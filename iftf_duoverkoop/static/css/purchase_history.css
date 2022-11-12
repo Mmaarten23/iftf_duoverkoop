@@ -1,0 +1,21 @@
+
+body {
+    background-color: darkgray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+
+    font-family: "Arial", sans-serif;
+
+}
+
+.history_field {
+    border: 3px solid white;
+    padding: 0.5rem;
+}
+
+.history_table {
+    border-collapse: collapse;
+}

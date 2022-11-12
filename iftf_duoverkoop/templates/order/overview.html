@@ -1,0 +1,29 @@
+{% load static %}
+{% load i18n %}
+<script>
+    setTimeout(function () {
+        const messageRender = document.getElementById('messages');
+        if (messageRender) {
+            messageRender.style.display = 'none';
+        }
+    }, 3000);
+</script>
+<div class="column-container">
+    <div class="row-container">
+        {% for association, performances_per_association in performances.items %}
+            <div class="association-card">
+                <img src="{{ association.image.url }}" alt="Association image" class="association-image">
+                <div class="association-performances">
+                    {% for performance in performances_per_association %}
+                        <p class="association-performance">{{ performance.date|date:"D d b" }}
+                            : {{ performance.tickets_left }} / {{ performance.max_tickets }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            {% if forloop.counter|divisibleby:5 %}
+                </div>
+                <div class="row-container">
+            {% endif %}
+        {% endfor %}
+        </div>
+</div>

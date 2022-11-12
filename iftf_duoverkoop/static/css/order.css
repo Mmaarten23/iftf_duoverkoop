@@ -1,0 +1,49 @@
+
+body {
+    background-color: darkgray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+
+    font-family: "Arial", sans-serif;
+
+}
+
+.column-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.row-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.association-image {
+    width: 10vw;
+    height: auto;
+}
+
+.association-card {
+    border-radius: 3px;
+    border-color: #ffffff;
+    background-color: #d5d5d5;
+    border-style: solid;
+    border-width: 3px;
+    padding: 5px;
+    margin: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.association-performances {
+}
+
+.association-performance {
+    margin: 3px;
+}
+
+
