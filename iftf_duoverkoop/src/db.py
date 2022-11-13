@@ -90,10 +90,6 @@ def handle_purchase(first_name: str, last_name: str, performance1: str, performa
     )
 
 
-def get_tickets_sold(key):
-    return Purchase.objects.filter(ticket1__key=key).count() + Purchase.objects.filter(ticket2__key=key).count()
-
-
 def data_ready():
     is_ready = True
     for association in get_all_associations():
