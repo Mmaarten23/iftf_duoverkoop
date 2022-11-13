@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from django.core.exceptions import ValidationError
+
 from iftf_duoverkoop.models import Performance, Purchase, Association
 
 
@@ -65,7 +67,21 @@ def get_purchases_by_user(user: str) -> list:
     return Purchase.objects.filter(name=user)
 
 
+def validate_purchase(first_name, last_name, performance1, performance2):
+    if not first_name or not last_name:
+        return False
+    if not performance1 or not performance2:
+        return False
+    if performance1 == performance2:
+        return False
+    if get_performance(performance1).tickets_left() <= 0 or get_performance(performance2).tickets_left() <= 0:
+        return False
+    return True
+
+
 def handle_purchase(first_name: str, last_name: str, performance1: str, performance2: str) -> None:
+    if not validate_purchase(first_name, last_name, performance1, performance2):
+        raise ValidationError('Invalid purchase')
     Purchase.objects.create(
         date=datetime.now(),
         name=f"{first_name} {last_name}",
