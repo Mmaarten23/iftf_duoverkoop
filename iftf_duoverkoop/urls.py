@@ -16,9 +16,9 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
-from iftf_duoverkoop import views
+from iftf_duoverkoop import views, urls_dev
 
 urlpatterns = [
     path('', views.main, name='main'),
@@ -26,3 +26,8 @@ urlpatterns = [
     path('order/', views.order, name='order'),
     path('purchase_history/', views.purchase_history, name='purchase_history'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    urlpatterns = [
+        path('--DEBUG--/', include(urls_dev.urls(), namespace='debug')),
+    ] + urlpatterns

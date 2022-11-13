@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.contrib import messages
+from django.http import Http404, HttpResponseServerError
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -10,6 +11,9 @@ from iftf_duoverkoop.src import db
 
 
 def order(request):
+    if not db.data_ready():
+        return HttpResponseServerError("The database has not been filled in correctly yet. Please notify a project "
+                                       "administrator!")
     form = order_form(request)
     return render(request, 'order/order.html', {'form': form, 'performances': db.get_performances_by_association()})
 
@@ -33,41 +37,3 @@ def purchase_history(request):
 
 def main(request):
     return redirect(reverse('order'), permanent=True)
-
-
-def _DEBUG_load_db():
-    db.create_association('Wina')
-    db.create_association('Politika')
-    db.create_performance(
-        key="Wina1104",
-        date=datetime(2022, 4, 11),
-        association=db.get_association('Wina'),
-        name="Van je familie moet je het maar hebben",
-        price=5,
-        tickets=30
-    )
-    db.create_performance(
-        key="Politika0104",
-        date=datetime(2022, 4, 1),
-        association=db.get_association('Politika'),
-        name="Working title",
-        price=5,
-        tickets=30
-    )
-    db.create_performance(
-        key="Politika0304",
-        date=datetime(2022, 4, 3),
-        association=db.get_association('Politika'),
-        name="Working title",
-        price=5,
-        tickets=30
-    )
-    db.create_performance(
-        key="Politika0504",
-        date=datetime(2022, 4, 5),
-        association=db.get_association('Politika'),
-        name="Working title",
-        price=5,
-        tickets=30
-    )
-

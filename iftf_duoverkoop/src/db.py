@@ -41,9 +41,10 @@ def get_performances_by_association() -> dict:
     return result
 
 
-def create_association(name: str) -> Association:
+def create_association(name: str, image: str = None) -> Association:
     association, _ = Association.objects.get_or_create(name=name, defaults={
-        'name': name
+        'name': name,
+        'image': image
     })
     return association
 
@@ -77,7 +78,9 @@ def get_tickets_sold(key):
     return Purchase.objects.filter(ticket1__key=key).count() + Purchase.objects.filter(ticket2__key=key).count()
 
 
-def _DEBUG_clear_db():
-    Purchase.objects.all().delete()
-    Performance.objects.all().delete()
-    Association.objects.all().delete()
+def data_ready():
+    is_ready = True
+    for association in get_all_associations():
+        if not association.image:
+            is_ready = False
+    return is_ready
