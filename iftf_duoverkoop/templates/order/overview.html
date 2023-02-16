@@ -15,8 +15,9 @@
                 <img src="{{ association.image.url }}" alt="Association image" class="association-image">
                 <div class="association-performances">
                     {% for performance in performances_per_association %}
-                        <p class="association-performance">{{ performance.date|date:"D d b" }}
-                            : {{ performance.tickets_left }} / {{ performance.max_tickets }}</p>
+                        <p class="association-performance">
+                            <a href="{{ performance.key }}"> {{ performance.date|date:"D d b" }} : {{ performance.tickets_left }} / {{ performance.max_tickets }} </a>
+                        </p>
                     {% endfor %}
                 </div>
             </div>

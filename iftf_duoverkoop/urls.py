@@ -23,7 +23,8 @@ from iftf_duoverkoop import views, urls_dev
 urlpatterns = [
     path('', views.main, name='main'),
     path('admin/', admin.site.urls),
-    path('order/', views.order, name='order'),
+    path(r'order/', views.order, name='order'),
+    path(r'order/<performance_id>', views.order, name='order'),
     path('purchase_history/', views.purchase_history, name='purchase_history'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
