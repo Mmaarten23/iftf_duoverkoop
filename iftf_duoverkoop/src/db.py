@@ -40,6 +40,8 @@ def get_performances_by_association() -> dict:
         if performance.association not in result:
             result[performance.association] = []
         result[performance.association].append(performance)
+    for association in result:
+        result[association].sort(key=lambda p: p.date)
     return result
 
 

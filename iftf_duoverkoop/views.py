@@ -25,7 +25,7 @@ def order_form(request, performance_id):
             messages.success(request, _('orderpage.success'))
             form = OrderForm()
     else:
-        form = OrderForm() if not performance_id else OrderForm(initial={'performance1': id})
+        form = OrderForm() if not performance_id else OrderForm(initial={'performance1': performance_id})
     return form
 
 
