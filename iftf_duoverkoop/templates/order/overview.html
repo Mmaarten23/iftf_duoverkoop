@@ -16,7 +16,22 @@
                 <div class="association-performances">
                     {% for performance in performances_per_association %}
                         <p class="association-performance">
-                            <a href="{{ performance.key }}"> {{ performance.date|date:"D d b" }} : {{ performance.tickets_left }} / {{ performance.max_tickets }} </a>
+                            {% if performance.tickets_left == 0 %}
+                                {{ performance.date|date:"D d b" }} : {{ performance.tickets_left }} /
+                                {{ performance.max_tickets }}
+                            {% else %}
+                                {% url 'order' as order_url %}
+                                {% if not 'performance_1' in request.GET %}
+                                    <a href="{% url 'order' %}?performance_1={{ performance.key }}"> {{ performance.date|date:"D d b" }}
+                                        : {{ performance.tickets_left }} / {{ performance.max_tickets }} </a>
+                                {% elif 'performance_1' in request.GET and not 'performance_2' in request.GET %}
+                                    <a href="{{ request.get_full_path }}&performance_2={{ performance.key }}"> {{ performance.date|date:"D d b" }}
+                                        : {{ performance.tickets_left }} / {{ performance.max_tickets }} </a>
+                                {% else %}
+                                    {{ performance.date|date:"D d b" }} : {{ performance.tickets_left }} /
+                                    {{ performance.max_tickets }}
+                                {% endif %}
+                            {% endif %}
                         </p>
                     {% endfor %}
                 </div>

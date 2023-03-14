@@ -8,15 +8,17 @@ from iftf_duoverkoop.forms import OrderForm
 from iftf_duoverkoop.src import db
 
 
-def order(request, performance_id=None):
+def order(request):
     if not db.data_ready():
         return HttpResponseServerError("The database has not been filled in correctly yet. Please notify a project "
                                        "administrator!")
-    form = order_form(request, performance_id)
+    performance_1 = request.GET.get('performance_1')
+    performance_2 = request.GET.get('performance_2')
+    form = order_form(request, performance_1, performance_2)
     return render(request, 'order/order.html', {'form': form, 'performances': db.get_performances_by_association()})
 
 
-def order_form(request, performance_id):
+def order_form(request, performance_1, performance_2):
     if request.method == 'POST':
         form = OrderForm(request.POST)
         if form.is_valid():
@@ -26,7 +28,12 @@ def order_form(request, performance_id):
             messages.success(request, _('orderpage.success'))
             form = OrderForm()
     else:
-        form = OrderForm() if not performance_id else OrderForm(initial={'performance1': performance_id})
+        initial = {}
+        if performance_1:
+            initial['performance1'] = performance_1
+        if performance_2:
+            initial['performance2'] = performance_2
+        form = OrderForm(initial=initial)
     return form
 
 
