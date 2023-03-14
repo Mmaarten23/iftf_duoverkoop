@@ -39,6 +39,7 @@ class Performance(models.Model):
 class Purchase(models.Model):
     date = models.DateTimeField("Date")
     name = models.CharField("Name", max_length=128)
+    email = models.EmailField("Email")
     ticket1 = models.ForeignKey(Performance, on_delete=models.PROTECT, related_name="ticket1")
     ticket2 = models.ForeignKey(Performance, on_delete=models.PROTECT, related_name="ticket2")
 

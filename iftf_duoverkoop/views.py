@@ -21,7 +21,8 @@ def order_form(request, performance_id):
         form = OrderForm(request.POST)
         if form.is_valid():
             clean = form.cleaned_data
-            db.handle_purchase(clean['first_name'], clean['last_name'], clean['performance1'], clean['performance2'])
+            db.handle_purchase(clean['first_name'], clean['last_name'], clean['email'], clean['performance1'],
+                               clean['performance2'])
             messages.success(request, _('orderpage.success'))
             form = OrderForm()
     else:

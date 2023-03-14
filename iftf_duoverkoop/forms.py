@@ -16,6 +16,7 @@ class OrderForm(forms.Form):
 
     first_name = forms.CharField(label=_('person.name_first'), max_length=100)
     last_name = forms.CharField(label=_('person.name_last'), max_length=100)
+    email = forms.EmailField(label=_('person.email'))
     performance1 = forms.ChoiceField(label=_('performance.name'), choices=[])
     performance2 = forms.ChoiceField(label=_('performance.name'), choices=[])
 

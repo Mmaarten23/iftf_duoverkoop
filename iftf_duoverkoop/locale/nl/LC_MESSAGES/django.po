@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-12 17:23+0100\n"
+"POT-Creation-Date: 2023-03-14 22:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,66 +16,70 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\forms.py:12
+#: .\iftf_duoverkoop\forms.py:17
 msgid "person.name_first"
 msgstr "Voornaam"
 
-#: .\forms.py:13
+#: .\iftf_duoverkoop\forms.py:18
 msgid "person.name_last"
 msgstr "Achternaam"
 
-#: .\forms.py:14 .\forms.py:15
+#: .\iftf_duoverkoop\forms.py:19
+msgid "person.email"
+msgstr "Emailadres"
+
+#: .\iftf_duoverkoop\forms.py:20 .\iftf_duoverkoop\forms.py:21
 msgid "performance.name"
 msgstr "Voorstelling"
 
-#: .\forms.py:17
+#: .\iftf_duoverkoop\forms.py:23
 msgid "error.duplicate_performance"
 msgstr "Je kan niet twee keer hetzelfde optreden bestellen."
 
-#: .\forms.py:18
+#: .\iftf_duoverkoop\forms.py:24
 msgid "error.empty_field"
 msgstr "Vul veld in."
 
-#: .\forms.py:19
+#: .\iftf_duoverkoop\forms.py:25
 msgid "error.sold_out"
 msgstr "Deze voorstelling is uitverkocht."
 
-#: .\models.py:32
+#: .\iftf_duoverkoop\models.py:32
 msgid "performance.tostring"
 msgstr "%(name)s door %(association)s op %(date)s"
 
-#: .\templates\order\order.html:7
+#: .\iftf_duoverkoop\templates\order\order.html:7
 msgid "orderpage.title"
 msgstr "Bestel"
 
-#: .\templates\order\overview.html:12
-msgid "performances.title"
-msgstr "Voorstellingen"
-
-#: .\templates\purchase_history\purchase_history.html:7
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:7
 msgid "purchase_historypage.title"
 msgstr "Aankoopgeschiedenis"
 
-#: .\templates\purchase_history\purchase_history.html:15
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:15
 msgid "purchase_historypage.header_id"
 msgstr "ID"
 
-#: .\templates\purchase_history\purchase_history.html:16
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:16
 msgid "purchase_historypage.header_purchase_date"
 msgstr "Bestel datum"
 
-#: .\templates\purchase_history\purchase_history.html:17
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:17
 msgid "purchase_historypage.header_buyer_name"
 msgstr "Koper"
 
-#: .\templates\purchase_history\purchase_history.html:18
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:18
+msgid "purchase_historypage.header_buyer_email"
+msgstr "Email"
+
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:19
 msgid "purchase_historypage.header_performance_1"
 msgstr "Voorstelling 1"
 
-#: .\templates\purchase_history\purchase_history.html:19
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:20
 msgid "purchase_historypage.header_performance_2"
 msgstr "Voorstelling 2"
 
-#: .\views.py:23
+#: .\iftf_duoverkoop\views.py:26
 msgid "orderpage.success"
 msgstr "Je bestelling is succesvol verstuurd."

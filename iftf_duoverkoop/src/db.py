@@ -81,12 +81,13 @@ def validate_purchase(first_name, last_name, performance1, performance2):
     return True
 
 
-def handle_purchase(first_name: str, last_name: str, performance1: str, performance2: str) -> None:
+def handle_purchase(first_name: str, last_name: str, email:str, performance1: str, performance2: str) -> None:
     if not validate_purchase(first_name, last_name, performance1, performance2):
         raise ValidationError('Invalid purchase')
     Purchase.objects.create(
         date=datetime.now(),
         name=f"{first_name} {last_name}",
+        email=email,
         ticket1=get_performance(performance1),
         ticket2=get_performance(performance2)
     )

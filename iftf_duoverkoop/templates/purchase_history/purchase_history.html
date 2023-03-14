@@ -15,6 +15,7 @@
         <th>{% translate "purchase_historypage.header_id" %}</th>
         <th>{% translate "purchase_historypage.header_purchase_date" %}</th>
         <th>{% translate "purchase_historypage.header_buyer_name" %}</th>
+        <th>{% translate "purchase_historypage.header_buyer_email" %}</th>
         <th>{% translate "purchase_historypage.header_performance_1" %}</th>
         <th>{% translate "purchase_historypage.header_performance_2" %}</th>
     </tr>
@@ -23,6 +24,7 @@
             <td class="history_field">{{ purchase.id }}</td>
             <td class="history_field">{{ purchase.date|date:"D d b H:i" }}</td>
             <td class="history_field">{{ purchase.name }}</td>
+            <td class="history_field">{{ purchase.email }}</td>
             <td class="history_field">{{ purchase.ticket1.selection }}</td>
             <td class="history_field">{{ purchase.ticket2.selection }}</td>
         </tr>
