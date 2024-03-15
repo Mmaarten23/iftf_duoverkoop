@@ -1,10 +1,16 @@
+import csv
+from io import StringIO
+from wsgiref.util import FileWrapper
+
 from django.contrib import messages
-from django.http import HttpResponseServerError
+from django.db.models import QuerySet
+from django.http import HttpResponseServerError, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
 from iftf_duoverkoop.forms import OrderForm
+from iftf_duoverkoop.models import Purchase
 from iftf_duoverkoop.src import db
 
 
@@ -23,7 +29,7 @@ def order_form(request, performance_1, performance_2):
         form = OrderForm(request.POST)
         if form.is_valid():
             clean = form.cleaned_data
-            db.handle_purchase(clean['first_name'], clean['last_name'], clean['email'], clean['performance1'],
+            db.handle_purchase(clean['name'], clean['email'], clean['performance1'],
                                clean['performance2'])
             messages.success(request, _('orderpage.success'))
             form = OrderForm()
@@ -39,6 +45,27 @@ def order_form(request, performance_1, performance_2):
 
 def purchase_history(request):
     return render(request, 'purchase_history/purchase_history.html', {'purchases': db.get_all_purchases()})
+
+
+def export(request):
+    # generate the file
+    file = StringIO()
+    writer = csv.writer(file)
+    writer.writerow(['Date of Purchase', 'Performance', 'Date of Performance', 'Full Name', 'Email'])
+    all_purchases = db.get_all_purchases()
+    for association in db.get_all_associations():
+        writer.writerows([[''], [association.name]])
+        for purchase in all_purchases:
+            # time format = 31/12/2024 12:00
+            time_format = "%d/%m/%Y %H:%M"
+            if purchase.ticket1.association == association:
+                writer.writerow([purchase.date.strftime(time_format), purchase.ticket1.name, purchase.ticket1.date.strftime(time_format), purchase.name, purchase.email])
+            if purchase.ticket2.association == association:
+                writer.writerow([purchase.date.strftime(time_format), purchase.ticket2.name, purchase.ticket2.date.strftime(time_format), purchase.name, purchase.email])
+    # create the response
+    response = HttpResponse(file.getvalue(), content_type='application/csv')
+    response['Content-Disposition'] = 'attachment; filename=export.csv'
+    return response
 
 
 def main(request):

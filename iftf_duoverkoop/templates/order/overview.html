@@ -13,6 +13,7 @@
         {% for association, performances_per_association in performances.items %}
             <div class="association-card">
                 <img src="{{ association.image.url }}" alt="Association image" class="association-image">
+                <b>{{ association.name }}</b>
                 <div class="association-performances">
                     {% for performance in performances_per_association %}
                         <p class="association-performance">
@@ -36,7 +37,7 @@
                     {% endfor %}
                 </div>
             </div>
-            {% if forloop.counter|divisibleby:5 %}
+            {% if forloop.counter|divisibleby:3 %}
                 </div>
                 <div class="row-container">
             {% endif %}

@@ -10,15 +10,7 @@
 
 </head>
 <body>
-<div class="column-container">
-    {% include "order/overview.html" %}
-    {% if messages %}
-        <ul id="messages" class="messages">
-            {% for message in messages %}
-                <li  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+<div class="row-container">
     <div id="order-form" class="column-container">
         <form action="/order/" method="post">
             {% csrf_token %}
@@ -27,7 +19,21 @@
             </table>
             <input type="submit" value="Submit">
         </form>
+        {% if messages %}
+            <ul id="messages" class="messages">
+                {% for message in messages %}
+                    <li  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <p>
+            <a href="{% url 'export' %}" class="button">Export to csv</a>
+        </p>
     </div>
+    <div class="column-container" style="overflow: scroll; max-height: 90vh">
+        {% include "order/overview.html" %}
+    </div>
+
 </div>
 
 </body>

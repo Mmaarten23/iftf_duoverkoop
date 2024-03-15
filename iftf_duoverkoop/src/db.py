@@ -58,19 +58,21 @@ def get_association(name: str) -> Association:
 
 
 def get_all_associations():
-    return Association.objects.all()
+    all_performances = [a for a in Association.objects.all()]
+    all_performances.sort(key=lambda a: a.name.lower())
+    return all_performances
 
 
-def get_all_purchases() -> list:
+def get_all_purchases() -> list[Purchase]:
     return Purchase.objects.all()
 
 
-def get_purchases_by_user(user: str) -> list:
+def get_purchases_by_user(user: str) -> list[Purchase]:
     return Purchase.objects.filter(name=user)
 
 
-def validate_purchase(first_name, last_name, performance1, performance2):
-    if not first_name or not last_name:
+def validate_purchase(name, performance1, performance2):
+    if not name:
         return False
     if not performance1 or not performance2:
         return False
@@ -81,12 +83,12 @@ def validate_purchase(first_name, last_name, performance1, performance2):
     return True
 
 
-def handle_purchase(first_name: str, last_name: str, email:str, performance1: str, performance2: str) -> None:
-    if not validate_purchase(first_name, last_name, performance1, performance2):
+def handle_purchase(name: str, email: str, performance1: str, performance2: str) -> None:
+    if not validate_purchase(name, performance1, performance2):
         raise ValidationError('Invalid purchase')
     Purchase.objects.create(
         date=datetime.now(),
-        name=f"{first_name} {last_name}",
+        name=name,
         email=email,
         ticket1=get_performance(performance1),
         ticket2=get_performance(performance2)

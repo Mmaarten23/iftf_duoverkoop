@@ -25,6 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path(r'order/', views.order, name='order'),
     path('purchase_history/', views.purchase_history, name='purchase_history'),
+    path('export/', views.export, name='export'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

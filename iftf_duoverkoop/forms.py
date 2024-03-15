@@ -14,8 +14,7 @@ class OrderForm(forms.Form):
         self.fields['performance1'].choices = performances
         self.fields['performance2'].choices = performances
 
-    first_name = forms.CharField(label=_('person.name_first'), max_length=100)
-    last_name = forms.CharField(label=_('person.name_last'), max_length=100)
+    name = forms.CharField(label=_('person.name'), max_length=100)
     email = forms.EmailField(label=_('person.email'))
     performance1 = forms.ChoiceField(label=_('performance.name'), choices=[])
     performance2 = forms.ChoiceField(label=_('performance.name'), choices=[])
@@ -24,17 +23,12 @@ class OrderForm(forms.Form):
     error_empty_field = _('error.empty_field')
     error_sold_out = _('error.sold_out')
 
-    def clean_first_name(self):
-        first_name = self.cleaned_data['first_name']
+    def clean_name(self):
+        first_name = self.cleaned_data['name']
         if not first_name:
             raise ValidationError(_(self.error_empty_field))
         return first_name.strip()[0].upper() + first_name.strip()[1:]
 
-    def clean_last_name(self):
-        last_name = self.cleaned_data['last_name']
-        if not last_name:
-            raise ValidationError(_(self.error_empty_field))
-        return last_name.strip()[0].upper() + last_name.strip()[1:]
 
     def clean_performance1(self):
         key = self.cleaned_data['performance1']

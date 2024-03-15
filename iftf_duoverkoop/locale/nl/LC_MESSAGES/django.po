@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-14 22:56+0100\n"
+"POT-Creation-Date: 2024-03-15 15:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,30 +17,26 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: .\iftf_duoverkoop\forms.py:17
-msgid "person.name_first"
-msgstr "Voornaam"
+msgid "person.name"
+msgstr "Naam"
 
 #: .\iftf_duoverkoop\forms.py:18
-msgid "person.name_last"
-msgstr "Achternaam"
-
-#: .\iftf_duoverkoop\forms.py:19
 msgid "person.email"
 msgstr "Emailadres"
 
-#: .\iftf_duoverkoop\forms.py:20 .\iftf_duoverkoop\forms.py:21
+#: .\iftf_duoverkoop\forms.py:19 .\iftf_duoverkoop\forms.py:20
 msgid "performance.name"
 msgstr "Voorstelling"
 
-#: .\iftf_duoverkoop\forms.py:23
+#: .\iftf_duoverkoop\forms.py:22
 msgid "error.duplicate_performance"
 msgstr "Je kan niet twee keer hetzelfde optreden bestellen."
 
-#: .\iftf_duoverkoop\forms.py:24
+#: .\iftf_duoverkoop\forms.py:23
 msgid "error.empty_field"
 msgstr "Vul veld in."
 
-#: .\iftf_duoverkoop\forms.py:25
+#: .\iftf_duoverkoop\forms.py:24
 msgid "error.sold_out"
 msgstr "Deze voorstelling is uitverkocht."
 
@@ -80,6 +76,6 @@ msgstr "Voorstelling 1"
 msgid "purchase_historypage.header_performance_2"
 msgstr "Voorstelling 2"
 
-#: .\iftf_duoverkoop\views.py:26
+#: .\iftf_duoverkoop\views.py:34
 msgid "orderpage.success"
 msgstr "Je bestelling is succesvol verstuurd."
