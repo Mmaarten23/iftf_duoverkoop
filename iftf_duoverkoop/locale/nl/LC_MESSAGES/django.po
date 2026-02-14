@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-15 15:50+0100\n"
+"POT-Creation-Date: 2024-03-15 16:21+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,7 +46,19 @@ msgstr "%(name)s door %(association)s op %(date)s"
 
 #: .\iftf_duoverkoop\templates\order\order.html:7
 msgid "orderpage.title"
-msgstr "Bestel"
+msgstr "IFTF Bestellen"
+
+#: .\iftf_duoverkoop\templates\order\order.html:15
+msgid "orderpage.rules.header"
+msgstr "Regels Duoticket Verkoop"
+
+#: .\iftf_duoverkoop\templates\order\order.html:16
+msgid "orderpage.rules.text"
+msgstr "Het is <b>verboden</b> om twee tickets te kopen voor dezelfde voorstelling. De twee tickets moeten verschillen in dag <b>of</b> voorstelling."
+
+#: .\iftf_duoverkoop\templates\order\order.html:32
+msgid "orderpage.export"
+msgstr "Exporteer naar CSV"
 
 #: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:7
 msgid "purchase_historypage.title"
@@ -76,6 +88,14 @@ msgstr "Voorstelling 1"
 msgid "purchase_historypage.header_performance_2"
 msgstr "Voorstelling 2"
 
-#: .\iftf_duoverkoop\views.py:34
+#: .\iftf_duoverkoop\views.py:31
 msgid "orderpage.success"
 msgstr "Je bestelling is succesvol verstuurd."
+
+#: .\iftf_duoverkoop\views.py:35
+msgid "email.subject"
+msgstr "Bevestiging van je IFTF Duoticket aankoop"
+
+#: .\iftf_duoverkoop\views.py:36
+msgid "email.message"
+msgstr "Beste %(name)s,\n\nBedankt voor je aankoop! Hier zijn de details:\n\nVoorstelling 1: %(performance1)s\nVoorstelling 2: %(performance2)s\n\nAankoopdatum: %(date)s\n\nGeniet van de voorstellingen!\n\nIFTF Team"

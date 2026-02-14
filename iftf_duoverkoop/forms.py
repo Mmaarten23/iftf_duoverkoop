@@ -9,6 +9,7 @@ class OrderForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(OrderForm, self).__init__(*args, **kwargs)
         performances = db.get_readable_keyed_performances()
+        performances.sort(key=lambda x: x[1].lower())
         performances.insert(0, ('', ''))
 
         self.fields['performance1'].choices = performances

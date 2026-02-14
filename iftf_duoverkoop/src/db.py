@@ -83,10 +83,10 @@ def validate_purchase(name, performance1, performance2):
     return True
 
 
-def handle_purchase(name: str, email: str, performance1: str, performance2: str) -> None:
+def handle_purchase(name: str, email: str, performance1: str, performance2: str) -> Purchase:
     if not validate_purchase(name, performance1, performance2):
         raise ValidationError('Invalid purchase')
-    Purchase.objects.create(
+    return Purchase.objects.create(
         date=datetime.now(),
         name=name,
         email=email,

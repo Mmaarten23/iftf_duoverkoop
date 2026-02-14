@@ -1,16 +1,14 @@
 import csv
 from io import StringIO
-from wsgiref.util import FileWrapper
 
 from django.contrib import messages
-from django.db.models import QuerySet
+from django.core.mail import send_mail
 from django.http import HttpResponseServerError, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
 from iftf_duoverkoop.forms import OrderForm
-from iftf_duoverkoop.models import Purchase
 from iftf_duoverkoop.src import db
 
 
@@ -29,8 +27,17 @@ def order_form(request, performance_1, performance_2):
         form = OrderForm(request.POST)
         if form.is_valid():
             clean = form.cleaned_data
-            db.handle_purchase(clean['name'], clean['email'], clean['performance1'],
+            purchase = db.handle_purchase(clean['name'], clean['email'], clean['performance1'],
                                clean['performance2'])
+            # Send confirmation email
+            subject = _('email.subject')
+            message = _('email.message') % {
+                'name': purchase.name,
+                'performance1': purchase.ticket1.selection(),
+                'performance2': purchase.ticket2.selection(),
+                'date': purchase.date.strftime('%d/%m/%Y %H:%M')
+            }
+            send_mail(subject, message, None, [purchase.email])
             messages.success(request, _('orderpage.success'))
             form = OrderForm()
     else:
@@ -59,9 +66,11 @@ def export(request):
             # time format = 31/12/2024 12:00
             time_format = "%d/%m/%Y %H:%M"
             if purchase.ticket1.association == association:
-                writer.writerow([purchase.date.strftime(time_format), purchase.ticket1.name, purchase.ticket1.date.strftime(time_format), purchase.name, purchase.email])
+                writer.writerow([purchase.date.strftime(time_format), purchase.ticket1.name,
+                                 purchase.ticket1.date.strftime(time_format), purchase.name, purchase.email])
             if purchase.ticket2.association == association:
-                writer.writerow([purchase.date.strftime(time_format), purchase.ticket2.name, purchase.ticket2.date.strftime(time_format), purchase.name, purchase.email])
+                writer.writerow([purchase.date.strftime(time_format), purchase.ticket2.name,
+                                 purchase.ticket2.date.strftime(time_format), purchase.name, purchase.email])
     # create the response
     response = HttpResponse(file.getvalue(), content_type='application/csv')
     response['Content-Disposition'] = 'attachment; filename=export.csv'
