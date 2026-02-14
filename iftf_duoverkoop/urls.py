@@ -14,9 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
+from django.views.static import serve
 
 from iftf_duoverkoop import views, urls_dev
 
@@ -26,9 +26,13 @@ urlpatterns = [
     path(r'order/', views.order, name='order'),
     path('purchase_history/', views.purchase_history, name='purchase_history'),
     path('export/', views.export, name='export'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
 
 if settings.DEBUG:
     urlpatterns = [
         path('--DEBUG--/', include(urls_dev.urls(), namespace='debug')),
     ] + urlpatterns
+
+urlpatterns += [
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+]
