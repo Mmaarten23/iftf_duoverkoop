@@ -4,7 +4,7 @@ from django.utils.translation import gettext as _
 
 class Association(models.Model):
     name = models.CharField(max_length=100, unique=True, primary_key=True)
-    image = models.ImageField(upload_to='iftf_duoverkoop/media/associations', blank=True, null=True)
+    image = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.name

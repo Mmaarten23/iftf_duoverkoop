@@ -7,8 +7,8 @@ from iftf_duoverkoop.src import db
 
 
 def load_db(request):
-    db.create_association('Wina', 'iftf_duoverkoop/media/associations/wina.jpg')
-    db.create_association('Politika', 'iftf_duoverkoop/media/associations/politika.png')
+    db.create_association('Wina', 'associations/wina.jpg')
+    db.create_association('Politika', 'associations/politika.png')
     db.create_performance(
         key="Wina1104",
         date=datetime(2022, 4, 11),

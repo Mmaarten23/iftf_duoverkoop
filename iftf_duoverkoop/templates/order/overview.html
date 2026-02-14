@@ -12,7 +12,7 @@
     <div class="row-container">
         {% for association, performances_per_association in performances.items %}
             <div class="association-card">
-                <img src="{{ association.image.url }}" alt="Association image" class="association-image">
+                {% if association.image %}<img src="{{ MEDIA_URL }}{{ association.image }}" alt="Association image" class="association-image">{% endif %}
                 <b>{{ association.name }}</b>
                 <div class="association-performances">
                     {% for performance in performances_per_association %}
