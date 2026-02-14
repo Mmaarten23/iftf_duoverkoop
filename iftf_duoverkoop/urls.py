@@ -26,6 +26,7 @@ urlpatterns = [
     path(r'order/', views.order, name='order'),
     path('purchase_history/', views.purchase_history, name='purchase_history'),
     path('export/', views.export, name='export'),
+    path('db-info/', views.db_info, name='db_info'),
 ]
 
 if settings.DEBUG:

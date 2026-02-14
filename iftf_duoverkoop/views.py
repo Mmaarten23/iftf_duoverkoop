@@ -3,7 +3,7 @@ from io import StringIO
 
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.http import HttpResponseServerError, HttpResponse
+from django.http import HttpResponseServerError, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -79,3 +79,8 @@ def export(request):
 
 def main(request):
     return redirect(reverse('order'), permanent=True)
+
+
+def db_info(request):
+    from django.db import connection
+    return JsonResponse({"database_type": connection.vendor})
