@@ -1,34 +1,513 @@
+{% extends "base.html" %}
 {% load i18n %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{% translate "purchase_historypage.title" %}</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/purchase_history.css' %}">
-    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
 
-</head>
-<body>
-<table class="history_table">
-    <tr>
-        <th>{% translate "purchase_historypage.header_id" %}</th>
-        <th>{% translate "purchase_historypage.header_purchase_date" %}</th>
-        <th>{% translate "purchase_historypage.header_buyer_name" %}</th>
-        <th>{% translate "purchase_historypage.header_buyer_email" %}</th>
-        <th>{% translate "purchase_historypage.header_performance_1" %}</th>
-        <th>{% translate "purchase_historypage.header_performance_2" %}</th>
-    </tr>
-    {% for purchase in purchases %}
-        <tr>
-            <td class="history_field">{{ purchase.id }}</td>
-            <td class="history_field">{{ purchase.date|date:"D d b H:i" }}</td>
-            <td class="history_field">{{ purchase.name }}</td>
-            <td class="history_field">{{ purchase.email }}</td>
-            <td class="history_field">{{ purchase.ticket1.selection }}</td>
-            <td class="history_field">{{ purchase.ticket2.selection }}</td>
-        </tr>
-    {% endfor %}
-</table>
-</body>
-</html>
+{% block title %}{% translate "purchase_historypage.title" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .purchase-card {
+        transition: all 0.3s;
+        border-left: 4px solid var(--primary-color);
+    }
+
+    .purchase-card:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .edit-mode {
+        background-color: #fff3cd;
+        border-left-color: var(--warning-color);
+    }
+
+    .performance-tag {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        background-color: #e7f3ff;
+        border: 1px solid #b6d4fe;
+        margin-bottom: 0.5rem;
+    }
+
+    .search-box {
+        max-width: 500px;
+    }
+
+    .filter-badge {
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .filter-badge:hover {
+        transform: scale(1.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>
+                <i class="bi bi-clock-history"></i> {% translate "purchase_historypage.title" %}
+                <span class="badge bg-primary ms-2">{{ purchases|length }}</span>
+            </h2>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="input-group search-box">
+                <span class="input-group-text">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text"
+                       class="form-control"
+                       id="searchInput"
+                       placeholder="{% translate 'purchase_historypage.search_placeholder_with_code' %}">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" id="associationFilter">
+                <option value="">{% translate "purchase_historypage.filter_all_associations" %}</option>
+                {% for association in associations %}
+                <option value="{{ association.name }}">{{ association.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" id="performanceFilter" disabled>
+                <option value="">{% translate "purchase_historypage.filter_all_performances" %}</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row" id="purchasesList">
+        {% for purchase in purchases %}
+        <div class="col-12 mb-3 purchase-item"
+             data-purchase-id="{{ purchase.id }}"
+             data-date="{{ purchase.date|date:'Y-m-d' }}"
+             data-search-text="{{ purchase.name|lower }} {{ purchase.email|lower }} {{ purchase.verification_code|lower }}"
+             data-association1="{{ purchase.ticket1.association.name }}"
+             data-association2="{{ purchase.ticket2.association.name }}"
+             data-ticket1-key="{{ purchase.ticket1.key }}"
+             data-ticket2-key="{{ purchase.ticket2.key }}">
+            <div class="card purchase-card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-1 text-center">
+                            <h5 class="text-muted mb-0">
+                                <i class="bi bi-hash"></i>{{ purchase.id }}
+                            </h5>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="mb-1">
+                                <i class="bi bi-calendar-check text-primary"></i>
+                                <strong>{{ purchase.date|date:"D d M Y" }}</strong>
+                            </div>
+                            <div class="text-muted small">
+                                <i class="bi bi-clock"></i> {{ purchase.date|date:"H:i" }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="purchase-name" data-field="name">
+                                <i class="bi bi-person-fill text-success"></i>
+                                <strong>{{ purchase.name }}</strong>
+                            </div>
+                            <div class="purchase-email text-muted small" data-field="email">
+                                <i class="bi bi-envelope"></i> {{ purchase.email }}
+                            </div>
+                            <div class="purchase-code mt-1" data-field="verification_code">
+                                <i class="bi bi-shield-check text-primary"></i>
+                                <code class="text-primary">{{ purchase.verification_code }}</code>
+                            </div>
+                        </div>
+
+                        <div class="col-md-5">
+                            <div class="performance-tag mb-2" data-field="ticket1">
+                                <i class="bi bi-ticket-perforated-fill text-primary"></i>
+                                <strong>{% translate "purchase_historypage.ticket_1" %}</strong> {{ purchase.ticket1.selection }}
+                            </div>
+                            <div class="performance-tag" data-field="ticket2">
+                                <i class="bi bi-ticket-perforated-fill text-primary"></i>
+                                <strong>{% translate "purchase_historypage.ticket_2" %}</strong> {{ purchase.ticket2.selection }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-1 text-end">
+                            {% if user_can_edit %}
+                            <button class="btn btn-sm btn-outline-primary edit-btn"
+                                    data-purchase-id="{{ purchase.id }}"
+                                    data-ticket1-key="{{ purchase.ticket1.key }}"
+                                    data-ticket2-key="{{ purchase.ticket2.key }}"
+                                    title="{% translate 'purchase_historypage.edit' %}">
+                                <i class="bi bi-pencil-fill"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger delete-btn"
+                                    data-purchase-id="{{ purchase.id }}"
+                                    title="{% translate 'purchase_historypage.delete' %}">
+                                <i class="bi bi-trash-fill"></i>
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="bi bi-info-circle-fill"></i>
+                {% translate "purchase_historypage.no_purchases" %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% if user.is_staff %}
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-pencil-fill"></i> {% translate "purchase_historypage.edit_purchase" %}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editForm">
+                <div class="modal-body">
+                    <input type="hidden" id="editPurchaseId">
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-person-fill"></i> {% translate "person.name" %}
+                        </label>
+                        <input type="text" class="form-control" id="editName" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-envelope-fill"></i> {% translate "person.email" %}
+                        </label>
+                        <input type="email" class="form-control" id="editEmail" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-ticket-fill"></i> {% translate "performance.name" %} 1
+                        </label>
+                        <select class="form-select" id="editPerformance1" required>
+                            <option value="">{% translate "orderpage.select_performance" %}</option>
+                            {% for perf_key, perf_name in available_performances %}
+                            <option value="{{ perf_key }}">{{ perf_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-ticket-fill"></i> {% translate "performance.name" %} 2
+                        </label>
+                        <select class="form-select" id="editPerformance2" required>
+                            <option value="">{% translate "orderpage.select_performance" %}</option>
+                            {% for perf_key, perf_name in available_performances %}
+                            <option value="{{ perf_key }}">{{ perf_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        {% translate "purchase_historypage.edit_warning" %}
+                    </div>
+
+                    <!-- Price Comparison (shown when performances change) -->
+                    <div id="priceComparison" class="alert alert-info" style="display: none;">
+                        <h6 class="alert-heading mb-2">
+                            <i class="bi bi-cash-coin"></i> {% translate "purchase_historypage.price_comparison" %}
+                        </h6>
+                        <div class="row">
+                            <div class="col-4">
+                                <small class="text-muted">{% translate "purchase_historypage.original_price" %}</small>
+                                <div class="h6 mb-0" id="originalPrice">€0.00</div>
+                            </div>
+                            <div class="col-4">
+                                <small class="text-muted">{% translate "purchase_historypage.new_price" %}</small>
+                                <div class="h6 mb-0" id="newPrice">€0.00</div>
+                            </div>
+                            <div class="col-4">
+                                <small class="text-muted">{% translate "purchase_historypage.price_difference" %}</small>
+                                <div class="h6 mb-0" id="priceDifference">€0.00</div>
+                            </div>
+                        </div>
+                        <div id="priceMessage" class="mt-2 small"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        {% translate "purchase_historypage.cancel" %}
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle-fill"></i> {% translate "purchase_historypage.save" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Translation strings for JavaScript
+const translations = {
+    extraChargeRequired: "{% translate 'purchase_historypage.extra_charge_required' %}",
+    refundDue: "{% translate 'purchase_historypage.refund_due' %}",
+    noPriceChange: "{% translate 'purchase_historypage.no_price_change' %}",
+    errorOccurred: "{% translate 'error.generic_error' %}"
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const purchaseItems = document.querySelectorAll('.purchase-item');
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    const associationFilter = document.getElementById('associationFilter');
+    const performanceFilter = document.getElementById('performanceFilter');
+    let currentFilter = 'all';
+    let performancePrices = {};
+
+    // Load performance prices
+    fetch('/get_performance_prices/')
+        .then(response => response.json())
+        .then(data => {
+            performancePrices = data.prices;
+        })
+        .catch(error => {
+            console.error('Error loading prices:', error);
+        });
+
+    // Populate performance filter based on associations
+    associationFilter.addEventListener('change', function() {
+        const selectedAssociation = this.value;
+
+        // Enable performance filter if an association is selected
+        if (selectedAssociation) {
+            performanceFilter.disabled = false;
+
+            // Fetch performances for the selected association
+            fetch(`/get_performances_by_association/${selectedAssociation}/`)
+                .then(response => response.json())
+                .then(data => {
+                    // Clear existing options
+                    performanceFilter.innerHTML = '<option value="">{% translate "purchase_historypage.filter_all_performances" %}</option>';
+
+                    // Add new options
+                    data.performances.forEach(performance => {
+                        const option = document.createElement('option');
+                        option.value = performance.key;
+                        option.textContent = performance.name;
+                        performanceFilter.appendChild(option);
+                    });
+                });
+        } else {
+            performanceFilter.disabled = true;
+            performanceFilter.innerHTML = '<option value="">{% translate "purchase_historypage.filter_all_performances" %}</option>';
+        }
+
+        filterPurchases(searchInput.value.toLowerCase(), currentFilter);
+    });
+
+    // Search functionality
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        filterPurchases(searchTerm, currentFilter);
+    });
+
+    // Filter functionality
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            currentFilter = this.dataset.filter;
+            filterPurchases(searchInput.value.toLowerCase(), currentFilter);
+        });
+    });
+
+    // Performance filter change
+    performanceFilter.addEventListener('change', function() {
+        filterPurchases(searchInput.value.toLowerCase(), currentFilter);
+    });
+
+    function filterPurchases(searchTerm, filter) {
+        const today = new Date();
+        const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+        purchaseItems.forEach(item => {
+            const searchText = item.dataset.searchText;
+            const dateStr = item.dataset.date;
+            const itemDate = new Date(dateStr);
+
+            let matchesSearch = searchTerm === '' || searchText.includes(searchTerm);
+            let matchesFilter = true;
+
+            if (filter === 'today') {
+                matchesFilter = dateStr === today.toISOString().split('T')[0];
+            } else if (filter === 'week') {
+                matchesFilter = itemDate >= weekAgo;
+            }
+
+            // Association and performance filter matching
+            const associationMatch = associationFilter.value === '' || item.dataset.association1 === associationFilter.value || item.dataset.association2 === associationFilter.value;
+            const performanceMatch = performanceFilter.value === '' || item.dataset.ticket1Key === performanceFilter.value || item.dataset.ticket2Key === performanceFilter.value;
+
+            item.style.display = matchesSearch && matchesFilter && associationMatch && performanceMatch ? '' : 'none';
+        });
+    }
+
+    {% if user.is_staff %}
+    // Edit functionality
+    const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+    const editForm = document.getElementById('editForm');
+    let originalPrice = 0;
+
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const purchaseId = this.dataset.purchaseId;
+            const card = document.querySelector(`[data-purchase-id="${purchaseId}"]`);
+            const name = card.querySelector('[data-field="name"] strong').textContent;
+            const email = card.querySelector('[data-field="email"]').textContent.trim().replace(/^.*\s/, '');
+
+            document.getElementById('editPurchaseId').value = purchaseId;
+            document.getElementById('editName').value = name;
+            document.getElementById('editEmail').value = email;
+
+            // Set performance selections from button data attributes
+            const ticket1Key = this.dataset.ticket1Key;
+            const ticket2Key = this.dataset.ticket2Key;
+            document.getElementById('editPerformance1').value = ticket1Key;
+            document.getElementById('editPerformance2').value = ticket2Key;
+
+            // Calculate original price
+            originalPrice = (performancePrices[ticket1Key] || 0) + (performancePrices[ticket2Key] || 0);
+
+            // Reset and hide price comparison
+            const originalPriceDiv = document.getElementById('originalPrice');
+            const newPriceDiv = document.getElementById('newPrice');
+            const priceDifferenceDiv = document.getElementById('priceDifference');
+            const priceMessageDiv = document.getElementById('priceMessage');
+            originalPriceDiv.textContent = '€' + originalPrice.toFixed(2);
+            newPriceDiv.textContent = '€' + originalPrice.toFixed(2);
+            priceDifferenceDiv.textContent = '€0.00';
+            priceMessageDiv.textContent = '';
+            document.getElementById('priceComparison').style.display = 'none';
+
+            editModal.show();
+        });
+    });
+
+    // Update price comparison when performance selections change
+    document.getElementById('editPerformance1').addEventListener('change', updatePriceComparison);
+    document.getElementById('editPerformance2').addEventListener('change', updatePriceComparison);
+
+    function updatePriceComparison() {
+        const perf1Key = document.getElementById('editPerformance1').value;
+        const perf2Key = document.getElementById('editPerformance2').value;
+
+        const newPrice = (performancePrices[perf1Key] || 0) + (performancePrices[perf2Key] || 0);
+        const priceDifference = newPrice - originalPrice;
+
+        const originalPriceDiv = document.getElementById('originalPrice');
+        const newPriceDiv = document.getElementById('newPrice');
+        const priceDifferenceDiv = document.getElementById('priceDifference');
+        const priceMessageDiv = document.getElementById('priceMessage');
+        const priceComparisonDiv = document.getElementById('priceComparison');
+
+        newPriceDiv.textContent = '€' + newPrice.toFixed(2);
+        priceDifferenceDiv.textContent = (priceDifference >= 0 ? '+' : '') + '€' + priceDifference.toFixed(2);
+
+        if (priceDifference > 0) {
+            priceDifferenceDiv.className = 'h6 mb-0 text-danger';
+            priceMessageDiv.textContent = translations.extraChargeRequired + ' €' + priceDifference.toFixed(2);
+            priceMessageDiv.className = 'mt-2 small text-danger';
+        } else if (priceDifference < 0) {
+            priceDifferenceDiv.className = 'h6 mb-0 text-success';
+            priceMessageDiv.textContent = translations.refundDue + ' €' + Math.abs(priceDifference).toFixed(2);
+            priceMessageDiv.className = 'mt-2 small text-success';
+        } else {
+            priceDifferenceDiv.className = 'h6 mb-0 text-muted';
+            priceMessageDiv.textContent = translations.noPriceChange;
+            priceMessageDiv.className = 'mt-2 small text-muted';
+        }
+
+        priceComparisonDiv.style.display = 'block';
+    }
+
+    editForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const purchaseId = document.getElementById('editPurchaseId').value;
+        const name = document.getElementById('editName').value;
+        const email = document.getElementById('editEmail').value;
+        const ticket1 = document.getElementById('editPerformance1').value;
+        const ticket2 = document.getElementById('editPerformance2').value;
+
+        fetch(`/purchase_history/edit/${purchaseId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({ name, email, ticket1, ticket2 })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.error || translations.errorOccurred);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(translations.errorOccurred);
+        });
+    });
+
+    // Delete functionality
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (confirm('{% translate "purchase_historypage.delete_confirm" %}')) {
+                const purchaseId = this.dataset.purchaseId;
+
+                fetch(`/purchase_history/delete/${purchaseId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert(data.error || translations.errorOccurred);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert(translations.errorOccurred);
+                });
+            }
+        });
+    });
+    {% endif %}
+});
+</script>
+{% csrf_token %}
+{% endblock %}

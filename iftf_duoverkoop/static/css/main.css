@@ -1,0 +1,260 @@
+:root {
+    --primary-color: #0d6efd;
+    --secondary-color: #6c757d;
+    --success-color: #198754;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #0dcaf0;
+    --light-bg: #f8f9fa;
+    --dark-text: #212529;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--light-bg);
+    min-height: 100vh;
+}
+
+main {
+    padding-top: 20px;
+    padding-bottom: 40px;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.association-card {
+    background: white;
+    border-radius: 12px;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.association-image {
+    width: 100%;
+    max-width: 150px;
+    height: 150px;
+    object-fit: contain;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.association-image-sm {
+    width: 100%;
+    max-width: 80px;
+    height: 80px;
+    object-fit: contain;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+}
+
+.performance-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    margin: 0.25rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    transition: background-color 0.2s, transform 0.2s;
+    cursor: pointer;
+}
+
+.performance-badge:hover {
+    transform: scale(1.05);
+}
+
+.performance-available {
+    background-color: #d1e7dd;
+    color: #0f5132;
+    border: 1px solid #badbcc;
+}
+
+.performance-available:hover {
+    background-color: #a3cfbb;
+}
+
+.performance-available-sm {
+    background-color: #d1e7dd;
+    color: #0f5132;
+    border: 3px solid #badbcc;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    margin: 0.125rem;
+}
+
+.performance-available-sm:hover {
+    background-color: #a3cfbb;
+}
+
+.performance-btn {
+    background-color: #d1e7dd;
+    color: #0f5132;
+    border: 3px solid #badbcc;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    margin: 0.1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.performance-btn:hover {
+    background-color: #a3cfbb;
+    transform: scale(1.05);
+}
+
+.performance-btn:active {
+    transform: scale(0.98);
+}
+
+/* Availability-based colors */
+.performance-high-availability {
+    background-color: #d1e7dd !important;
+    color: #0f5132 !important;
+    border: 3px solid #198754 !important;
+}
+
+.performance-high-availability .badge {
+    background-color: #198754 !important;
+    color: #d1e7dd !important;
+}
+
+.performance-high-availability span.d-block {
+    color: #0f5132 !important;
+}
+
+.performance-medium-availability {
+    background-color: #fff3cd !important;
+    color: #664d03 !important;
+    border: 3px solid #ffc107 !important;
+}
+
+.performance-medium-availability .badge {
+    background-color: #ffc107 !important;
+    color: #fff3cd !important;
+}
+
+.performance-medium-availability span.d-block {
+    color: #664d03 !important;
+}
+
+.performance-low-availability {
+    background-color: #f8d7da !important;
+    color: #842029 !important;
+    border: 3px solid #dc3545 !important;
+}
+
+.performance-low-availability .badge {
+    background-color: #dc3545 !important;
+    color: #f8d7da !important;
+}
+
+.performance-low-availability span.d-block {
+    color: #842029 !important;
+}
+
+/* Selected state with inverted colors */
+.performance-selected {
+    z-index: 10 !important;
+    position: relative !important;
+    border: 3px solid var(--primary-color) !important;
+}
+
+.performance-selected.performance-high-availability {
+    background-color: #198754 !important;
+    color: #d1e7dd !important;
+}
+
+.performance-selected.performance-high-availability .badge {
+    background-color: #d1e7dd !important;
+    color: #0f5132 !important;
+}
+
+.performance-selected.performance-high-availability span.d-block {
+    color: #d1e7dd !important;
+}
+
+.performance-selected.performance-medium-availability {
+    background-color: #ffc107 !important;
+    color: #fff3cd !important;
+}
+
+.performance-selected.performance-medium-availability .badge {
+    background-color: #fff3cd !important;
+    color: #664d03 !important;
+}
+
+.performance-selected.performance-medium-availability span.d-block {
+    color: #fff3cd !important;
+}
+
+.performance-selected.performance-low-availability {
+    background-color: #dc3545 !important;
+    color: #f8d7da !important;
+}
+
+.performance-selected.performance-low-availability .badge {
+    background-color: #f8d7da !important;
+    color: #dc3545 !important;
+}
+
+.performance-selected.performance-low-availability span.d-block {
+    color: #f8d7da !important;
+}
+
+.table {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    border: none;
+    padding: 1rem;
+}
+
+.table tbody tr {
+    transition: background-color 0.2s;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.badge {
+    padding: 0.5rem 0.75rem;
+    font-weight: 500;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.performance-name {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .association-card {
+        text-align: center;
+    }
+
+    .performance-badge {
+        display: block;
+        margin: 0.5rem auto;
+    }
+}

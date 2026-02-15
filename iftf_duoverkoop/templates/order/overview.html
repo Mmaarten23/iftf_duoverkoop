@@ -1,46 +1,72 @@
 {% load static %}
 {% load i18n %}
-<script>
-    setTimeout(function () {
-        const messageRender = document.getElementById('messages');
-        if (messageRender) {
-            messageRender.style.display = 'none';
-        }
-    }, 3000);
-</script>
-<div class="column-container">
-    <div class="row-container">
-        {% for association, performances_per_association in performances.items %}
-            <div class="association-card">
-                {% if association.image %}<img src="{{ MEDIA_URL }}{{ association.image }}" alt="Association image" class="association-image">{% endif %}
-                <b>{{ association.name }}</b>
-                <div class="association-performances">
+
+<h2 class="mb-3">
+    <i class="bi bi-calendar-event-fill"></i> {% translate "orderpage.overview.title" %}
+</h2>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3">
+    {% for association, performances_per_association in performances.items %}
+        <div class="col">
+            <div class="association-card h-100" style="margin-bottom: 1rem;">
+                <div class="text-center mb-1">
+                    {% if association.image %}
+                        <img src="{{ MEDIA_URL }}{{ association.image }}"
+                             alt="{{ association.name }}"
+                             class="association-image-sm">
+                    {% endif %}
+                    <h6 class="fw-bold mb-1">{{ association.name }}</h6>
+                </div>
+
+                <div class="text-center">
+                    {% for name in association.unique_performance_names %}
+                        <div class="performance-name">{{ name }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="d-flex flex-wrap justify-content-center" style="gap: 0.25rem;">
                     {% for performance in performances_per_association %}
-                        <p class="association-performance">
-                            {% if performance.tickets_left == 0 %}
-                                {{ performance.date|date:"D d b" }} : {{ performance.tickets_left }} /
-                                {{ performance.max_tickets }}
-                            {% else %}
-                                {% url 'order' as order_url %}
-                                {% if not 'performance_1' in request.GET %}
-                                    <a href="{% url 'order' %}?performance_1={{ performance.key }}"> {{ performance.date|date:"D d b" }}
-                                        : {{ performance.tickets_left }} / {{ performance.max_tickets }} </a>
-                                {% elif 'performance_1' in request.GET and not 'performance_2' in request.GET %}
-                                    <a href="{{ request.get_full_path }}&performance_2={{ performance.key }}"> {{ performance.date|date:"D d b" }}
-                                        : {{ performance.tickets_left }} / {{ performance.max_tickets }} </a>
-                                {% else %}
-                                    {{ performance.date|date:"D d b" }} : {{ performance.tickets_left }} /
-                                    {{ performance.max_tickets }}
-                                {% endif %}
-                            {% endif %}
-                        </p>
+                        {% if performance.tickets_left == 0 %}
+                            <span class="performance-badge performance-sold-out-sm"
+                                  data-performance-key="{{ performance.key }}"
+                                  title="{% translate 'orderpage.sold_out' %}">
+                                    <small>{{ performance.date|date:"D d/m H:i" }}</small>
+                                    <span class="d-block text-secondary fw-bold small">{% translate "orderpage.sold_out" %}</span>
+                                </span>
+                        {% elif performance.availability_percentage > 50 %}
+                            <button type="button"
+                                    class="performance-badge performance-btn performance-high-availability"
+                                    data-performance-key="{{ performance.key }}"
+                                    data-performance-price="{{ performance.price }}"
+                                    title="{% translate 'orderpage.click_to_select' %}">
+                                <small>{{ performance.date|date:"D d/m H:i" }}</small>
+                                <span class="d-block fw-bold small">€{{ performance.price|floatformat:2 }}</span>
+                                <span class="badge ms-1">{{ performance.tickets_left }}/{{ performance.max_tickets }}</span>
+                            </button>
+                        {% elif performance.availability_percentage > 25 %}
+                            <button type="button"
+                                    class="performance-badge performance-btn performance-medium-availability"
+                                    data-performance-key="{{ performance.key }}"
+                                    data-performance-price="{{ performance.price }}"
+                                    title="{% translate 'orderpage.click_to_select' %}">
+                                <small>{{ performance.date|date:"D d/m H:i" }}</small>
+                                <span class="d-block fw-bold small">€{{ performance.price|floatformat:2 }}</span>
+                                <span class="badge ms-1">{{ performance.tickets_left }}/{{ performance.max_tickets }}</span>
+                            </button>
+                        {% else %}
+                            <button type="button"
+                                    class="performance-badge performance-btn performance-low-availability"
+                                    data-performance-key="{{ performance.key }}"
+                                    data-performance-price="{{ performance.price }}"
+                                    title="{% translate 'orderpage.click_to_select' %}">
+                                <small>{{ performance.date|date:"D d/m H:i" }}</small>
+                                <span class="d-block fw-bold small">€{{ performance.price|floatformat:2 }}</span>
+                                <span class="badge ms-1">{{ performance.tickets_left }}/{{ performance.max_tickets }}</span>
+                            </button>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>
-            {% if forloop.counter|divisibleby:4 %}
-                </div>
-                <div class="row-container">
-            {% endif %}
-        {% endfor %}
         </div>
+    {% endfor %}
 </div>

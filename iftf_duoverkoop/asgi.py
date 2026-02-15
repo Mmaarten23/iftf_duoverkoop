@@ -1,4 +1,4 @@
-""
+"""
 ASGI config for iftf_duoverkoop project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.

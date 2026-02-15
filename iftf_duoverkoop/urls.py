@@ -22,11 +22,18 @@ from iftf_duoverkoop import views, urls_dev
 
 urlpatterns = [
     path('', views.main, name='main'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
     path('admin/', admin.site.urls),
     path(r'order/', views.order, name='order'),
     path('purchase_history/', views.purchase_history, name='purchase_history'),
+    path('purchase_history/edit/<int:purchase_id>/', views.edit_purchase, name='edit_purchase'),
+    path('purchase_history/delete/<int:purchase_id>/', views.delete_purchase, name='delete_purchase'),
+    path('verify/', views.verify_code, name='verify_code'),
     path('export/', views.export, name='export'),
     path('db-info/', views.db_info, name='db_info'),
+    path('get_performances_by_association/<str:association_name>/', views.get_performances_by_association, name='get_performances_by_association'),
+    path('get_performance_prices/', views.get_performance_prices, name='get_performance_prices'),
 ]
 
 if settings.DEBUG:
@@ -37,3 +44,8 @@ if settings.DEBUG:
 urlpatterns += [
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
+
+if settings.DEBUG:
+    urlpatterns += [
+        re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
+    ]

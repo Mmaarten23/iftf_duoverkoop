@@ -35,11 +35,13 @@ def get_readable_keyed_performances() -> list:
 
 
 def get_performances_by_association() -> dict:
-    result = {association: [] for association in get_all_associations()}
+    # Get associations sorted alphabetically (they already are from get_all_associations)
+    associations = get_all_associations()
+    result = {association: [] for association in associations}
     for performance in get_all_performances():
-        if performance.association not in result:
-            result[performance.association] = []
-        result[performance.association].append(performance)
+        if performance.association in result:
+            result[performance.association].append(performance)
+    # Sort performances within each association by date
     for association in result:
         result[association].sort(key=lambda p: p.date)
     return result
@@ -83,16 +85,45 @@ def validate_purchase(name, performance1, performance2):
     return True
 
 
-def handle_purchase(name: str, email: str, performance1: str, performance2: str) -> Purchase:
+def handle_purchase(name: str, email: str, performance1: str, performance2: str, created_by=None) -> Purchase:
+    """
+    Create a new purchase record with a unique verification code.
+
+    Args:
+        name: Customer name
+        email: Customer email
+        performance1: Key of first performance
+        performance2: Key of second performance
+        created_by: User creating the purchase (required for audit trail)
+
+    Returns:
+        Created Purchase instance with unique verification code
+
+    Raises:
+        ValidationError: If purchase validation fails
+    """
     if not validate_purchase(name, performance1, performance2):
         raise ValidationError('Invalid purchase')
-    return Purchase.objects.create(
+
+    # Import here to avoid circular dependency
+    from iftf_duoverkoop.verification_codes import generate_unique_code
+
+    # Get existing codes to ensure uniqueness
+    existing_codes = set(Purchase.objects.values_list('verification_code', flat=True))
+
+    # Generate unique verification code
+    verification_code = generate_unique_code(existing_codes)
+
+    purchase = Purchase.objects.create(
         date=datetime.now(),
         name=name,
         email=email,
         ticket1=get_performance(performance1),
-        ticket2=get_performance(performance2)
+        ticket2=get_performance(performance2),
+        created_by=created_by,
+        verification_code=verification_code
     )
+    return purchase
 
 
 def data_ready():

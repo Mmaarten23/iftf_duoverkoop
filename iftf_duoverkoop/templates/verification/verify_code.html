@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% translate "verify.title" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .verify-container {
+        max-width: 600px;
+        margin: 2rem auto;
+    }
+
+    .code-input {
+        font-size: 1.5rem;
+        text-align: center;
+        letter-spacing: 0.1rem;
+        font-family: monospace;
+        text-transform: lowercase;
+    }
+
+    .purchase-details {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-top: 2rem;
+    }
+
+    .valid-badge {
+        background-color: #198754;
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 20px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 1rem;
+    }
+
+    .detail-row {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.25rem;
+    }
+
+    .detail-value {
+        color: #212529;
+        font-size: 1.1rem;
+    }
+
+    .performance-info {
+        background-color: #e7f3ff;
+        border-left: 4px solid #0d6efd;
+        padding: 1rem;
+        margin: 0.5rem 0;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="verify-container">
+        <h2 class="text-center mb-4">
+            <i class="bi bi-check-circle"></i> {% translate "verify.title" %}
+        </h2>
+
+        <div class="card">
+            <div class="card-body">
+                <form method="post" action="{% url 'verify_code' %}">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="verification_code" class="form-label">
+                            {% translate "verify.enter_code" %}
+                        </label>
+                        <input type="text"
+                               class="form-control code-input"
+                               id="verification_code"
+                               name="verification_code"
+                               placeholder="word-word-word"
+                               value="{{ code|default:'' }}"
+                               pattern="[a-z]+-[a-z]+-[a-z]+"
+                               required
+                               autofocus>
+                        <div class="form-text">
+                            {% translate "verify.format_hint" %}
+                        </div>
+                    </div>
+
+                    {% if error_message %}
+                    <div class="alert alert-danger" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        {{ error_message }}
+                    </div>
+                    {% endif %}
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> {% translate "verify.check_button" %}
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {% if purchase %}
+        <div class="purchase-details">
+            <div class="text-center">
+                <div class="valid-badge">
+                    <i class="bi bi-check-circle-fill"></i> {% translate "verify.valid" %}
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">{% translate "verify.code" %}</div>
+                <div class="detail-value">
+                    <code style="font-size: 1.2rem; color: #0d6efd;">{{ purchase.verification_code }}</code>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">{% translate "verify.customer_name" %}</div>
+                <div class="detail-value">{{ purchase.name }}</div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">{% translate "verify.email" %}</div>
+                <div class="detail-value">{{ purchase.email }}</div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">{% translate "verify.purchase_date" %}</div>
+                <div class="detail-value">{{ purchase.date|date:"D d M Y H:i" }}</div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">{% translate "verify.performances" %}</div>
+                <div>
+                    <div class="performance-info">
+                        <strong>{% translate "verify.ticket_1" %}</strong><br>
+                        {{ purchase.ticket1.selection }}<br>
+                        <small class="text-muted">{{ purchase.ticket1.date|date:"D d M Y H:i" }}</small>
+                    </div>
+                    <div class="performance-info">
+                        <strong>{% translate "verify.ticket_2" %}</strong><br>
+                        {{ purchase.ticket2.selection }}<br>
+                        <small class="text-muted">{{ purchase.ticket2.date|date:"D d M Y H:i" }}</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">{% translate "verify.created_by" %}</div>
+                <div class="detail-value">{{ purchase.created_by.username }}</div>
+            </div>
+
+            {% if purchase.modified_by %}
+            <div class="detail-row">
+                <div class="detail-label">{% translate "verify.last_modified" %}</div>
+                <div class="detail-value">
+                    {{ purchase.modified_date|date:"D d M Y H:i" }}
+                    {% translate "verify.by" %} {{ purchase.modified_by.username }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
