@@ -57,11 +57,11 @@ def edit_purchase(request: HttpRequest, purchase_id: int) -> JsonResponse:
         if not name or not email:
             return JsonResponse({'success': False, 'error': _('error.name_email_required')}, status=400)
 
-        changes = {}
+        diff = {}
         if name != original['name']:
-            changes['name'] = {'old': original['name'], 'new': name}
+            diff['name'] = {'old': original['name'], 'new': name}
         if email != original['email']:
-            changes['email'] = {'old': original['email'], 'new': email}
+            diff['email'] = {'old': original['email'], 'new': email}
 
         new_price = original_price
         if ticket1_key and ticket2_key:
@@ -82,12 +82,20 @@ def edit_purchase(request: HttpRequest, purchase_id: int) -> JsonResponse:
                 return JsonResponse({'success': False, 'error': _('error.performance_no_longer_available') % {'performance': new_ticket2.selection(), 'number': 2}}, status=400)
 
             if ticket1_key != original['ticket1']:
-                changes['ticket1'] = {'old': original['ticket1'], 'new': ticket1_key}
+                diff['ticket1'] = {'old': original['ticket1'], 'new': ticket1_key}
             if ticket2_key != original['ticket2']:
-                changes['ticket2'] = {'old': original['ticket2'], 'new': ticket2_key}
+                diff['ticket2'] = {'old': original['ticket2'], 'new': ticket2_key}
 
             purchase.ticket1 = new_ticket1
             purchase.ticket2 = new_ticket2
+
+        # Capture the before-state while the purchase object still holds old values
+        before_state = {
+            'name': original['name'],
+            'email': original['email'],
+            'ticket1': original['ticket1'],
+            'ticket2': original['ticket2'],
+        }
 
         purchase.name = name
         purchase.email = email
@@ -95,9 +103,21 @@ def edit_purchase(request: HttpRequest, purchase_id: int) -> JsonResponse:
         purchase.modified_date = datetime.now()
         purchase.save()
 
+        after_state = {
+            'name': purchase.name,
+            'email': purchase.email,
+            'ticket1': purchase.ticket1.key,
+            'ticket2': purchase.ticket2.key,
+        }
+
         log_purchase_action(
             purchase=purchase, action='UPDATE',
-            user=request.user, ip_address=get_client_ip(request), changes=changes,
+            user=request.user, ip_address=get_client_ip(request),
+            changes={
+                'before': before_state,
+                'after': after_state,
+                'diff': diff,
+            },
         )
 
         price_difference = new_price - original_price
@@ -115,19 +135,19 @@ def edit_purchase(request: HttpRequest, purchase_id: int) -> JsonResponse:
 @login_required
 @permission_required('iftf_duoverkoop.delete_purchase', raise_exception=True)
 def delete_purchase(request: HttpRequest, purchase_id: int) -> JsonResponse:
-    """Delete a purchase (Support Staff only). Deletion is logged before removal."""
+    """
+    Delete a purchase (Support Staff only).
+
+    The full final state is captured as an audit log entry before the row is
+    removed.  Because PurchaseAuditLog.purchase is SET_NULL, the log entry
+    survives the deletion and remains queryable via purchase_id_snapshot.
+    """
     try:
         purchase = get_object_or_404(Purchase, id=purchase_id)
+        # log_purchase_action auto-builds {'final_state': <snapshot>} for DELETE
         log_purchase_action(
             purchase=purchase, action='DELETE',
             user=request.user, ip_address=get_client_ip(request),
-            changes={'deleted_purchase': {
-                'id': purchase.id, 'name': purchase.name, 'email': purchase.email,
-                'ticket1': purchase.ticket1.key, 'ticket2': purchase.ticket2.key,
-                'verification_code': purchase.verification_code,
-                'created_by': purchase.created_by.username,
-                'created_at': purchase.date.isoformat(),
-            }},
         )
         purchase.delete()
         return JsonResponse({'success': True})

@@ -90,14 +90,7 @@ def _process_order_form(
                 action='CREATE',
                 user=request.user,
                 ip_address=get_client_ip(request),
-                changes={
-                    'name': purchase.name,
-                    'email': purchase.email,
-                    'ticket1': purchase.ticket1.key,
-                    'ticket2': purchase.ticket2.key,
-                    'verification_code': purchase.verification_code,
-                    'created_at': purchase.date.isoformat(),
-                },
+                # changes=None → helper auto-builds {'state': <full snapshot>}
             )
 
             subject = _('email.subject')

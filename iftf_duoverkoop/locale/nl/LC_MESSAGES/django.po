@@ -554,6 +554,44 @@ msgstr "Wijzigingen (JSON)"
 msgid "dashboard.audit_detail.back"
 msgstr "Terug naar auditlog"
 
+# Audit detail – structured snapshot labels
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html
+msgid "dashboard.audit_detail.created_with"
+msgstr "Aangemaakt met de volgende gegevens"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html
+msgid "dashboard.audit_detail.changed_fields"
+msgstr "Gewijzigde velden"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html
+msgid "dashboard.audit_detail.field"
+msgstr "Veld"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html
+msgid "dashboard.audit_detail.from"
+msgstr "Van"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html
+msgid "dashboard.audit_detail.to"
+msgstr "Naar"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html
+msgid "dashboard.audit_detail.before"
+msgstr "Voor"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html
+msgid "dashboard.audit_detail.after"
+msgstr "Na"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html
+msgid "dashboard.audit_detail.deleted_state"
+msgstr "Aankoop op moment van verwijdering"
+
+# Audit list – deleted purchase badge tooltip
+#: .\iftf_duoverkoop\templates\dashboard\audit.html
+msgid "dashboard.audit.purchase_deleted"
+msgstr "Aankoop verwijderd"
+
 # ── Dashboard – sidebar ──────────────────────────────────────────────────────
 #: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:13
 msgid "dashboard.sidebar.overview"

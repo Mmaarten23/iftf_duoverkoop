@@ -83,8 +83,13 @@
                         </span>
                     </td>
                     <td>
-                        <a href="?tab=purchases&purchase={{ entry.purchase_id }}"
-                           class="text-decoration-none">#{{ entry.purchase_id }}</a>
+                        <a href="?tab=purchases&purchase={{ entry.purchase_id_snapshot }}"
+                           class="text-decoration-none">#{{ entry.purchase_id_snapshot }}</a>
+                        {% if not entry.purchase %}
+                            <span class="badge bg-secondary ms-1" title="{% translate "dashboard.audit.purchase_deleted" %}">
+                                <i class="bi bi-trash3"></i>
+                            </span>
+                        {% endif %}
                     </td>
                     <td>{{ entry.user.username }}</td>
                     <td><small class="text-muted font-monospace">{{ entry.ip_address|default:"—" }}</small></td>

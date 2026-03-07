@@ -442,7 +442,8 @@ def dashboard_audit(request: HttpRequest) -> HttpResponse:
     if user_filter:
         qs = qs.filter(user__username__icontains=user_filter)
     if purchase_filter:
-        qs = qs.filter(purchase__id=purchase_filter)
+        # Filter on purchase_id_snapshot so deleted purchases remain findable
+        qs = qs.filter(purchase_id_snapshot=purchase_filter)
 
     page = Paginator(qs, 50).get_page(request.GET.get('page'))
 
@@ -474,6 +475,12 @@ def dashboard_audit_detail(request: HttpRequest, log_id: int) -> HttpResponse:
     return render(request, 'dashboard/audit_detail.html', {
         'entry': entry,
         'changes_pretty': json.dumps(entry.changes, indent=2) if entry.changes else None,
+        # Pre-extracted sections for structured display in the template
+        'changes_state':       (entry.changes or {}).get('state'),       # CREATE
+        'changes_before':      (entry.changes or {}).get('before'),      # UPDATE
+        'changes_after':       (entry.changes or {}).get('after'),       # UPDATE
+        'changes_diff':        (entry.changes or {}).get('diff'),        # UPDATE
+        'changes_final_state': (entry.changes or {}).get('final_state'), # DELETE
     })
 
 

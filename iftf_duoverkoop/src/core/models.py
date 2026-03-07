@@ -130,6 +130,12 @@ class PurchaseAuditLog(models.Model):
 
     Tracks creation, modification, and deletion of purchases
     for security and compliance purposes.
+
+    The FK to Purchase uses SET_NULL so that log entries are never deleted
+    when a purchase is deleted.  The purchase's numeric ID is also stored in
+    ``purchase_id_snapshot`` so it is readable even after the Purchase row
+    itself is gone.  The full before/after state is always stored in
+    ``changes`` so the log is self-contained.
     """
     ACTION_CHOICES = [
         ('CREATE', 'Created'),
@@ -139,27 +145,40 @@ class PurchaseAuditLog(models.Model):
 
     purchase = models.ForeignKey(
         Purchase,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name='audit_logs',
-        help_text="The purchase this log entry refers to",
+        help_text="The purchase this log entry refers to (NULL once the purchase is deleted)",
+    )
+    purchase_id_snapshot = models.IntegerField(
+        null=True,
+        blank=True,
+        db_index=True,
+        help_text="Numeric purchase ID captured at log time; survives purchase deletion",
     )
     action = models.CharField(max_length=10, choices=ACTION_CHOICES, help_text="Type of action performed")
     timestamp = models.DateTimeField(auto_now_add=True, help_text="When the action occurred")
     user = models.ForeignKey(User, on_delete=models.PROTECT, help_text="User who performed the action")
     changes = models.JSONField(
         null=True, blank=True,
-        help_text="JSON object containing the changes made (for UPDATE actions)",
+        help_text=(
+            "Self-contained snapshot of the purchase state at the time of the action. "
+            "CREATE: {'state': {...full purchase fields...}}. "
+            "UPDATE: {'before': {...}, 'after': {...}, 'diff': {...changed fields only...}}. "
+            "DELETE: {'final_state': {...full purchase fields...}}."
+        ),
     )
     ip_address = models.GenericIPAddressField(null=True, blank=True, help_text="IP address of the user")
 
     def __str__(self) -> str:
-        return f"{self.action} on Purchase {self.purchase_id} by {self.user.username} at {self.timestamp}"
+        return f"{self.action} on Purchase #{self.purchase_id_snapshot} by {self.user.username} at {self.timestamp}"
 
     class Meta:
         ordering = ['-timestamp']
         indexes = [
             models.Index(fields=['-timestamp']),
-            models.Index(fields=['purchase', '-timestamp']),
+            models.Index(fields=['purchase_id_snapshot', '-timestamp']),
             models.Index(fields=['user', '-timestamp']),
         ]
 

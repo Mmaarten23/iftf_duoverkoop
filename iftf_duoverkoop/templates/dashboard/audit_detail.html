@@ -11,26 +11,36 @@
     {% blocktranslate with id=entry.id %}Entry #{{ id }}{% endblocktranslate %}
 </div>
 
-<h4 class="dash-section-title"><i class="bi bi-journal-text"></i> {% blocktranslate with id=entry.id %}Audit Entry #{{ id }}{% endblocktranslate %}</h4>
+<h4 class="dash-section-title">
+    <i class="bi bi-journal-text"></i> {% blocktranslate with id=entry.id %}Audit Entry #{{ id }}{% endblocktranslate %}
+</h4>
 
-<div class="row g-3" style="max-width:800px">
+<div class="row g-3" style="max-width:860px">
+
+    {# ── Meta block ─────────────────────────────────────────────────────── #}
     <div class="col-12">
         <div class="card">
             <div class="card-body">
                 <dl class="row mb-0">
                     <dt class="col-sm-3">{% translate "dashboard.audit.col_action" %}</dt>
                     <dd class="col-sm-9">
-                        <span class="badge
+                        <span class="badge fs-6
                             {% if entry.action == 'CREATE' %}bg-success
                             {% elif entry.action == 'DELETE' %}bg-danger
-                            {% else %}bg-warning text-dark{% endif %}
-                            fs-6">
+                            {% else %}bg-warning text-dark{% endif %}">
                             {{ entry.action }}
                         </span>
                     </dd>
 
                     <dt class="col-sm-3">{% translate "dashboard.audit.col_purchase" %}</dt>
-                    <dd class="col-sm-9">#{{ entry.purchase_id }}</dd>
+                    <dd class="col-sm-9">
+                        #{{ entry.purchase_id_snapshot }}
+                        {% if not entry.purchase %}
+                            <span class="badge bg-secondary ms-1">
+                                <i class="bi bi-trash3"></i> {% translate "dashboard.audit.purchase_deleted" %}
+                            </span>
+                        {% endif %}
+                    </dd>
 
                     <dt class="col-sm-3">{% translate "dashboard.audit_detail.performed_by" %}</dt>
                     <dd class="col-sm-9">
@@ -47,12 +57,135 @@
         </div>
     </div>
 
+    {# ── CREATE – full state snapshot ────────────────────────────────────── #}
+    {% if changes_state %}
+    <div class="col-12">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <i class="bi bi-plus-circle-fill"></i> {% translate "dashboard.audit_detail.created_with" %}
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <tbody>
+                        {% for key, value in changes_state.items %}
+                        <tr>
+                            <th class="ps-3" style="width:180px">{{ key }}</th>
+                            <td>{{ value|default:"—" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# ── UPDATE – before / after / diff ─────────────────────────────────── #}
+    {% if changes_diff %}
+    <div class="col-12">
+        <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+                <i class="bi bi-pencil-fill"></i> {% translate "dashboard.audit_detail.changed_fields" %}
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3" style="width:180px">{% translate "dashboard.audit_detail.field" %}</th>
+                            <th>{% translate "dashboard.audit_detail.from" %}</th>
+                            <th>{% translate "dashboard.audit_detail.to" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for field, change in changes_diff.items %}
+                        <tr>
+                            <th class="ps-3">{{ field }}</th>
+                            <td class="text-danger font-monospace small">{{ change.old|default:"—" }}</td>
+                            <td class="text-success font-monospace small">{{ change.new|default:"—" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% if changes_before and changes_after %}
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header text-danger"><i class="bi bi-arrow-left-circle"></i> {% translate "dashboard.audit_detail.before" %}</div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <tbody>
+                        {% for key, value in changes_before.items %}
+                        <tr>
+                            <th class="ps-3" style="width:120px">{{ key }}</th>
+                            <td class="{% if changes_diff and key in changes_diff %}text-danger fw-bold{% endif %}">{{ value|default:"—" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header text-success"><i class="bi bi-arrow-right-circle"></i> {% translate "dashboard.audit_detail.after" %}</div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <tbody>
+                        {% for key, value in changes_after.items %}
+                        <tr>
+                            <th class="ps-3" style="width:120px">{{ key }}</th>
+                            <td class="{% if changes_diff and key in changes_diff %}text-success fw-bold{% endif %}">{{ value|default:"—" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    {# ── DELETE – final state snapshot ───────────────────────────────────── #}
+    {% if changes_final_state %}
+    <div class="col-12">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <i class="bi bi-trash3-fill"></i> {% translate "dashboard.audit_detail.deleted_state" %}
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <tbody>
+                        {% for key, value in changes_final_state.items %}
+                        <tr>
+                            <th class="ps-3" style="width:180px">{{ key }}</th>
+                            <td>{{ value|default:"—" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# ── Raw JSON (collapsible) ───────────────────────────────────────────── #}
     {% if changes_pretty %}
     <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <h6 class="dash-section-title"><i class="bi bi-code-square"></i> {% translate "dashboard.audit_detail.changes_json" %}</h6>
-                <pre class="bg-light p-3 rounded" style="font-size:0.85rem;max-height:400px;overflow-y:auto;">{{ changes_pretty }}</pre>
+        <div class="accordion" id="rawJsonAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#rawJsonBody">
+                        <i class="bi bi-code-square me-2"></i>{% translate "dashboard.audit_detail.changes_json" %}
+                    </button>
+                </h2>
+                <div id="rawJsonBody" class="accordion-collapse collapse">
+                    <div class="accordion-body p-0">
+                        <pre class="bg-light p-3 mb-0 rounded-bottom" style="font-size:0.85rem;max-height:400px;overflow-y:auto;">{{ changes_pretty }}</pre>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

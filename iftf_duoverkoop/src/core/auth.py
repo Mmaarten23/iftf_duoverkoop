@@ -1,12 +1,13 @@
 """
 core/auth.py – Permission groups, role helpers, audit log helper.
 """
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 
-from iftf_duoverkoop.src.core.models import Purchase, PurchaseAuditLog
+if TYPE_CHECKING:
+    from iftf_duoverkoop.src.core.models import Purchase, PurchaseAuditLog
 
 
 # Permission group names
@@ -24,6 +25,7 @@ def setup_permission_groups() -> None:
       export data, and verify purchases by code.
     - Association Representative: Can only look up purchases by verification code.
     """
+    from iftf_duoverkoop.src.core.models import Purchase  # local import avoids circularity
     purchase_ct = ContentType.objects.get_for_model(Purchase)
 
     with transaction.atomic():
@@ -87,16 +89,64 @@ def get_client_ip(request) -> Optional[str]:
     return xff.split(',')[0].strip() if xff else request.META.get('REMOTE_ADDR')
 
 
+def _purchase_snapshot(purchase: 'Purchase') -> dict:
+    """
+    Return a flat dict capturing the full observable state of a Purchase.
+    Used as the canonical snapshot format inside audit log ``changes`` payloads.
+    """
+    return {
+        'id': purchase.pk,
+        'name': purchase.name,
+        'email': purchase.email,
+        'ticket1': purchase.ticket1.key,
+        'ticket2': purchase.ticket2.key,
+        'verification_code': purchase.verification_code,
+        'created_by': purchase.created_by.username,
+        'created_at': purchase.date.isoformat(),
+        'modified_by': purchase.modified_by.username if purchase.modified_by else None,
+        'modified_at': purchase.modified_date.isoformat() if purchase.modified_date else None,
+    }
+
+
 def log_purchase_action(
-    purchase: Purchase,
+    purchase: 'Purchase',
     action: str,
     user: User,
     ip_address: Optional[str] = None,
     changes: Optional[dict] = None,
-) -> PurchaseAuditLog:
-    """Create an append-only audit log entry for a purchase action."""
+) -> 'PurchaseAuditLog':
+    """
+    Create an append-only audit log entry for a purchase action.
+
+    The ``changes`` argument carries a structured, self-contained payload:
+
+    CREATE
+        Pass ``changes=None``; the full purchase state is captured automatically
+        as ``{'state': <snapshot>}``.
+
+    UPDATE
+        Pass a dict with keys ``'before'`` and ``'after'`` (each a snapshot dict)
+        plus ``'diff'`` (only the changed fields).  If only a partial ``'diff'``
+        dict is supplied the helper wraps it for backwards compatibility.
+
+    DELETE
+        Pass ``changes=None``; the full final state is captured automatically
+        as ``{'final_state': <snapshot>}``.
+
+    Any caller may also pass a fully-formed ``changes`` dict to override this
+    behaviour (used by the order-creation view which pre-builds the payload).
+    """
+    from iftf_duoverkoop.src.core.models import PurchaseAuditLog  # local import avoids circularity
+
+    if action == 'CREATE' and changes is None:
+        changes = {'state': _purchase_snapshot(purchase)}
+
+    elif action == 'DELETE' and changes is None:
+        changes = {'final_state': _purchase_snapshot(purchase)}
+
     return PurchaseAuditLog.objects.create(
         purchase=purchase,
+        purchase_id_snapshot=purchase.pk,
         action=action,
         user=user,
         ip_address=ip_address,
