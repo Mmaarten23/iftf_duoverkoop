@@ -25,7 +25,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    "iftf-duoverkoop.onrender.com",
+    "iftfduoverkoop.dpdns.org",
+    "www.iftfduoverkoop.dpdns.org",
+    "mg.iftfduoverkoop.dpdns.org"
+]
+CSRF_TRUSTED_ORIGINS = [
+    "iftf-duoverkoop.onrender.com",
+    "iftfduoverkoop.dpdns.org",
+    "www.iftfduoverkoop.dpdns.org",
+    "mg.iftfduoverkoop.dpdns.org"
+]
+
 
 
 # Application definition
@@ -136,12 +148,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # https://docs.djangoproject.com/en/4.1/topics/email/
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # For development; change to SMTP for production
-SEND_EMAILS = os.environ.get("SEND_EMAILS", "False").lower() == "true" # Control email sending via environment variable
+SEND_EMAILS = True # os.environ.get("SEND_EMAILS", "False").lower() == "true" # Control email sending via environment variable
 EMAIL_HOST = 'smtp.mailgun.org'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'postmaster@sandbox9a7e622175ec46a3b6c985a39de04854.mailgun.org'
+EMAIL_HOST_USER = 'no-reply@mg.iftfduoverkoop.dpdns.org'
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = "no-reply@mg.iftfduoverkoop.dpdns.org"
+SERVER_EMAIL = "no-reply@mg.iftfduoverkoop.dpdns.org"
 
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

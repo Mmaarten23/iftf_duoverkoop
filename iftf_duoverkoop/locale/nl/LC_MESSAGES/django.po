@@ -241,6 +241,12 @@ msgstr ""
 "Bestelling succesvol! Jouw verificatiecode: %(code)s (E-mail verzending "
 "uitgeschakeld)"
 
+#: .\iftf_duoverkoop\src\views\order.py
+msgid "orderpage.email_failed"
+msgstr ""
+"Bestelling succesvol! Jouw verificatiecode: %(code)s — de bevestigingsmail "
+"kon helaas niet worden verstuurd. Noteer de code."
+
 #: .\iftf_duoverkoop\src\views\verify.py:58
 msgid "verify.error_empty"
 msgstr "Voer een verificatiecode in."
