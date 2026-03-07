@@ -32,10 +32,10 @@ ALLOWED_HOSTS = [
     "mg.iftfduoverkoop.dpdns.org"
 ]
 CSRF_TRUSTED_ORIGINS = [
-    "iftf-duoverkoop.onrender.com",
-    "iftfduoverkoop.dpdns.org",
-    "www.iftfduoverkoop.dpdns.org",
-    "mg.iftfduoverkoop.dpdns.org"
+    "https://iftf-duoverkoop.onrender.com",
+    "https://iftfduoverkoop.dpdns.org",
+    "https://www.iftfduoverkoop.dpdns.org",
+    "https://mg.iftfduoverkoop.dpdns.org"
 ]
 
 
