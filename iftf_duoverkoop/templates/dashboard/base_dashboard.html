@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <nav class="dashboard-sidebar d-none d-md-block">
+        <div class="sidebar-header">Overview</div>
+        <a class="nav-link {% if request.resolver_match.url_name == 'dashboard_home' %}active{% endif %}"
+           href="{% url 'dashboard:dashboard_home' %}">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+
+        <div class="sidebar-header mt-2">Data</div>
+        <a class="nav-link {% if 'association' in request.resolver_match.url_name %}active{% endif %}"
+           href="{% url 'dashboard:dashboard_associations' %}">
+            <i class="bi bi-building"></i> Associations
+        </a>
+        <a class="nav-link {% if 'performance' in request.resolver_match.url_name %}active{% endif %}"
+           href="{% url 'dashboard:dashboard_performances' %}">
+            <i class="bi bi-ticket-perforated"></i> Performances
+        </a>
+
+        <div class="sidebar-header mt-2">People</div>
+        <a class="nav-link {% if 'user' in request.resolver_match.url_name %}active{% endif %}"
+           href="{% url 'dashboard:dashboard_users' %}">
+            <i class="bi bi-people-fill"></i> Users
+        </a>
+
+        <div class="sidebar-header mt-2">Monitoring</div>
+        <a class="nav-link {% if 'audit' in request.resolver_match.url_name %}active{% endif %}"
+           href="{% url 'dashboard:dashboard_audit' %}">
+            <i class="bi bi-journal-text"></i> Audit Log
+        </a>
+        <a class="nav-link {% if request.resolver_match.url_name == 'dashboard_system' %}active{% endif %}"
+           href="{% url 'dashboard:dashboard_system' %}">
+            <i class="bi bi-gear-fill"></i> System
+        </a>
+
+        <div class="sidebar-header mt-2">Links</div>
+        <a class="nav-link" href="{% url 'purchase_history' %}">
+            <i class="bi bi-clock-history"></i> Purchase History
+        </a>
+        <a class="nav-link" href="{% url 'export' %}">
+            <i class="bi bi-download"></i> Export CSV
+        </a>
+        <a class="nav-link" href="{% url 'verify_code' %}">
+            <i class="bi bi-check-circle"></i> Verify Code
+        </a>
+        <a class="nav-link text-warning" href="{% url 'admin:index' %}" target="_blank">
+            <i class="bi bi-box-arrow-up-right"></i> Django Admin
+        </a>
+    </nav>
+
+    <!-- Main content -->
+    <div class="dashboard-content">
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block dashboard_content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}
+

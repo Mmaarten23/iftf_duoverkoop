@@ -1,0 +1,95 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}System — Dashboard{% endblock %}
+
+{% block dashboard_content %}
+<div class="dash-breadcrumb">
+    <a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a> / System
+</div>
+
+<h4 class="dash-section-title"><i class="bi bi-gear-fill"></i> System</h4>
+
+<div class="row g-4">
+    <!-- Database info -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="dash-section-title"><i class="bi bi-database-fill"></i> Database</h6>
+                <div class="sysinfo-row">
+                    <span class="text-muted">Engine</span>
+                    <strong class="font-monospace">{{ db_vendor }}</strong>
+                </div>
+                {% for model, count in model_counts.items %}
+                <div class="sysinfo-row">
+                    <span class="text-muted">{{ model }}</span>
+                    <strong>{{ count }}</strong>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Environment -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="dash-section-title"><i class="bi bi-toggles"></i> Environment</h6>
+                <div class="sysinfo-row">
+                    <span class="text-muted">DEBUG mode</span>
+                    {% if debug %}
+                    <span class="badge bg-warning text-dark">ON</span>
+                    {% else %}
+                    <span class="badge bg-success">OFF (production)</span>
+                    {% endif %}
+                </div>
+                <div class="sysinfo-row">
+                    <span class="text-muted">Email sending</span>
+                    {% if send_emails %}
+                    <span class="badge bg-success">ENABLED</span>
+                    {% else %}
+                    <span class="badge bg-secondary">DISABLED</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Permission sync -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="dash-section-title"><i class="bi bi-shield-lock-fill"></i> Permission Groups</h6>
+                <p class="text-muted small mb-3">
+                    Re-run the permission group setup to ensure all three groups exist
+                    and have exactly the right permissions assigned
+                    (e.g. after a deployment or migration).
+                </p>
+                <form method="post" action="{% url 'dashboard:dashboard_sync_permissions' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-arrow-repeat"></i> Re-sync permission groups
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Danger zone -->
+    <div class="col-md-6">
+        <div class="card border-warning">
+            <div class="card-body">
+                <h6 class="dash-section-title text-warning"><i class="bi bi-exclamation-triangle-fill"></i> Escape Hatch</h6>
+                <p class="text-muted small mb-3">
+                    The Django admin interface is still available for any operation
+                    not yet covered by this dashboard.
+                </p>
+                <a href="{% url 'admin:index' %}" target="_blank" class="btn btn-outline-warning btn-sm">
+                    <i class="bi bi-box-arrow-up-right"></i> Open Django Admin
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

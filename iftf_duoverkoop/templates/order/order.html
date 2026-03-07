@@ -121,7 +121,7 @@
     let performancePrices = {};
 
     // Load performance prices
-    fetch('/get_performance_prices/')
+    fetch('/api/performance-prices/')
         .then(response => response.json())
         .then(data => {
             performancePrices = data.prices;

@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.core.exceptions import ValidationError
 
-from iftf_duoverkoop.models import Performance, Purchase, Association
+from iftf_duoverkoop.src.core.models import Performance, Purchase, Association
 
 
 def create_performance(key: str, date: datetime, association: Association, name: str, price: float,
@@ -106,7 +106,7 @@ def handle_purchase(name: str, email: str, performance1: str, performance2: str,
         raise ValidationError('Invalid purchase')
 
     # Import here to avoid circular dependency
-    from iftf_duoverkoop.verification_codes import generate_unique_code
+    from iftf_duoverkoop.src.core.verification_codes import generate_unique_code
 
     # Get existing codes to ensure uniqueness
     existing_codes = set(Purchase.objects.values_list('verification_code', flat=True))

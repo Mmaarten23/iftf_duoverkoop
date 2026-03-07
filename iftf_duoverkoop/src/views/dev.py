@@ -1,3 +1,7 @@
+"""
+views/dev.py – Development-only views for seeding the database.
+Only loaded when DEBUG=True (see urls_dev.py).
+"""
 from datetime import datetime
 
 from django.shortcuts import redirect
@@ -42,3 +46,4 @@ def load_db(request):
         tickets=30
     )
     return redirect(reverse('order'))
+

@@ -1,14 +1,12 @@
 """
-Authentication and authorization utilities.
-
-Defines permission groups and helper functions for role-based access control.
+core/auth.py – Permission groups, role helpers, audit log helper.
 """
 from typing import Optional
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 
-from iftf_duoverkoop.models import Purchase, PurchaseAuditLog
+from iftf_duoverkoop.src.core.models import Purchase, PurchaseAuditLog
 
 
 # Permission group names
@@ -29,76 +27,64 @@ def setup_permission_groups() -> None:
     purchase_ct = ContentType.objects.get_for_model(Purchase)
 
     with transaction.atomic():
-        # Create POS Staff group
         pos_group, _ = Group.objects.get_or_create(name=GROUP_POS_STAFF)
-        pos_permissions = [
+        pos_group.permissions.set([
             Permission.objects.get(codename='add_purchase', content_type=purchase_ct),
             Permission.objects.get(codename='view_purchase', content_type=purchase_ct),
-        ]
-        pos_group.permissions.set(pos_permissions)
+        ])
 
-        # Create Support Staff group
         support_group, _ = Group.objects.get_or_create(name=GROUP_SUPPORT_STAFF)
-        support_permissions = [
+        support_group.permissions.set([
             Permission.objects.get(codename='add_purchase', content_type=purchase_ct),
             Permission.objects.get(codename='view_purchase', content_type=purchase_ct),
             Permission.objects.get(codename='change_purchase', content_type=purchase_ct),
             Permission.objects.get(codename='delete_purchase', content_type=purchase_ct),
             Permission.objects.get(codename='export_data', content_type=purchase_ct),
             Permission.objects.get(codename='verify_purchase', content_type=purchase_ct),
-        ]
-        support_group.permissions.set(support_permissions)
+        ])
 
-        # Create Association Representative group
         rep_group, _ = Group.objects.get_or_create(name=GROUP_ASSOCIATION_REP)
-        rep_permissions = [
+        rep_group.permissions.set([
             Permission.objects.get(codename='verify_purchase', content_type=purchase_ct),
-        ]
-        rep_group.permissions.set(rep_permissions)
+        ])
 
+
+# ---------------------------------------------------------------------------
+# Role helpers
+# ---------------------------------------------------------------------------
 
 def is_pos_staff(user: User) -> bool:
-    """Check if user is a member of POS Staff group."""
     return user.groups.filter(name=GROUP_POS_STAFF).exists()
 
 
 def is_support_staff(user: User) -> bool:
-    """Check if user is a member of Support Staff group."""
     return user.groups.filter(name=GROUP_SUPPORT_STAFF).exists()
 
 
 def is_association_rep(user: User) -> bool:
-    """Check if user is a member of Association Representative group."""
     return user.groups.filter(name=GROUP_ASSOCIATION_REP).exists()
 
 
 def can_edit_purchases(user: User) -> bool:
-    """Check if user has permission to edit purchases (Support Staff only)."""
     return user.has_perm('iftf_duoverkoop.change_purchase')
 
 
 def can_export_data(user: User) -> bool:
-    """Check if user has permission to export purchase data (Support Staff only)."""
     return user.has_perm('iftf_duoverkoop.export_data')
 
 
 def can_verify_tickets(user: User) -> bool:
-    """Check if user has permission to look up purchases by verification code."""
     return user.has_perm('iftf_duoverkoop.verify_purchase')
 
 
-def get_client_ip(request) -> Optional[str]:
-    """
-    Extract client IP address from request.
+# ---------------------------------------------------------------------------
+# Request helpers
+# ---------------------------------------------------------------------------
 
-    Handles both direct connections and proxied requests (X-Forwarded-For).
-    """
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0].strip()
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
+def get_client_ip(request) -> Optional[str]:
+    """Extract client IP, honouring X-Forwarded-For for proxied deployments."""
+    xff = request.META.get('HTTP_X_FORWARDED_FOR')
+    return xff.split(',')[0].strip() if xff else request.META.get('REMOTE_ADDR')
 
 
 def log_purchase_action(
@@ -106,27 +92,13 @@ def log_purchase_action(
     action: str,
     user: User,
     ip_address: Optional[str] = None,
-    changes: Optional[dict] = None
+    changes: Optional[dict] = None,
 ) -> PurchaseAuditLog:
-    """
-    Create an audit log entry for a purchase action.
-
-    Args:
-        purchase: The purchase being acted upon
-        action: Type of action ('CREATE', 'UPDATE', or 'DELETE')
-        user: User performing the action
-        ip_address: IP address of the user (optional)
-        changes: Dictionary of changes made (for UPDATE actions)
-
-    Returns:
-        The created PurchaseAuditLog instance
-    """
-    log_entry = PurchaseAuditLog.objects.create(
+    """Create an append-only audit log entry for a purchase action."""
+    return PurchaseAuditLog.objects.create(
         purchase=purchase,
         action=action,
         user=user,
         ip_address=ip_address,
-        changes=changes
+        changes=changes,
     )
-    return log_entry
-

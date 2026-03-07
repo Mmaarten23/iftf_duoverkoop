@@ -1,0 +1,49 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}{{ action }} User — Dashboard{% endblock %}
+
+{% block dashboard_content %}
+<div class="dash-breadcrumb">
+    <a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a> /
+    <a href="{% url 'dashboard:dashboard_users' %}">Users</a> /
+    {{ action }}{% if target %} {{ target.username }}{% endif %}
+</div>
+
+<h4 class="dash-section-title">
+    <i class="bi bi-person-fill"></i> {{ action }} User{% if target %}: {{ target.username }}{% endif %}
+</h4>
+
+<div class="card" style="max-width:540px">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="mb-3">
+                {% if field.field.widget.input_type == 'checkbox' %}
+                <div class="form-check">
+                    {{ field }}
+                    <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                </div>
+                {% else %}
+                <label class="form-label fw-semibold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% endif %}
+                {% if field.errors %}
+                <div class="text-danger small mt-1">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <div class="d-flex gap-2 mt-3">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-lg"></i> Save
+                </button>
+                <a href="{% url 'dashboard:dashboard_users' %}" class="btn btn-outline-secondary">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

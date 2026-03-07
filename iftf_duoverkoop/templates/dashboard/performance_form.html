@@ -1,0 +1,51 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}{{ action }} Performance — Dashboard{% endblock %}
+
+{% block dashboard_content %}
+<div class="dash-breadcrumb">
+    <a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a> /
+    <a href="{% url 'dashboard:dashboard_performances' %}">Performances</a> /
+    {{ action }}
+</div>
+
+<h4 class="dash-section-title"><i class="bi bi-ticket-perforated"></i> {{ action }} Performance</h4>
+
+{% if action == 'Edit' and sold > 0 %}
+<div class="alert alert-info">
+    <i class="bi bi-info-circle-fill"></i>
+    <strong>{{ sold }}</strong> ticket(s) have been sold for this performance.
+    You cannot reduce "Maximum tickets" below this number.
+</div>
+{% endif %}
+
+<div class="card" style="max-width:600px">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="mb-3">
+                <label class="form-label fw-semibold">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <div class="form-text text-muted">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                    <div class="text-danger small mt-1">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-lg"></i> Save
+                </button>
+                <a href="{% url 'dashboard:dashboard_performances' %}" class="btn btn-outline-secondary">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

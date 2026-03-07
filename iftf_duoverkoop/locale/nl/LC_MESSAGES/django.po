@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-07 03:05+0100\n"
+"POT-Creation-Date: 2026-03-07 04:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,37 +16,122 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\iftf_duoverkoop\forms.py:18
+#: .\iftf_duoverkoop\src\core\models.py:41
+msgid "performance.tostring"
+msgstr "%(association)s - \"%(name)s\" op %(date)s"
+
+#: .\iftf_duoverkoop\src\forms\order.py:20
 #: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:187
 msgid "person.name"
 msgstr "Naam"
 
-#: .\iftf_duoverkoop\forms.py:19
+#: .\iftf_duoverkoop\src\forms\order.py:21
 #: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:194
 msgid "person.email"
 msgstr "Emailadres"
 
-#: .\iftf_duoverkoop\forms.py:20 .\iftf_duoverkoop\forms.py:21
+#: .\iftf_duoverkoop\src\forms\order.py:22
+#: .\iftf_duoverkoop\src\forms\order.py:23
 #: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:201
 #: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:213
 msgid "performance.name"
 msgstr "Voorstelling"
 
-#: .\iftf_duoverkoop\forms.py:23 .\iftf_duoverkoop\views.py:239
+#: .\iftf_duoverkoop\src\forms\order.py:25
+#: .\iftf_duoverkoop\src\views\history.py:69
 msgid "error.duplicate_performance"
 msgstr "Je kan niet twee keer hetzelfde optreden bestellen."
 
-#: .\iftf_duoverkoop\forms.py:24
+#: .\iftf_duoverkoop\src\forms\order.py:26
 msgid "error.empty_field"
 msgstr "Vul veld in."
 
-#: .\iftf_duoverkoop\forms.py:25
+#: .\iftf_duoverkoop\src\forms\order.py:27
 msgid "error.sold_out"
 msgstr "Deze voorstelling is uitverkocht."
 
-#: .\iftf_duoverkoop\models.py:34
-msgid "performance.tostring"
-msgstr "%(association)s - \"%(name)s\" op %(date)s"
+#: .\iftf_duoverkoop\src\views\auth.py:31
+msgid "login.success"
+msgstr "Welkom, %(username)s!"
+
+#: .\iftf_duoverkoop\src\views\auth.py:34
+msgid "login.error"
+msgstr "Ongeldige gebruikersnaam of wachtwoord."
+
+#: .\iftf_duoverkoop\src\views\auth.py:46
+msgid "login.logout_success"
+msgstr "%(username)s is uitgelogd."
+
+#: .\iftf_duoverkoop\src\views\history.py:58
+msgid "error.name_email_required"
+msgstr "Naam en emailadres zijn verplicht."
+
+#: .\iftf_duoverkoop\src\views\history.py:75
+msgid "error.invalid_performance"
+msgstr "Ongeldige voorstelling geselecteerd."
+
+#: .\iftf_duoverkoop\src\views\history.py:80
+#: .\iftf_duoverkoop\src\views\history.py:82
+msgid "error.performance_no_longer_available"
+msgstr "Voorstelling %(number)s (%(performance)s) is niet meer beschikbaar."
+
+#: .\iftf_duoverkoop\src\views\order.py:85
+msgid "email.subject"
+msgstr "Bevestiging van je IFTF Duoticket aankoop"
+
+# Email with verification code
+#: .\iftf_duoverkoop\src\views\order.py:86
+msgid "email.message_with_code"
+msgstr ""
+"GEHEIME CODE: %(verification_code)s\n"
+"\n"
+"\n"
+"Beste %(name)s,\n"
+"\n"
+"Bedankt voor je aankoop van een DUO ticket voor het Interfacultair "
+"Theaterfestival!\n"
+"Dit ticket is je toegang tot een wereld van theater, creativiteit en "
+"samenwerking tussen verschillende faculteiten.\n"
+"We hopen je te mogen verwelkomen bij de voorstellingen en dat je zult "
+"genieten van de unieke ervaringen die het IFTF te bieden heeft.\n"
+"Om een vlotte toegang tot de voorstellingen te garanderen, vragen we je om "
+"de geheime code bij de hand te houden wanneer je arriveert. Deze code is "
+"gekoppeld aan jouw aankoop en kan worden gebruikt om je toegang te "
+"verifiëren.\n"
+"\n"
+"De voorstellingen waar dit ticket toegang toe geeft zijn:\n"
+"Voorstelling 1: %(performance1)s\n"
+"Voorstelling 2: %(performance2)s\n"
+"\n"
+"Aankoopdatum: %(date)s\n"
+"\n"
+"Hou zeker je E-mail in de gaten voor eventuele updates of belangrijke "
+"informatie van de individuele verenigingen!\n"
+"Geniet van de voorstellingen en hopelijk tot snel!\n"
+"\n"
+"IFTF Team"
+
+#: .\iftf_duoverkoop\src\views\order.py:95
+msgid "orderpage.success_with_code"
+msgstr "Bestelling succesvol! Jouw verificatiecode: %(code)s"
+
+#: .\iftf_duoverkoop\src\views\order.py:99
+msgid "orderpage.success_with_code_no_email"
+msgstr ""
+"Bestelling succesvol! Jouw verificatiecode: %(code)s (E-mail verzending "
+"uitgeschakeld)"
+
+#: .\iftf_duoverkoop\src\views\verify.py:30
+msgid "verify.error_empty"
+msgstr "Voer een verificatiecode in."
+
+#: .\iftf_duoverkoop\src\views\verify.py:32
+msgid "verify.error_invalid_format"
+msgstr "Ongeldige code indeling. Gebruik het formaat: woord-woord-woord"
+
+#: .\iftf_duoverkoop\src\views\verify.py:37
+msgid "verify.error_not_found"
+msgstr "Code niet gevonden. Controleer de code en probeer het opnieuw."
 
 #: .\iftf_duoverkoop\templates\base.html:8
 #: .\iftf_duoverkoop\templates\order\order.html:5
@@ -67,20 +152,20 @@ msgstr "Geschiedenis"
 msgid "navbar.verify"
 msgstr "Verifiëren"
 
-#: .\iftf_duoverkoop\templates\base.html:47
+#: .\iftf_duoverkoop\templates\base.html:49
 msgid "navbar.export"
 msgstr "Exporteren"
 
-#: .\iftf_duoverkoop\templates\base.html:54
-#: .\iftf_duoverkoop\templates\base.html:69
-msgid "navbar.admin"
-msgstr "Beheer"
+#: .\iftf_duoverkoop\templates\base.html:57
+#: .\iftf_duoverkoop\templates\base.html:72
+msgid "navbar.dashboard"
+msgstr "Dashboard"
 
-#: .\iftf_duoverkoop\templates\base.html:74
+#: .\iftf_duoverkoop\templates\base.html:77
 msgid "navbar.logout"
 msgstr "Uitloggen"
 
-#: .\iftf_duoverkoop\templates\base.html:81
+#: .\iftf_duoverkoop\templates\base.html:84
 msgid "navbar.login"
 msgstr "Inloggen"
 
@@ -308,89 +393,3 @@ msgstr "Laatst gewijzigd"
 #: .\iftf_duoverkoop\templates\verification\verify_code.html:171
 msgid "verify.by"
 msgstr "door"
-
-#: .\iftf_duoverkoop\views.py:50
-msgid "login.success"
-msgstr "Welkom, %(username)s!"
-
-#: .\iftf_duoverkoop\views.py:53
-msgid "login.error"
-msgstr "Ongeldige gebruikersnaam of wachtwoord."
-
-#: .\iftf_duoverkoop\views.py:68
-msgid "login.logout_success"
-msgstr "%(username)s is uitgelogd."
-
-#: .\iftf_duoverkoop\views.py:134
-msgid "email.subject"
-msgstr "Bevestiging van je IFTF Duoticket aankoop"
-
-# Email with verification code
-#: .\iftf_duoverkoop\views.py:135
-msgid "email.message_with_code"
-msgstr ""
-"GEHEIME CODE: %(verification_code)s\n"
-"\n"
-"\n"
-"Beste %(name)s,\n"
-"\n"
-"Bedankt voor je aankoop van een DUO ticket voor het Interfacultair "
-"Theaterfestival!\n"
-"Dit ticket is je toegang tot een wereld van theater, creativiteit en "
-"samenwerking tussen verschillende faculteiten.\n"
-"We hopen je te mogen verwelkomen bij de voorstellingen en dat je zult "
-"genieten van de unieke ervaringen die het IFTF te bieden heeft.\n"
-"Om een vlotte toegang tot de voorstellingen te garanderen, vragen we je om "
-"de geheime code bij de hand te houden wanneer je arriveert. Deze code is "
-"gekoppeld aan jouw aankoop en kan worden gebruikt om je toegang te "
-"verifiëren.\n"
-"\n"
-"De voorstellingen waar dit ticket toegang toe geeft zijn:\n"
-"Voorstelling 1: %(performance1)s\n"
-"Voorstelling 2: %(performance2)s\n"
-"\n"
-"Aankoopdatum: %(date)s\n"
-"\n"
-"Hou zeker je E-mail in de gaten voor eventuele updates of belangrijke "
-"informatie van de individuele verenigingen!\n"
-"Geniet van de voorstellingen en hopelijk tot snel!\n"
-"\n"
-"IFTF Team"
-
-#: .\iftf_duoverkoop\views.py:145
-msgid "orderpage.success_with_code"
-msgstr "Bestelling succesvol! Jouw verificatiecode: %(code)s"
-
-#: .\iftf_duoverkoop\views.py:148
-msgid "orderpage.success_with_code_no_email"
-msgstr ""
-"Bestelling succesvol! Jouw verificatiecode: %(code)s (E-mail verzending "
-"uitgeschakeld)"
-
-#: .\iftf_duoverkoop\views.py:226
-msgid "error.name_email_required"
-msgstr "Naam en emailadres zijn verplicht."
-
-#: .\iftf_duoverkoop\views.py:246
-msgid "error.invalid_performance"
-msgstr "Ongeldige voorstelling geselecteerd."
-
-#: .\iftf_duoverkoop\views.py:253 .\iftf_duoverkoop\views.py:255
-msgid "error.performance_no_longer_available"
-msgstr "Voorstelling %(number)s (%(performance)s) is niet meer beschikbaar."
-
-#: .\iftf_duoverkoop\views.py:340
-msgid "error.no_permission"
-msgstr "U heeft geen toestemming om deze actie uit te voeren."
-
-#: .\iftf_duoverkoop\views.py:382
-msgid "verify.error_empty"
-msgstr "Voer een verificatiecode in."
-
-#: .\iftf_duoverkoop\views.py:384
-msgid "verify.error_invalid_format"
-msgstr "Ongeldige code indeling. Gebruik het formaat: woord-woord-woord"
-
-#: .\iftf_duoverkoop\views.py:390
-msgid "verify.error_not_found"
-msgstr "Code niet gevonden. Controleer de code en probeer het opnieuw."

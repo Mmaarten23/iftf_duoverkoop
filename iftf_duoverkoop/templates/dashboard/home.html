@@ -1,0 +1,155 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block dashboard_content %}
+<div class="dash-breadcrumb mb-3">Dashboard</div>
+<h4 class="dash-section-title"><i class="bi bi-speedometer2"></i> Overview</h4>
+
+{% if not data_ready %}
+<div class="alert alert-warning">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <strong>Data not ready:</strong> One or more associations are missing a logo.
+    The order page will show an error until this is resolved.
+    <a href="{% url 'dashboard:dashboard_associations' %}" class="alert-link">Fix associations →</a>
+</div>
+{% endif %}
+
+<!-- Stat cards -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-value">{{ total_purchases }}</div>
+            <div class="stat-label"><i class="bi bi-receipt"></i> Total purchases</div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card success">
+            <div class="stat-value">€{{ total_revenue|floatformat:2 }}</div>
+            <div class="stat-label"><i class="bi bi-cash-coin"></i> Total revenue</div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card info">
+            <div class="stat-value">{{ total_tickets_sold }}</div>
+            <div class="stat-label"><i class="bi bi-ticket-perforated-fill"></i> Tickets sold</div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card warning">
+            <div class="stat-value">{{ total_capacity }}</div>
+            <div class="stat-label"><i class="bi bi-bar-chart-fill"></i> Total capacity</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Performance capacity -->
+    <div class="col-lg-7">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="dash-section-title"><i class="bi bi-bar-chart"></i> Performance Capacity</h6>
+                <div class="table-responsive">
+                    <table class="table dash-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Performance</th>
+                                <th>Assoc.</th>
+                                <th>Date</th>
+                                <th>Sold / Max</th>
+                                <th style="min-width:100px">Fill</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in performances %}
+                            <tr>
+                                <td>
+                                    {% if p.sold_out %}
+                                        <span class="badge bg-danger me-1">SOLD OUT</span>
+                                    {% elif p.warning %}
+                                        <span class="badge bg-warning text-dark me-1">≥80%</span>
+                                    {% endif %}
+                                    {{ p.perf.name }}
+                                </td>
+                                <td><small class="text-muted">{{ p.perf.association }}</small></td>
+                                <td><small>{{ p.perf.date|date:"d M H:i" }}</small></td>
+                                <td><small>{{ p.sold }}/{{ p.perf.max_tickets }}</small></td>
+                                <td>
+                                    <div class="capacity-bar">
+                                        <div class="fill {% if p.sold_out %}danger{% elif p.warning %}warning{% endif %}"
+                                             style="width:{{ p.fill_pct }}%"></div>
+                                    </div>
+                                    <small class="text-muted">{{ p.fill_pct }}%</small>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="5" class="text-muted text-center">No performances yet.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Association summary -->
+    <div class="col-lg-5">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h6 class="dash-section-title"><i class="bi bi-building"></i> By Association</h6>
+                {% for s in assoc_stats %}
+                <div class="d-flex align-items-center mb-2 gap-2">
+                    {% if s.association.image %}
+                    <img src="/media/{{ s.association.image }}" alt="{{ s.association.name }}"
+                         style="width:32px;height:32px;object-fit:contain;border-radius:4px;">
+                    {% else %}
+                    <div style="width:32px;height:32px;background:#e2e8f0;border-radius:4px;"></div>
+                    {% endif %}
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between">
+                            <small class="fw-semibold">{{ s.association.name }}</small>
+                            <small class="text-muted">€{{ s.revenue|floatformat:2 }}</small>
+                        </div>
+                        <div class="capacity-bar mt-1">
+                            <div class="fill {% if s.fill_pct >= 100 %}danger{% elif s.fill_pct >= 80 %}warning{% endif %}"
+                                 style="width:{{ s.fill_pct }}%"></div>
+                        </div>
+                        <small class="text-muted">{{ s.tickets_sold }}/{{ s.total_capacity }} tickets</small>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted small">No associations yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Recent activity -->
+        <div class="card">
+            <div class="card-body">
+                <h6 class="dash-section-title"><i class="bi bi-activity"></i> Recent Activity</h6>
+                {% for log in recent_purchase_logs %}
+                <div class="activity-item">
+                    <span class="badge
+                        {% if log.action == 'CREATE' %}bg-success
+                        {% elif log.action == 'DELETE' %}bg-danger
+                        {% else %}bg-warning text-dark{% endif %}
+                        me-1">{{ log.action }}</span>
+                    Purchase #{{ log.purchase_id }}
+                    <span class="text-muted">by {{ log.user.username }}</span>
+                    <span class="text-muted float-end">{{ log.timestamp|date:"d M H:i" }}</span>
+                </div>
+                {% empty %}
+                <p class="text-muted small">No activity yet.</p>
+                {% endfor %}
+                <div class="mt-2">
+                    <a href="{% url 'dashboard:dashboard_audit' %}" class="btn btn-sm btn-outline-secondary w-100">
+                        View full audit log
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

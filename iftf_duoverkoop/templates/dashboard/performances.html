@@ -1,0 +1,81 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Performances — Dashboard{% endblock %}
+
+{% block dashboard_content %}
+<div class="dash-breadcrumb">
+    <a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a> / Performances
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="dash-section-title mb-0"><i class="bi bi-ticket-perforated"></i> Performances</h4>
+    <a href="{% url 'dashboard:dashboard_performance_create' %}" class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-lg"></i> New Performance
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table dash-table mb-0">
+            <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Association</th>
+                    <th>Name</th>
+                    <th>Date & Time</th>
+                    <th>Price</th>
+                    <th>Sold / Max</th>
+                    <th>Fill</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in performances %}
+                <tr>
+                    <td><code class="text-muted small">{{ p.perf.key }}</code></td>
+                    <td>{{ p.perf.association }}</td>
+                    <td>
+                        {% if p.sold_out %}
+                            <span class="badge bg-danger me-1">SOLD OUT</span>
+                        {% elif p.warning %}
+                            <span class="badge bg-warning text-dark me-1">≥80%</span>
+                        {% endif %}
+                        {{ p.perf.name }}
+                    </td>
+                    <td><small>{{ p.perf.date|date:"d M Y H:i" }}</small></td>
+                    <td>€{{ p.perf.price|floatformat:2 }}</td>
+                    <td>{{ p.sold }}/{{ p.perf.max_tickets }}</td>
+                    <td style="min-width:100px">
+                        <div class="capacity-bar">
+                            <div class="fill {% if p.sold_out %}danger{% elif p.warning %}warning{% endif %}"
+                                 style="width:{{ p.fill_pct }}%"></div>
+                        </div>
+                        <small class="text-muted">{{ p.fill_pct }}%</small>
+                    </td>
+                    <td>
+                        <div class="action-btn-row">
+                            <a href="{% url 'dashboard:dashboard_performance_edit' p.perf.key %}"
+                               class="btn btn-sm btn-outline-primary" title="Edit">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+                            <form method="post" action="{% url 'dashboard:dashboard_performance_delete' p.perf.key %}"
+                                  onsubmit="return confirm('Delete performance {{ p.perf.key }}?')">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                        {% if p.sold > 0 %}disabled title="{{ p.sold }} ticket(s) sold"{% endif %}>
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="8" class="text-center text-muted p-4">No performances yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+

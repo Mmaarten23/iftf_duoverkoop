@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let performancePrices = {};
 
     // Load performance prices
-    fetch('/get_performance_prices/')
+    fetch('/api/performance-prices/')
         .then(response => response.json())
         .then(data => {
             performancePrices = data.prices;
@@ -301,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
             performanceFilter.disabled = false;
 
             // Fetch performances for the selected association
-            fetch(`/get_performances_by_association/${selectedAssociation}/`)
+            fetch(`/api/performances-by-association/${selectedAssociation}/`)
                 .then(response => response.json())
                 .then(data => {
                     // Clear existing options

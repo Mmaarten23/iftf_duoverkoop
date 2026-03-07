@@ -1,0 +1,102 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Users — Dashboard{% endblock %}
+
+{% block dashboard_content %}
+<div class="dash-breadcrumb">
+    <a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a> / Users
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="dash-section-title mb-0"><i class="bi bi-people-fill"></i> Users</h4>
+    <a href="{% url 'dashboard:dashboard_user_create' %}" class="btn btn-primary btn-sm">
+        <i class="bi bi-person-plus-fill"></i> New User
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table dash-table mb-0">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role group</th>
+                    <th>Staff</th>
+                    <th>Active</th>
+                    <th>Last login</th>
+                    <th>Purchases created</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in user_data %}
+                <tr class="{% if not row.user.is_active %}table-secondary{% endif %}">
+                    <td>
+                        <i class="bi bi-person-circle me-1 text-muted"></i>
+                        <strong>{{ row.user.username }}</strong>
+                        {% if row.user == request.user %}
+                            <span class="badge bg-secondary ms-1">you</span>
+                        {% endif %}
+                        {% if row.user.is_superuser %}
+                            <span class="badge bg-dark ms-1">superuser</span>
+                        {% endif %}
+                    </td>
+                    <td><small class="text-muted">{{ row.user.email|default:"—" }}</small></td>
+                    <td>
+                        {% if row.group != '—' %}
+                        <span class="badge role-badge
+                            {% if row.group == 'Support Staff' %}bg-danger
+                            {% elif row.group == 'POS Staff' %}bg-primary
+                            {% else %}bg-success{% endif %}">
+                            {{ row.group }}
+                        </span>
+                        {% else %}
+                        <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if row.user.is_staff %}
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        {% else %}
+                        <i class="bi bi-x-circle text-muted"></i>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if row.user.is_active %}
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        {% else %}
+                        <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td><small class="text-muted">{{ row.user.last_login|date:"d M Y H:i"|default:"Never" }}</small></td>
+                    <td>{{ row.purchases_created }}</td>
+                    <td>
+                        <div class="action-btn-row">
+                            <a href="{% url 'dashboard:dashboard_user_edit' row.user.pk %}"
+                               class="btn btn-sm btn-outline-primary" title="Edit">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+                            {% if row.user != request.user %}
+                            <form method="post" action="{% url 'dashboard:dashboard_user_delete' row.user.pk %}"
+                                  onsubmit="return confirm('Delete user {{ row.user.username }}?')">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                        {% if row.purchases_created > 0 %}disabled title="Has purchases on record"{% endif %}>
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="8" class="text-center text-muted p-4">No users found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+

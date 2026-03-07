@@ -1,6 +1,5 @@
 from django.urls import path
-
-from iftf_duoverkoop import views_dev
+from iftf_duoverkoop.src.views.dev import load_db
 
 
 def urls():
@@ -8,5 +7,4 @@ def urls():
 
 
 def get_urls():
-    urlpatterns = [path("load_db/", views_dev.load_db, name='debug_load_db')]
-    return urlpatterns
+    return [path("load_db/", load_db, name='debug_load_db')]

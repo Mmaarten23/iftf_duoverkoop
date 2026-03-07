@@ -81,7 +81,7 @@ user_can_edit = user.has_perm('iftf_duoverkoop.change_purchase')
 
 ---
 
-## Helper Functions (`auth.py`)
+## Helper Functions (`core/auth.py`)
 
 | Function | Returns `True` when… |
 |---|---|
