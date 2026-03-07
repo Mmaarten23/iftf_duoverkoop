@@ -1,30 +1,31 @@
 {% extends "dashboard/base_dashboard.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Associations — Dashboard{% endblock %}
+{% block title %}{% translate "dashboard.associations.title" %}{% endblock %}
 
 {% block dashboard_content %}
 <div class="dash-breadcrumb">
-    <a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a> / Associations
+    <a href="{% url 'dashboard:dashboard_home' %}">{% translate "dashboard.home.title" %}</a> / {% translate "dashboard.sidebar.associations" %}
 </div>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="dash-section-title mb-0"><i class="bi bi-building"></i> Associations</h4>
+    <h4 class="dash-section-title mb-0"><i class="bi bi-building"></i> {% translate "dashboard.sidebar.associations" %}</h4>
     <a href="{% url 'dashboard:dashboard_association_create' %}" class="btn btn-primary btn-sm">
-        <i class="bi bi-plus-lg"></i> New Association
+        <i class="bi bi-plus-lg"></i> {% translate "dashboard.associations.new" %}
     </a>
 </div>
 
 <!-- Upload logo -->
 <div class="card mb-4">
     <div class="card-body">
-        <h6 class="dash-section-title"><i class="bi bi-cloud-upload"></i> Upload Logo</h6>
-        <p class="text-muted small">Upload a new logo file to make it available in the logo selector below.</p>
+        <h6 class="dash-section-title"><i class="bi bi-cloud-upload"></i> {% translate "dashboard.associations.upload_logo" %}</h6>
+        <p class="text-muted small">{% translate "dashboard.associations.upload_logo_hint" %}</p>
         <form method="post" enctype="multipart/form-data" action="{% url 'dashboard:dashboard_logo_upload' %}">
             {% csrf_token %}
             <div class="d-flex gap-2 align-items-end">
                 <div class="flex-grow-1">{{ upload_form.logo }}</div>
-                <button type="submit" class="btn btn-outline-primary btn-sm">Upload</button>
+                <button type="submit" class="btn btn-outline-primary btn-sm">{% translate "dashboard.action.upload" %}</button>
             </div>
         </form>
     </div>
@@ -37,12 +38,12 @@
             <thead>
                 <tr>
                     <th style="width:60px"></th>
-                    <th>Name</th>
-                    <th>Performances</th>
-                    <th>Tickets sold</th>
-                    <th>Capacity</th>
-                    <th>Revenue</th>
-                    <th>Logo file</th>
+                    <th>{% translate "dashboard.col.name" %}</th>
+                    <th>{% translate "dashboard.col.performances" %}</th>
+                    <th>{% translate "dashboard.col.tickets_sold" %}</th>
+                    <th>{% translate "dashboard.col.capacity" %}</th>
+                    <th>{% translate "dashboard.col.revenue" %}</th>
+                    <th>{% translate "dashboard.col.logo_file" %}</th>
                     <th></th>
                 </tr>
             </thead>
@@ -74,14 +75,14 @@
                     <td>
                         <div class="action-btn-row">
                             <a href="{% url 'dashboard:dashboard_association_edit' s.association.name %}"
-                               class="btn btn-sm btn-outline-primary" title="Edit">
+                               class="btn btn-sm btn-outline-primary" title="{% translate "dashboard.action.edit" %}">
                                 <i class="bi bi-pencil-fill"></i>
                             </a>
                             <form method="post" action="{% url 'dashboard:dashboard_association_delete' s.association.name %}"
-                                  onsubmit="return confirm('Delete association {{ s.association.name }}? This cannot be undone.')">
+                                  onsubmit="return confirm('{% blocktranslate with name=s.association.name %}Delete association {{ name }}? This cannot be undone.{% endblocktranslate %}')">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"
-                                        {% if s.performance_count > 0 %}disabled title="Has linked performances"{% endif %}>
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="{% translate "dashboard.action.delete" %}"
+                                        {% if s.performance_count > 0 %}disabled title="{% translate "dashboard.associations.has_performances" %}"{% endif %}>
                                     <i class="bi bi-trash-fill"></i>
                                 </button>
                             </form>
@@ -89,11 +90,10 @@
                     </td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="8" class="text-center text-muted p-4">No associations yet.</td></tr>
+                <tr><td colspan="8" class="text-center text-muted p-4">{% translate "dashboard.empty.associations" %}</td></tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
 {% endblock %}
-

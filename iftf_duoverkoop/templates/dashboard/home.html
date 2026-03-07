@@ -1,18 +1,19 @@
 {% extends "dashboard/base_dashboard.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}{% translate "dashboard.home.title" %}{% endblock %}
 
 {% block dashboard_content %}
-<div class="dash-breadcrumb mb-3">Dashboard</div>
-<h4 class="dash-section-title"><i class="bi bi-speedometer2"></i> Overview</h4>
+<div class="dash-breadcrumb mb-3">{% translate "dashboard.home.title" %}</div>
+<h4 class="dash-section-title"><i class="bi bi-speedometer2"></i> {% translate "dashboard.home.overview" %}</h4>
 
 {% if not data_ready %}
 <div class="alert alert-warning">
     <i class="bi bi-exclamation-triangle-fill"></i>
-    <strong>Data not ready:</strong> One or more associations are missing a logo.
-    The order page will show an error until this is resolved.
-    <a href="{% url 'dashboard:dashboard_associations' %}" class="alert-link">Fix associations →</a>
+    <strong>{% translate "dashboard.home.data_not_ready_title" %}</strong>
+    {% translate "dashboard.home.data_not_ready_body" %}
+    <a href="{% url 'dashboard:dashboard_associations' %}" class="alert-link">{% translate "dashboard.home.fix_associations" %}</a>
 </div>
 {% endif %}
 
@@ -21,25 +22,25 @@
     <div class="col-6 col-xl-3">
         <div class="stat-card">
             <div class="stat-value">{{ total_purchases }}</div>
-            <div class="stat-label"><i class="bi bi-receipt"></i> Total purchases</div>
+            <div class="stat-label"><i class="bi bi-receipt"></i> {% translate "dashboard.home.total_purchases" %}</div>
         </div>
     </div>
     <div class="col-6 col-xl-3">
         <div class="stat-card success">
             <div class="stat-value">€{{ total_revenue|floatformat:2 }}</div>
-            <div class="stat-label"><i class="bi bi-cash-coin"></i> Total revenue</div>
+            <div class="stat-label"><i class="bi bi-cash-coin"></i> {% translate "dashboard.home.total_revenue" %}</div>
         </div>
     </div>
     <div class="col-6 col-xl-3">
         <div class="stat-card info">
             <div class="stat-value">{{ total_tickets_sold }}</div>
-            <div class="stat-label"><i class="bi bi-ticket-perforated-fill"></i> Tickets sold</div>
+            <div class="stat-label"><i class="bi bi-ticket-perforated-fill"></i> {% translate "dashboard.home.tickets_sold" %}</div>
         </div>
     </div>
     <div class="col-6 col-xl-3">
         <div class="stat-card warning">
             <div class="stat-value">{{ total_capacity }}</div>
-            <div class="stat-label"><i class="bi bi-bar-chart-fill"></i> Total capacity</div>
+            <div class="stat-label"><i class="bi bi-bar-chart-fill"></i> {% translate "dashboard.home.total_capacity" %}</div>
         </div>
     </div>
 </div>
@@ -49,16 +50,16 @@
     <div class="col-lg-7">
         <div class="card h-100">
             <div class="card-body">
-                <h6 class="dash-section-title"><i class="bi bi-bar-chart"></i> Performance Capacity</h6>
+                <h6 class="dash-section-title"><i class="bi bi-bar-chart"></i> {% translate "dashboard.home.performance_capacity" %}</h6>
                 <div class="table-responsive">
                     <table class="table dash-table mb-0">
                         <thead>
                             <tr>
-                                <th>Performance</th>
-                                <th>Assoc.</th>
-                                <th>Date</th>
-                                <th>Sold / Max</th>
-                                <th style="min-width:100px">Fill</th>
+                                <th>{% translate "dashboard.col.performance" %}</th>
+                                <th>{% translate "dashboard.col.assoc" %}</th>
+                                <th>{% translate "dashboard.col.date" %}</th>
+                                <th>{% translate "dashboard.col.sold_max" %}</th>
+                                <th style="min-width:100px">{% translate "dashboard.col.fill" %}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -66,7 +67,7 @@
                             <tr>
                                 <td>
                                     {% if p.sold_out %}
-                                        <span class="badge bg-danger me-1">SOLD OUT</span>
+                                        <span class="badge bg-danger me-1">{% translate "dashboard.badge.sold_out" %}</span>
                                     {% elif p.warning %}
                                         <span class="badge bg-warning text-dark me-1">≥80%</span>
                                     {% endif %}
@@ -84,7 +85,7 @@
                                 </td>
                             </tr>
                             {% empty %}
-                            <tr><td colspan="5" class="text-muted text-center">No performances yet.</td></tr>
+                            <tr><td colspan="5" class="text-muted text-center">{% translate "dashboard.empty.performances" %}</td></tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -97,7 +98,7 @@
     <div class="col-lg-5">
         <div class="card mb-4">
             <div class="card-body">
-                <h6 class="dash-section-title"><i class="bi bi-building"></i> By Association</h6>
+                <h6 class="dash-section-title"><i class="bi bi-building"></i> {% translate "dashboard.home.by_association" %}</h6>
                 {% for s in assoc_stats %}
                 <div class="d-flex align-items-center mb-2 gap-2">
                     {% if s.association.image %}
@@ -115,11 +116,11 @@
                             <div class="fill {% if s.fill_pct >= 100 %}danger{% elif s.fill_pct >= 80 %}warning{% endif %}"
                                  style="width:{{ s.fill_pct }}%"></div>
                         </div>
-                        <small class="text-muted">{{ s.tickets_sold }}/{{ s.total_capacity }} tickets</small>
+                        <small class="text-muted">{{ s.tickets_sold }}/{{ s.total_capacity }} {% translate "dashboard.home.tickets" %}</small>
                     </div>
                 </div>
                 {% empty %}
-                <p class="text-muted small">No associations yet.</p>
+                <p class="text-muted small">{% translate "dashboard.empty.associations" %}</p>
                 {% endfor %}
             </div>
         </div>
@@ -127,7 +128,7 @@
         <!-- Recent activity -->
         <div class="card">
             <div class="card-body">
-                <h6 class="dash-section-title"><i class="bi bi-activity"></i> Recent Activity</h6>
+                <h6 class="dash-section-title"><i class="bi bi-activity"></i> {% translate "dashboard.home.recent_activity" %}</h6>
                 {% for log in recent_purchase_logs %}
                 <div class="activity-item">
                     <span class="badge
@@ -135,16 +136,16 @@
                         {% elif log.action == 'DELETE' %}bg-danger
                         {% else %}bg-warning text-dark{% endif %}
                         me-1">{{ log.action }}</span>
-                    Purchase #{{ log.purchase_id }}
-                    <span class="text-muted">by {{ log.user.username }}</span>
+                    {% blocktranslate with id=log.purchase_id %}Purchase #{{ id }}{% endblocktranslate %}
+                    <span class="text-muted">{% blocktranslate with username=log.user.username %}by {{ username }}{% endblocktranslate %}</span>
                     <span class="text-muted float-end">{{ log.timestamp|date:"d M H:i" }}</span>
                 </div>
                 {% empty %}
-                <p class="text-muted small">No activity yet.</p>
+                <p class="text-muted small">{% translate "dashboard.empty.activity" %}</p>
                 {% endfor %}
                 <div class="mt-2">
                     <a href="{% url 'dashboard:dashboard_audit' %}" class="btn btn-sm btn-outline-secondary w-100">
-                        View full audit log
+                        {% translate "dashboard.home.view_full_audit" %}
                     </a>
                 </div>
             </div>
@@ -152,4 +153,3 @@
     </div>
 </div>
 {% endblock %}
-

@@ -1,17 +1,18 @@
 {% extends "dashboard/base_dashboard.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Performances — Dashboard{% endblock %}
+{% block title %}{% translate "dashboard.performances.title" %}{% endblock %}
 
 {% block dashboard_content %}
 <div class="dash-breadcrumb">
-    <a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a> / Performances
+    <a href="{% url 'dashboard:dashboard_home' %}">{% translate "dashboard.home.title" %}</a> / {% translate "dashboard.sidebar.performances" %}
 </div>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="dash-section-title mb-0"><i class="bi bi-ticket-perforated"></i> Performances</h4>
+    <h4 class="dash-section-title mb-0"><i class="bi bi-ticket-perforated"></i> {% translate "dashboard.sidebar.performances" %}</h4>
     <a href="{% url 'dashboard:dashboard_performance_create' %}" class="btn btn-primary btn-sm">
-        <i class="bi bi-plus-lg"></i> New Performance
+        <i class="bi bi-plus-lg"></i> {% translate "dashboard.performances.new" %}
     </a>
 </div>
 
@@ -20,13 +21,13 @@
         <table class="table dash-table mb-0">
             <thead>
                 <tr>
-                    <th>Key</th>
-                    <th>Association</th>
-                    <th>Name</th>
-                    <th>Date & Time</th>
-                    <th>Price</th>
-                    <th>Sold / Max</th>
-                    <th>Fill</th>
+                    <th>{% translate "dashboard.col.key" %}</th>
+                    <th>{% translate "dashboard.col.association" %}</th>
+                    <th>{% translate "dashboard.col.name" %}</th>
+                    <th>{% translate "dashboard.col.date_time" %}</th>
+                    <th>{% translate "dashboard.col.price" %}</th>
+                    <th>{% translate "dashboard.col.sold_max" %}</th>
+                    <th>{% translate "dashboard.col.fill" %}</th>
                     <th></th>
                 </tr>
             </thead>
@@ -37,7 +38,7 @@
                     <td>{{ p.perf.association }}</td>
                     <td>
                         {% if p.sold_out %}
-                            <span class="badge bg-danger me-1">SOLD OUT</span>
+                            <span class="badge bg-danger me-1">{% translate "dashboard.badge.sold_out" %}</span>
                         {% elif p.warning %}
                             <span class="badge bg-warning text-dark me-1">≥80%</span>
                         {% endif %}
@@ -56,14 +57,14 @@
                     <td>
                         <div class="action-btn-row">
                             <a href="{% url 'dashboard:dashboard_performance_edit' p.perf.key %}"
-                               class="btn btn-sm btn-outline-primary" title="Edit">
+                               class="btn btn-sm btn-outline-primary" title="{% translate "dashboard.action.edit" %}">
                                 <i class="bi bi-pencil-fill"></i>
                             </a>
                             <form method="post" action="{% url 'dashboard:dashboard_performance_delete' p.perf.key %}"
-                                  onsubmit="return confirm('Delete performance {{ p.perf.key }}?')">
+                                  onsubmit="return confirm('{% blocktranslate with key=p.perf.key %}Delete performance {{ key }}?{% endblocktranslate %}')">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-sm btn-outline-danger"
-                                        {% if p.sold > 0 %}disabled title="{{ p.sold }} ticket(s) sold"{% endif %}>
+                                        {% if p.sold > 0 %}disabled title="{% blocktranslate with sold=p.sold %}{{ sold }} ticket(s) sold{% endblocktranslate %}"{% endif %}>
                                     <i class="bi bi-trash-fill"></i>
                                 </button>
                             </form>
@@ -71,11 +72,10 @@
                     </td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="8" class="text-center text-muted p-4">No performances yet.</td></tr>
+                <tr><td colspan="8" class="text-center text-muted p-4">{% translate "dashboard.empty.performances" %}</td></tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
 {% endblock %}
-

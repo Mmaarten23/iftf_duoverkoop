@@ -1,17 +1,18 @@
 {% extends "dashboard/base_dashboard.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Users — Dashboard{% endblock %}
+{% block title %}{% translate "dashboard.users.title" %}{% endblock %}
 
 {% block dashboard_content %}
 <div class="dash-breadcrumb">
-    <a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a> / Users
+    <a href="{% url 'dashboard:dashboard_home' %}">{% translate "dashboard.home.title" %}</a> / {% translate "dashboard.sidebar.users" %}
 </div>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="dash-section-title mb-0"><i class="bi bi-people-fill"></i> Users</h4>
+    <h4 class="dash-section-title mb-0"><i class="bi bi-people-fill"></i> {% translate "dashboard.sidebar.users" %}</h4>
     <a href="{% url 'dashboard:dashboard_user_create' %}" class="btn btn-primary btn-sm">
-        <i class="bi bi-person-plus-fill"></i> New User
+        <i class="bi bi-person-plus-fill"></i> {% translate "dashboard.users.new" %}
     </a>
 </div>
 
@@ -20,13 +21,13 @@
         <table class="table dash-table mb-0">
             <thead>
                 <tr>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Role group</th>
-                    <th>Staff</th>
-                    <th>Active</th>
-                    <th>Last login</th>
-                    <th>Purchases created</th>
+                    <th>{% translate "dashboard.col.username" %}</th>
+                    <th>{% translate "dashboard.col.email" %}</th>
+                    <th>{% translate "dashboard.col.role_group" %}</th>
+                    <th>{% translate "dashboard.col.staff" %}</th>
+                    <th>{% translate "dashboard.col.active" %}</th>
+                    <th>{% translate "dashboard.col.last_login" %}</th>
+                    <th>{% translate "dashboard.col.purchases_created" %}</th>
                     <th></th>
                 </tr>
             </thead>
@@ -37,10 +38,10 @@
                         <i class="bi bi-person-circle me-1 text-muted"></i>
                         <strong>{{ row.user.username }}</strong>
                         {% if row.user == request.user %}
-                            <span class="badge bg-secondary ms-1">you</span>
+                            <span class="badge bg-secondary ms-1">{% translate "dashboard.users.badge_you" %}</span>
                         {% endif %}
                         {% if row.user.is_superuser %}
-                            <span class="badge bg-dark ms-1">superuser</span>
+                            <span class="badge bg-dark ms-1">{% translate "dashboard.users.badge_superuser" %}</span>
                         {% endif %}
                     </td>
                     <td><small class="text-muted">{{ row.user.email|default:"—" }}</small></td>
@@ -67,23 +68,23 @@
                         {% if row.user.is_active %}
                         <i class="bi bi-check-circle-fill text-success"></i>
                         {% else %}
-                        <span class="badge bg-secondary">Inactive</span>
+                        <span class="badge bg-secondary">{% translate "dashboard.users.inactive" %}</span>
                         {% endif %}
                     </td>
-                    <td><small class="text-muted">{{ row.user.last_login|date:"d M Y H:i"|default:"Never" }}</small></td>
+                    <td><small class="text-muted">{% translate "dashboard.users.never_logged_in" as never_str %}{{ row.user.last_login|date:"d M Y H:i"|default:never_str }}</small></td>
                     <td>{{ row.purchases_created }}</td>
                     <td>
                         <div class="action-btn-row">
                             <a href="{% url 'dashboard:dashboard_user_edit' row.user.pk %}"
-                               class="btn btn-sm btn-outline-primary" title="Edit">
+                               class="btn btn-sm btn-outline-primary" title="{% translate "dashboard.action.edit" %}">
                                 <i class="bi bi-pencil-fill"></i>
                             </a>
                             {% if row.user != request.user %}
                             <form method="post" action="{% url 'dashboard:dashboard_user_delete' row.user.pk %}"
-                                  onsubmit="return confirm('Delete user {{ row.user.username }}?')">
+                                  onsubmit="return confirm('{% blocktranslate with username=row.user.username %}Delete user {{ username }}?{% endblocktranslate %}')">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-sm btn-outline-danger"
-                                        {% if row.purchases_created > 0 %}disabled title="Has purchases on record"{% endif %}>
+                                        {% if row.purchases_created > 0 %}disabled title="{% translate "dashboard.users.has_purchases" %}"{% endif %}>
                                     <i class="bi bi-trash-fill"></i>
                                 </button>
                             </form>
@@ -92,11 +93,10 @@
                     </td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="8" class="text-center text-muted p-4">No users found.</td></tr>
+                <tr><td colspan="8" class="text-center text-muted p-4">{% translate "dashboard.empty.users" %}</td></tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
 {% endblock %}
-

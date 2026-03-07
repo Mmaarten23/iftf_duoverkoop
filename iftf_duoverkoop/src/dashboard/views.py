@@ -15,6 +15,7 @@ from django.core.paginator import Paginator
 from django.db import transaction
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_http_methods
 
 from iftf_duoverkoop.src.core.models import Association, Performance, Purchase, PurchaseAuditLog, LoginAuditLog
@@ -34,7 +35,7 @@ def staff_required(view_func):
     @login_required
     def _wrapped(request, *args, **kwargs):
         if not request.user.is_staff:
-            messages.error(request, 'You do not have permission to access the dashboard.')
+            messages.error(request, _('dashboard.error.no_permission'))
             return redirect('order')
         return view_func(request, *args, **kwargs)
     return _wrapped
@@ -138,10 +139,10 @@ def dashboard_association_create(request: HttpRequest) -> HttpResponse:
             name = form.cleaned_data['name']
             image = form.cleaned_data.get('image') or None
             if Association.objects.filter(name=name).exists():
-                form.add_error('name', 'An association with this name already exists.')
+                form.add_error('name', _('dashboard.associations.error.name_exists'))
             else:
                 Association.objects.create(name=name, image=image)
-                messages.success(request, f'Association "{name}" created.')
+                messages.success(request, _('dashboard.associations.created') % {'name': name})
                 return redirect('dashboard:dashboard_associations')
     else:
         form = AssociationForm()
@@ -158,7 +159,7 @@ def dashboard_association_edit(request: HttpRequest, name: str) -> HttpResponse:
             new_name = form.cleaned_data['name']
             image = form.cleaned_data.get('image') or None
             if new_name != assoc.name and Association.objects.filter(name=new_name).exists():
-                form.add_error('name', 'An association with this name already exists.')
+                form.add_error('name', _('dashboard.associations.error.name_exists'))
             else:
                 with transaction.atomic():
                     if new_name != assoc.name:
@@ -168,7 +169,7 @@ def dashboard_association_edit(request: HttpRequest, name: str) -> HttpResponse:
                     else:
                         assoc.image = image
                         assoc.save()
-                messages.success(request, 'Association updated.')
+                messages.success(request, _('dashboard.associations.updated'))
                 return redirect('dashboard:dashboard_associations')
     else:
         form = AssociationForm(initial={'name': assoc.name, 'image': assoc.image or ''})
@@ -182,10 +183,10 @@ def dashboard_association_edit(request: HttpRequest, name: str) -> HttpResponse:
 def dashboard_association_delete(request: HttpRequest, name: str) -> HttpResponse:
     assoc = get_object_or_404(Association, name=name)
     if Performance.objects.filter(association=assoc).exists():
-        messages.error(request, f'Cannot delete "{name}": it still has linked performances.')
+        messages.error(request, _('dashboard.associations.error.has_performances') % {'name': name})
     else:
         assoc.delete()
-        messages.success(request, f'Association "{name}" deleted.')
+        messages.success(request, _('dashboard.associations.deleted') % {'name': name})
     return redirect('dashboard:dashboard_associations')
 
 
@@ -200,9 +201,9 @@ def dashboard_logo_upload(request: HttpRequest) -> HttpResponse:
         with open(os.path.join(media_path, logo.name), 'wb+') as fh:
             for chunk in logo.chunks():
                 fh.write(chunk)
-        messages.success(request, f'Logo "{logo.name}" uploaded.')
+        messages.success(request, _('dashboard.associations.logo_uploaded') % {'name': logo.name})
     else:
-        messages.error(request, 'Invalid file. Please upload a valid image.')
+        messages.error(request, _('dashboard.associations.error.invalid_logo'))
     return redirect('dashboard:dashboard_associations')
 
 
@@ -242,7 +243,7 @@ def dashboard_performance_create(request: HttpRequest) -> HttpResponse:
                 price=d['price'],
                 max_tickets=d['max_tickets'],
             )
-            messages.success(request, f'Performance "{d["key"]}" created.')
+            messages.success(request, _('dashboard.performances.created') % {'key': d['key']})
             return redirect('dashboard:dashboard_performances')
     else:
         form = PerformanceForm()
@@ -259,7 +260,7 @@ def dashboard_performance_edit(request: HttpRequest, key: str) -> HttpResponse:
         if form.is_valid():
             d = form.cleaned_data
             if d['max_tickets'] < sold:
-                form.add_error('max_tickets', f'Cannot set below current sold count ({sold}).')
+                form.add_error('max_tickets', _('dashboard.performances.error.below_sold') % {'sold': sold})
             else:
                 assoc = get_object_or_404(Association, name=d['association'])
                 with transaction.atomic():
@@ -279,7 +280,7 @@ def dashboard_performance_edit(request: HttpRequest, key: str) -> HttpResponse:
                         perf.price = d['price']
                         perf.max_tickets = d['max_tickets']
                         perf.save()
-                messages.success(request, 'Performance updated.')
+                messages.success(request, _('dashboard.performances.updated'))
                 return redirect('dashboard:dashboard_performances')
     else:
         form = PerformanceForm(initial={
@@ -298,10 +299,10 @@ def dashboard_performance_delete(request: HttpRequest, key: str) -> HttpResponse
     perf = get_object_or_404(Performance, key=key)
     sold = perf.tickets_sold()
     if sold > 0:
-        messages.error(request, f'Cannot delete "{key}": {sold} ticket(s) sold.')
+        messages.error(request, _('dashboard.performances.error.has_tickets') % {'key': key, 'sold': sold})
     else:
         perf.delete()
-        messages.success(request, f'Performance "{key}" deleted.')
+        messages.success(request, _('dashboard.performances.deleted') % {'key': key})
     return redirect('dashboard:dashboard_performances')
 
 
@@ -338,7 +339,7 @@ def dashboard_user_create(request: HttpRequest) -> HttpResponse:
                     user.groups.set([Group.objects.get(name=d['group'])])
                 except Group.DoesNotExist:
                     pass
-            messages.success(request, f'User "{user.username}" created.')
+            messages.success(request, _('dashboard.users.created') % {'username': user.username})
             return redirect('dashboard:dashboard_users')
     else:
         form = CreateUserForm()
@@ -365,7 +366,7 @@ def dashboard_user_edit(request: HttpRequest, user_id: int) -> HttpResponse:
                     target.groups.add(Group.objects.get(name=d['group']))
                 except Group.DoesNotExist:
                     pass
-            messages.success(request, f'User "{target.username}" updated.')
+            messages.success(request, _('dashboard.users.updated') % {'username': target.username})
             return redirect('dashboard:dashboard_users')
     else:
         current_group = target.groups.first()
@@ -382,13 +383,13 @@ def dashboard_user_edit(request: HttpRequest, user_id: int) -> HttpResponse:
 def dashboard_user_delete(request: HttpRequest, user_id: int) -> HttpResponse:
     target = get_object_or_404(User, pk=user_id)
     if target == request.user:
-        messages.error(request, 'You cannot delete your own account.')
+        messages.error(request, _('dashboard.users.error.cannot_delete_self'))
     elif target.purchases_created.exists() or target.purchases_modified.exists():
-        messages.error(request, f'Cannot delete "{target.username}": referenced by purchase records.')
+        messages.error(request, _('dashboard.users.error.has_purchases') % {'username': target.username})
     else:
         username = target.username
         target.delete()
-        messages.success(request, f'User "{username}" deleted.')
+        messages.success(request, _('dashboard.users.deleted') % {'username': username})
     return redirect('dashboard:dashboard_users')
 
 
@@ -469,8 +470,8 @@ def dashboard_system(request: HttpRequest) -> HttpResponse:
 def dashboard_sync_permissions(request: HttpRequest) -> HttpResponse:
     try:
         setup_permission_groups()
-        messages.success(request, 'Permission groups re-synced successfully.')
+        messages.success(request, _('dashboard.system.permissions_synced'))
     except Exception as e:
-        messages.error(request, f'Failed to sync permissions: {e}')
+        messages.error(request, _('dashboard.system.permissions_sync_failed') % {'error': e})
     return redirect('dashboard:dashboard_system')
 

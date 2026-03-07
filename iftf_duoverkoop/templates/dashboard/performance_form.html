@@ -1,22 +1,23 @@
 {% extends "dashboard/base_dashboard.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}{{ action }} Performance — Dashboard{% endblock %}
+{% block title %}{% translate "dashboard.performance_form.title" %} — {% translate "dashboard.home.title" %}{% endblock %}
 
 {% block dashboard_content %}
 <div class="dash-breadcrumb">
-    <a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a> /
-    <a href="{% url 'dashboard:dashboard_performances' %}">Performances</a> /
+    <a href="{% url 'dashboard:dashboard_home' %}">{% translate "dashboard.home.title" %}</a> /
+    <a href="{% url 'dashboard:dashboard_performances' %}">{% translate "dashboard.sidebar.performances" %}</a> /
     {{ action }}
 </div>
 
-<h4 class="dash-section-title"><i class="bi bi-ticket-perforated"></i> {{ action }} Performance</h4>
+<h4 class="dash-section-title"><i class="bi bi-ticket-perforated"></i> {{ action }} {% translate "dashboard.performance_form.performance" %}</h4>
 
 {% if action == 'Edit' and sold > 0 %}
 <div class="alert alert-info">
     <i class="bi bi-info-circle-fill"></i>
-    <strong>{{ sold }}</strong> ticket(s) have been sold for this performance.
-    You cannot reduce "Maximum tickets" below this number.
+    <strong>{% blocktranslate with sold=sold %}{{ sold }} ticket(s) sold{% endblocktranslate %}</strong>
+    {% translate "dashboard.performance_form.sold_warning" %}
 </div>
 {% endif %}
 
@@ -38,14 +39,13 @@
             {% endfor %}
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-check-lg"></i> Save
+                    <i class="bi bi-check-lg"></i> {% translate "dashboard.action.save" %}
                 </button>
                 <a href="{% url 'dashboard:dashboard_performances' %}" class="btn btn-outline-secondary">
-                    Cancel
+                    {% translate "dashboard.action.cancel" %}
                 </a>
             </div>
         </form>
     </div>
 </div>
 {% endblock %}
-

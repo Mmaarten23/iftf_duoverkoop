@@ -1,23 +1,24 @@
 {% extends "dashboard/base_dashboard.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Audit Entry #{{ entry.id }} — Dashboard{% endblock %}
+{% block title %}{% translate "dashboard.audit_detail.title" %} #{{ entry.id }} — {% translate "dashboard.home.title" %}{% endblock %}
 
 {% block dashboard_content %}
 <div class="dash-breadcrumb">
-    <a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a> /
-    <a href="{% url 'dashboard:dashboard_audit' %}">Audit Log</a> /
-    Entry #{{ entry.id }}
+    <a href="{% url 'dashboard:dashboard_home' %}">{% translate "dashboard.home.title" %}</a> /
+    <a href="{% url 'dashboard:dashboard_audit' %}">{% translate "dashboard.sidebar.audit_log" %}</a> /
+    {% blocktranslate with id=entry.id %}Entry #{{ id }}{% endblocktranslate %}
 </div>
 
-<h4 class="dash-section-title"><i class="bi bi-journal-text"></i> Audit Entry #{{ entry.id }}</h4>
+<h4 class="dash-section-title"><i class="bi bi-journal-text"></i> {% blocktranslate with id=entry.id %}Audit Entry #{{ id }}{% endblocktranslate %}</h4>
 
 <div class="row g-3" style="max-width:800px">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
                 <dl class="row mb-0">
-                    <dt class="col-sm-3">Action</dt>
+                    <dt class="col-sm-3">{% translate "dashboard.audit.col_action" %}</dt>
                     <dd class="col-sm-9">
                         <span class="badge
                             {% if entry.action == 'CREATE' %}bg-success
@@ -28,18 +29,18 @@
                         </span>
                     </dd>
 
-                    <dt class="col-sm-3">Purchase</dt>
+                    <dt class="col-sm-3">{% translate "dashboard.audit.col_purchase" %}</dt>
                     <dd class="col-sm-9">#{{ entry.purchase_id }}</dd>
 
-                    <dt class="col-sm-3">Performed by</dt>
+                    <dt class="col-sm-3">{% translate "dashboard.audit_detail.performed_by" %}</dt>
                     <dd class="col-sm-9">
                         <a href="{% url 'dashboard:dashboard_user_edit' entry.user.pk %}">{{ entry.user.username }}</a>
                     </dd>
 
-                    <dt class="col-sm-3">Timestamp</dt>
+                    <dt class="col-sm-3">{% translate "dashboard.audit.col_timestamp" %}</dt>
                     <dd class="col-sm-9">{{ entry.timestamp|date:"d M Y H:i:s" }}</dd>
 
-                    <dt class="col-sm-3">IP Address</dt>
+                    <dt class="col-sm-3">{% translate "dashboard.audit_detail.ip_address" %}</dt>
                     <dd class="col-sm-9 font-monospace">{{ entry.ip_address|default:"—" }}</dd>
                 </dl>
             </div>
@@ -50,7 +51,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h6 class="dash-section-title"><i class="bi bi-code-square"></i> Changes (JSON)</h6>
+                <h6 class="dash-section-title"><i class="bi bi-code-square"></i> {% translate "dashboard.audit_detail.changes_json" %}</h6>
                 <pre class="bg-light p-3 rounded" style="font-size:0.85rem;max-height:400px;overflow-y:auto;">{{ changes_pretty }}</pre>
             </div>
         </div>
@@ -59,9 +60,8 @@
 
     <div class="col-12">
         <a href="{% url 'dashboard:dashboard_audit' %}" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-arrow-left"></i> Back to Audit Log
+            <i class="bi bi-arrow-left"></i> {% translate "dashboard.audit_detail.back" %}
         </a>
     </div>
 </div>
 {% endblock %}
-

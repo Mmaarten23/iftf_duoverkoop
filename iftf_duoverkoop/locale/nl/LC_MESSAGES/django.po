@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-07 04:54+0100\n"
+"POT-Creation-Date: 2026-03-07 05:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,6 +19,91 @@ msgstr ""
 #: .\iftf_duoverkoop\src\core\models.py:41
 msgid "performance.tostring"
 msgstr "%(association)s - \"%(name)s\" op %(date)s"
+
+# ── Dashboard – flash messages (views.py) ─────────────────────────────────────
+#: .\iftf_duoverkoop\src\dashboard\views.py:38
+msgid "dashboard.error.no_permission"
+msgstr "Je hebt geen toegang tot het dashboard."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:142
+#: .\iftf_duoverkoop\src\dashboard\views.py:162
+msgid "dashboard.associations.error.name_exists"
+msgstr "Er bestaat al een vereniging met deze naam."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:145
+msgid "dashboard.associations.created"
+msgstr "Vereniging \"%(name)s\" aangemaakt."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:172
+msgid "dashboard.associations.updated"
+msgstr "Vereniging bijgewerkt."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:186
+msgid "dashboard.associations.error.has_performances"
+msgstr ""
+"Kan \"%(name)s\" niet verwijderen: heeft nog gekoppelde voorstellingen."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:189
+msgid "dashboard.associations.deleted"
+msgstr "Vereniging \"%(name)s\" verwijderd."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:204
+msgid "dashboard.associations.logo_uploaded"
+msgstr "Logo \"%(name)s\" geüpload."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:206
+msgid "dashboard.associations.error.invalid_logo"
+msgstr "Ongeldig bestand. Upload een geldig afbeeldingsbestand."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:246
+msgid "dashboard.performances.created"
+msgstr "Voorstelling \"%(key)s\" aangemaakt."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:263
+msgid "dashboard.performances.error.below_sold"
+msgstr ""
+"Kan niet lager instellen dan het huidige aantal verkochte tickets (%(sold)s)."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:283
+msgid "dashboard.performances.updated"
+msgstr "Voorstelling bijgewerkt."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:302
+msgid "dashboard.performances.error.has_tickets"
+msgstr "Kan \"%(key)s\" niet verwijderen: %(sold)s ticket(s) verkocht."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:305
+msgid "dashboard.performances.deleted"
+msgstr "Voorstelling \"%(key)s\" verwijderd."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:342
+msgid "dashboard.users.created"
+msgstr "Gebruiker \"%(username)s\" aangemaakt."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:369
+msgid "dashboard.users.updated"
+msgstr "Gebruiker \"%(username)s\" bijgewerkt."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:386
+msgid "dashboard.users.error.cannot_delete_self"
+msgstr "Je kan je eigen account niet verwijderen."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:388
+msgid "dashboard.users.error.has_purchases"
+msgstr ""
+"Kan \"%(username)s\" niet verwijderen: wordt gerefereerd door aankooprecords."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:392
+msgid "dashboard.users.deleted"
+msgstr "Gebruiker \"%(username)s\" verwijderd."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:473
+msgid "dashboard.system.permissions_synced"
+msgstr "Machtigingsgroepen succesvol opnieuw gesynchroniseerd."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:475
+msgid "dashboard.system.permissions_sync_failed"
+msgstr "Synchronisatie van machtigingen mislukt: %(error)s"
 
 #: .\iftf_duoverkoop\src\forms\order.py:20
 #: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:187
@@ -177,6 +262,648 @@ msgstr "Uitloggen"
 #: .\iftf_duoverkoop\templates\base.html:84
 msgid "navbar.login"
 msgstr "Inloggen"
+
+# ── Dashboard – association form ──────────────────────────────────────────────
+#: .\iftf_duoverkoop\templates\dashboard\association_form.html:5
+msgid "dashboard.association_form.title"
+msgstr "Vereniging"
+
+# ── Dashboard – home ─────────────────────────────────────────────────────────
+#: .\iftf_duoverkoop\templates\dashboard\association_form.html:5
+#: .\iftf_duoverkoop\templates\dashboard\association_form.html:9
+#: .\iftf_duoverkoop\templates\dashboard\associations.html:9
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:9
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:5
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:9
+#: .\iftf_duoverkoop\templates\dashboard\home.html:5
+#: .\iftf_duoverkoop\templates\dashboard\home.html:8
+#: .\iftf_duoverkoop\templates\dashboard\performance_form.html:5
+#: .\iftf_duoverkoop\templates\dashboard\performance_form.html:9
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:9
+#: .\iftf_duoverkoop\templates\dashboard\system.html:9
+#: .\iftf_duoverkoop\templates\dashboard\user_form.html:5
+#: .\iftf_duoverkoop\templates\dashboard\user_form.html:9
+#: .\iftf_duoverkoop\templates\dashboard\users.html:9
+msgid "dashboard.home.title"
+msgstr "Dashboard"
+
+#: .\iftf_duoverkoop\templates\dashboard\association_form.html:10
+#: .\iftf_duoverkoop\templates\dashboard\associations.html:9
+#: .\iftf_duoverkoop\templates\dashboard\associations.html:13
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:22
+msgid "dashboard.sidebar.associations"
+msgstr "Verenigingen"
+
+#: .\iftf_duoverkoop\templates\dashboard\association_form.html:14
+msgid "dashboard.association_form.association"
+msgstr "Vereniging"
+
+#: .\iftf_duoverkoop\templates\dashboard\association_form.html:19
+msgid "dashboard.association_form.rename_note_title"
+msgstr "Let op:"
+
+#: .\iftf_duoverkoop\templates\dashboard\association_form.html:20
+msgid "dashboard.association_form.rename_note_body"
+msgstr ""
+"De naam van de vereniging is de primaire sleutel. Hernoemen zal alle "
+"gekoppelde voorstellingen automatisch bijwerken via een databasetransactie."
+
+#: .\iftf_duoverkoop\templates\dashboard\association_form.html:39
+#: .\iftf_duoverkoop\templates\dashboard\performance_form.html:42
+#: .\iftf_duoverkoop\templates\dashboard\user_form.html:40
+msgid "dashboard.action.save"
+msgstr "Opslaan"
+
+#: .\iftf_duoverkoop\templates\dashboard\association_form.html:42
+#: .\iftf_duoverkoop\templates\dashboard\performance_form.html:45
+#: .\iftf_duoverkoop\templates\dashboard\user_form.html:43
+msgid "dashboard.action.cancel"
+msgstr "Annuleren"
+
+# ── Dashboard – associations page ─────────────────────────────────────────────
+#: .\iftf_duoverkoop\templates\dashboard\associations.html:5
+msgid "dashboard.associations.title"
+msgstr "Verenigingen — Dashboard"
+
+#: .\iftf_duoverkoop\templates\dashboard\associations.html:15
+msgid "dashboard.associations.new"
+msgstr "Nieuwe Vereniging"
+
+#: .\iftf_duoverkoop\templates\dashboard\associations.html:22
+msgid "dashboard.associations.upload_logo"
+msgstr "Logo uploaden"
+
+#: .\iftf_duoverkoop\templates\dashboard\associations.html:23
+msgid "dashboard.associations.upload_logo_hint"
+msgstr ""
+"Upload een nieuw logobestand om het beschikbaar te maken in de logoselector "
+"hieronder."
+
+#: .\iftf_duoverkoop\templates\dashboard\associations.html:28
+msgid "dashboard.action.upload"
+msgstr "Uploaden"
+
+#: .\iftf_duoverkoop\templates\dashboard\associations.html:41
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:26
+msgid "dashboard.col.name"
+msgstr "Naam"
+
+#: .\iftf_duoverkoop\templates\dashboard\associations.html:42
+msgid "dashboard.col.performances"
+msgstr "Voorstellingen"
+
+#: .\iftf_duoverkoop\templates\dashboard\associations.html:43
+msgid "dashboard.col.tickets_sold"
+msgstr "Tickets verkocht"
+
+#: .\iftf_duoverkoop\templates\dashboard\associations.html:44
+msgid "dashboard.col.capacity"
+msgstr "Capaciteit"
+
+#: .\iftf_duoverkoop\templates\dashboard\associations.html:45
+msgid "dashboard.col.revenue"
+msgstr "Omzet"
+
+#: .\iftf_duoverkoop\templates\dashboard\associations.html:46
+msgid "dashboard.col.logo_file"
+msgstr "Logobestand"
+
+# ── Dashboard – shared actions ────────────────────────────────────────────────
+#: .\iftf_duoverkoop\templates\dashboard\associations.html:78
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:60
+#: .\iftf_duoverkoop\templates\dashboard\users.html:79
+msgid "dashboard.action.edit"
+msgstr "Bewerken"
+
+#: .\iftf_duoverkoop\templates\dashboard\associations.html:82
+#, fuzzy, python-format
+#| msgid "Delete association {{ name }}? This cannot be undone."
+msgid "Delete association %(name)s? This cannot be undone."
+msgstr ""
+"Vereniging {{ name }} verwijderen? Dit kan niet ongedaan worden gemaakt."
+
+#: .\iftf_duoverkoop\templates\dashboard\associations.html:84
+msgid "dashboard.action.delete"
+msgstr "Verwijderen"
+
+#: .\iftf_duoverkoop\templates\dashboard\associations.html:85
+msgid "dashboard.associations.has_performances"
+msgstr "Heeft gekoppelde voorstellingen"
+
+#: .\iftf_duoverkoop\templates\dashboard\associations.html:93
+#: .\iftf_duoverkoop\templates\dashboard\home.html:123
+msgid "dashboard.empty.associations"
+msgstr "Nog geen verenigingen."
+
+# ── Dashboard – audit log ─────────────────────────────────────────────────────
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:5
+msgid "dashboard.audit.title"
+msgstr "Auditlog — Dashboard"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:9
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:12
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:10
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:38
+msgid "dashboard.sidebar.audit_log"
+msgstr "Auditlog"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:18
+msgid "dashboard.audit.tab_purchases"
+msgstr "Aankoopacties"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:22
+msgid "dashboard.audit.tab_logins"
+msgstr "Logingebeurtenissen"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:33
+msgid "dashboard.audit.filter_action"
+msgstr "Actie"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:35
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:140
+msgid "dashboard.audit.filter_all"
+msgstr "Alle"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:42
+msgid "dashboard.audit.filter_user"
+msgstr "Gebruiker"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:44
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:149
+msgid "dashboard.audit.filter_username_placeholder"
+msgstr "gebruikersnaam"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:47
+msgid "dashboard.audit.filter_purchase"
+msgstr "Aankoop #"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:52
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:152
+msgid "dashboard.action.filter"
+msgstr "Filteren"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:53
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:153
+msgid "dashboard.action.clear"
+msgstr "Wissen"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:65
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:21
+msgid "dashboard.audit.col_action"
+msgstr "Actie"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:66
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:32
+msgid "dashboard.audit.col_purchase"
+msgstr "Aankoop"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:67
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:147
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:165
+#: .\iftf_duoverkoop\templates\dashboard\users.html:24
+msgid "dashboard.col.username"
+msgstr "Gebruikersnaam"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:68
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:167
+msgid "dashboard.audit.col_ip"
+msgstr "IP-adres"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:69
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:168
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:40
+msgid "dashboard.audit.col_timestamp"
+msgstr "Tijdstip"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:94
+msgid "dashboard.audit.view_details"
+msgstr "Details bekijken"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:100
+msgid "dashboard.empty.audit_entries"
+msgstr "Geen vermeldingen overeenkomen met uw filters."
+
+# ── Dashboard – pagination ────────────────────────────────────────────────────
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:113
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:208
+msgid "dashboard.pagination.prev"
+msgstr "Vorige"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:118
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:213
+#, fuzzy, python-format
+#| msgid "Page {{ num }} of {{ total }}"
+msgid "Page %(num)s of %(total)s"
+msgstr "Pagina {{ num }} van {{ total }}"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:123
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:218
+msgid "dashboard.pagination.next"
+msgstr "Volgende"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:138
+msgid "dashboard.audit.filter_event"
+msgstr "Gebeurtenis"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:164
+msgid "dashboard.audit.col_event"
+msgstr "Gebeurtenis"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:166
+msgid "dashboard.audit.col_user_account"
+msgstr "Gebruikersaccount"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:195
+msgid "dashboard.empty.login_events"
+msgstr "Nog geen logingebeurtenissen geregistreerd."
+
+# ── Dashboard – audit detail ──────────────────────────────────────────────────
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:5
+msgid "dashboard.audit_detail.title"
+msgstr "Auditvermelding"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:11
+#, fuzzy, python-format
+#| msgid "Entry #{{ id }}"
+msgid "Entry #%(id)s"
+msgstr "Vermelding #{{ id }}"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:14
+#, fuzzy, python-format
+#| msgid "Audit Entry #{{ id }}"
+msgid "Audit Entry #%(id)s"
+msgstr "Auditvermelding #{{ id }}"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:35
+msgid "dashboard.audit_detail.performed_by"
+msgstr "Uitgevoerd door"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:43
+msgid "dashboard.audit_detail.ip_address"
+msgstr "IP-adres"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:54
+msgid "dashboard.audit_detail.changes_json"
+msgstr "Wijzigingen (JSON)"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:63
+msgid "dashboard.audit_detail.back"
+msgstr "Terug naar auditlog"
+
+# ── Dashboard – sidebar ──────────────────────────────────────────────────────
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:13
+msgid "dashboard.sidebar.overview"
+msgstr "Overzicht"
+
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:16
+msgid "dashboard.sidebar.dashboard"
+msgstr "Dashboard"
+
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:19
+msgid "dashboard.sidebar.data"
+msgstr "Data"
+
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:26
+#: .\iftf_duoverkoop\templates\dashboard\performance_form.html:10
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:9
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:13
+msgid "dashboard.sidebar.performances"
+msgstr "Voorstellingen"
+
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:29
+msgid "dashboard.sidebar.people"
+msgstr "Mensen"
+
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:32
+#: .\iftf_duoverkoop\templates\dashboard\user_form.html:10
+#: .\iftf_duoverkoop\templates\dashboard\users.html:9
+#: .\iftf_duoverkoop\templates\dashboard\users.html:13
+msgid "dashboard.sidebar.users"
+msgstr "Gebruikers"
+
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:35
+msgid "dashboard.sidebar.monitoring"
+msgstr "Monitoring"
+
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:42
+#: .\iftf_duoverkoop\templates\dashboard\system.html:9
+#: .\iftf_duoverkoop\templates\dashboard\system.html:12
+msgid "dashboard.sidebar.system"
+msgstr "Systeem"
+
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:45
+msgid "dashboard.sidebar.links"
+msgstr "Links"
+
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:47
+msgid "dashboard.sidebar.purchase_history"
+msgstr "Aankoopgeschiedenis"
+
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:50
+msgid "dashboard.sidebar.export_csv"
+msgstr "Exporteer CSV"
+
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:53
+msgid "dashboard.sidebar.verify_code"
+msgstr "Verifieer Code"
+
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:56
+#: .\iftf_duoverkoop\templates\dashboard\system.html:86
+msgid "dashboard.sidebar.django_admin"
+msgstr "Django Admin"
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:9
+msgid "dashboard.home.overview"
+msgstr "Overzicht"
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:14
+msgid "dashboard.home.data_not_ready_title"
+msgstr "Data niet klaar:"
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:15
+msgid "dashboard.home.data_not_ready_body"
+msgstr ""
+"Een of meer verenigingen hebben geen logo. De bestelpagina zal een fout "
+"tonen totdat dit is opgelost."
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:16
+msgid "dashboard.home.fix_associations"
+msgstr "Verenigingen aanpassen →"
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:25
+msgid "dashboard.home.total_purchases"
+msgstr "Totaal aankopen"
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:31
+msgid "dashboard.home.total_revenue"
+msgstr "Totale omzet"
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:37
+msgid "dashboard.home.tickets_sold"
+msgstr "Tickets verkocht"
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:43
+msgid "dashboard.home.total_capacity"
+msgstr "Totale capaciteit"
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:53
+msgid "dashboard.home.performance_capacity"
+msgstr "Capaciteit per voorstelling"
+
+# ── Dashboard – shared columns & badges ──────────────────────────────────────
+#: .\iftf_duoverkoop\templates\dashboard\home.html:58
+msgid "dashboard.col.performance"
+msgstr "Voorstelling"
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:59
+msgid "dashboard.col.assoc"
+msgstr "Ver."
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:60
+msgid "dashboard.col.date"
+msgstr "Datum"
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:61
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:29
+msgid "dashboard.col.sold_max"
+msgstr "Verkocht / Max"
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:62
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:30
+msgid "dashboard.col.fill"
+msgstr "Bezetting"
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:70
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:41
+msgid "dashboard.badge.sold_out"
+msgstr "UITVERKOCHT"
+
+# ── Dashboard – empty states ──────────────────────────────────────────────────
+#: .\iftf_duoverkoop\templates\dashboard\home.html:88
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:75
+msgid "dashboard.empty.performances"
+msgstr "Nog geen voorstellingen."
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:101
+msgid "dashboard.home.by_association"
+msgstr "Per vereniging"
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:119
+msgid "dashboard.home.tickets"
+msgstr "tickets"
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:131
+msgid "dashboard.home.recent_activity"
+msgstr "Recente activiteit"
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:139
+#, fuzzy, python-format
+#| msgid "Purchase #{{ id }}"
+msgid "Purchase #%(id)s"
+msgstr "Aankoop #{{ id }}"
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:140
+#, fuzzy, python-format
+#| msgid "by {{ username }}"
+msgid "by %(username)s"
+msgstr "door {{ username }}"
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:144
+msgid "dashboard.empty.activity"
+msgstr "Nog geen activiteit."
+
+#: .\iftf_duoverkoop\templates\dashboard\home.html:148
+msgid "dashboard.home.view_full_audit"
+msgstr "Volledig auditlog bekijken"
+
+# ── Dashboard – performance form ──────────────────────────────────────────────
+#: .\iftf_duoverkoop\templates\dashboard\performance_form.html:5
+msgid "dashboard.performance_form.title"
+msgstr "Voorstelling"
+
+#: .\iftf_duoverkoop\templates\dashboard\performance_form.html:14
+msgid "dashboard.performance_form.performance"
+msgstr "Voorstelling"
+
+#: .\iftf_duoverkoop\templates\dashboard\performance_form.html:19
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:67
+#, fuzzy, python-format
+#| msgid "{{ sold }} ticket(s) sold"
+msgid "%(sold)s ticket(s) sold"
+msgstr "{{ sold }} ticket(s) verkocht"
+
+#: .\iftf_duoverkoop\templates\dashboard\performance_form.html:20
+msgid "dashboard.performance_form.sold_warning"
+msgstr "Je kan het maximum aantal tickets niet verlagen tot onder dit aantal."
+
+# ── Dashboard – performances page ─────────────────────────────────────────────
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:5
+msgid "dashboard.performances.title"
+msgstr "Voorstellingen — Dashboard"
+
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:15
+msgid "dashboard.performances.new"
+msgstr "Nieuwe Voorstelling"
+
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:24
+msgid "dashboard.col.key"
+msgstr "Sleutel"
+
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:25
+msgid "dashboard.col.association"
+msgstr "Vereniging"
+
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:27
+msgid "dashboard.col.date_time"
+msgstr "Datum & Tijd"
+
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:28
+msgid "dashboard.col.price"
+msgstr "Prijs"
+
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:64
+#, fuzzy, python-format
+#| msgid "Delete performance {{ key }}?"
+msgid "Delete performance %(key)s?"
+msgstr "Voorstelling {{ key }} verwijderen?"
+
+# ── Dashboard – system page ───────────────────────────────────────────────────
+#: .\iftf_duoverkoop\templates\dashboard\system.html:5
+msgid "dashboard.system.title"
+msgstr "Systeem — Dashboard"
+
+#: .\iftf_duoverkoop\templates\dashboard\system.html:19
+msgid "dashboard.system.database"
+msgstr "Database"
+
+#: .\iftf_duoverkoop\templates\dashboard\system.html:21
+msgid "dashboard.system.engine"
+msgstr "Engine"
+
+#: .\iftf_duoverkoop\templates\dashboard\system.html:38
+msgid "dashboard.system.environment"
+msgstr "Omgeving"
+
+#: .\iftf_duoverkoop\templates\dashboard\system.html:40
+msgid "dashboard.system.debug_mode"
+msgstr "DEBUG-modus"
+
+#: .\iftf_duoverkoop\templates\dashboard\system.html:42
+msgid "dashboard.system.on"
+msgstr "AAN"
+
+#: .\iftf_duoverkoop\templates\dashboard\system.html:44
+msgid "dashboard.system.off_production"
+msgstr "UIT (productie)"
+
+#: .\iftf_duoverkoop\templates\dashboard\system.html:48
+msgid "dashboard.system.email_sending"
+msgstr "E-mailverzending"
+
+#: .\iftf_duoverkoop\templates\dashboard\system.html:50
+msgid "dashboard.system.enabled"
+msgstr "INGESCHAKELD"
+
+#: .\iftf_duoverkoop\templates\dashboard\system.html:52
+msgid "dashboard.system.disabled"
+msgstr "UITGESCHAKELD"
+
+#: .\iftf_duoverkoop\templates\dashboard\system.html:63
+msgid "dashboard.system.permission_groups"
+msgstr "Machtigingsgroepen"
+
+#: .\iftf_duoverkoop\templates\dashboard\system.html:65
+msgid "dashboard.system.permission_groups_hint"
+msgstr ""
+"Voer de setup van de machtigingsgroepen opnieuw uit om er zeker van te zijn "
+"dat alle drie de groepen bestaan en precies de juiste machtigingen hebben "
+"(bijv. na een deployment of migratie)."
+
+#: .\iftf_duoverkoop\templates\dashboard\system.html:70
+msgid "dashboard.system.resync_permissions"
+msgstr "Machtigingsgroepen opnieuw synchroniseren"
+
+#: .\iftf_duoverkoop\templates\dashboard\system.html:81
+msgid "dashboard.system.escape_hatch"
+msgstr "Nooduitgang"
+
+#: .\iftf_duoverkoop\templates\dashboard\system.html:83
+msgid "dashboard.system.escape_hatch_hint"
+msgstr ""
+"De Django-beheerdersinterface is nog steeds beschikbaar voor bewerkingen die "
+"nog niet door dit dashboard worden ondersteund."
+
+# ── Dashboard – user form ─────────────────────────────────────────────────────
+#: .\iftf_duoverkoop\templates\dashboard\user_form.html:5
+msgid "dashboard.user_form.title"
+msgstr "Gebruiker"
+
+#: .\iftf_duoverkoop\templates\dashboard\user_form.html:15
+msgid "dashboard.user_form.user"
+msgstr "Gebruiker"
+
+# ── Dashboard – users page ────────────────────────────────────────────────────
+#: .\iftf_duoverkoop\templates\dashboard\users.html:5
+msgid "dashboard.users.title"
+msgstr "Gebruikers — Dashboard"
+
+#: .\iftf_duoverkoop\templates\dashboard\users.html:15
+msgid "dashboard.users.new"
+msgstr "Nieuwe Gebruiker"
+
+#: .\iftf_duoverkoop\templates\dashboard\users.html:25
+msgid "dashboard.col.email"
+msgstr "E-mail"
+
+#: .\iftf_duoverkoop\templates\dashboard\users.html:26
+msgid "dashboard.col.role_group"
+msgstr "Rolgroep"
+
+#: .\iftf_duoverkoop\templates\dashboard\users.html:27
+msgid "dashboard.col.staff"
+msgstr "Staf"
+
+#: .\iftf_duoverkoop\templates\dashboard\users.html:28
+msgid "dashboard.col.active"
+msgstr "Actief"
+
+#: .\iftf_duoverkoop\templates\dashboard\users.html:29
+msgid "dashboard.col.last_login"
+msgstr "Laatste login"
+
+#: .\iftf_duoverkoop\templates\dashboard\users.html:30
+msgid "dashboard.col.purchases_created"
+msgstr "Aankopen aangemaakt"
+
+#: .\iftf_duoverkoop\templates\dashboard\users.html:41
+msgid "dashboard.users.badge_you"
+msgstr "jij"
+
+#: .\iftf_duoverkoop\templates\dashboard\users.html:44
+msgid "dashboard.users.badge_superuser"
+msgstr "supergebruiker"
+
+#: .\iftf_duoverkoop\templates\dashboard\users.html:71
+msgid "dashboard.users.inactive"
+msgstr "Inactief"
+
+#: .\iftf_duoverkoop\templates\dashboard\users.html:74
+msgid "dashboard.users.never_logged_in"
+msgstr "Nooit"
+
+#: .\iftf_duoverkoop\templates\dashboard\users.html:84
+#, fuzzy, python-format
+#| msgid "Delete user {{ username }}?"
+msgid "Delete user %(username)s?"
+msgstr "Gebruiker {{ username }} verwijderen?"
+
+#: .\iftf_duoverkoop\templates\dashboard\users.html:87
+msgid "dashboard.users.has_purchases"
+msgstr "Heeft aankopen op record"
+
+#: .\iftf_duoverkoop\templates\dashboard\users.html:96
+msgid "dashboard.empty.users"
+msgstr "Geen gebruikers gevonden."
 
 # Login page
 #: .\iftf_duoverkoop\templates\login.html:8

@@ -1,22 +1,23 @@
 {% extends "dashboard/base_dashboard.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}{{ action }} Association — Dashboard{% endblock %}
+{% block title %}{% translate "dashboard.association_form.title" %} — {% translate "dashboard.home.title" %}{% endblock %}
 
 {% block dashboard_content %}
 <div class="dash-breadcrumb">
-    <a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a> /
-    <a href="{% url 'dashboard:dashboard_associations' %}">Associations</a> /
+    <a href="{% url 'dashboard:dashboard_home' %}">{% translate "dashboard.home.title" %}</a> /
+    <a href="{% url 'dashboard:dashboard_associations' %}">{% translate "dashboard.sidebar.associations" %}</a> /
     {{ action }}
 </div>
 
-<h4 class="dash-section-title"><i class="bi bi-building"></i> {{ action }} Association</h4>
+<h4 class="dash-section-title"><i class="bi bi-building"></i> {{ action }} {% translate "dashboard.association_form.association" %}</h4>
 
 {% if action == 'Edit' and assoc %}
 <div class="alert alert-warning">
     <i class="bi bi-exclamation-triangle-fill"></i>
-    <strong>Note:</strong> Association name is the primary key.
-    Renaming it will update all linked performances automatically via a database transaction.
+    <strong>{% translate "dashboard.association_form.rename_note_title" %}</strong>
+    {% translate "dashboard.association_form.rename_note_body" %}
 </div>
 {% endif %}
 
@@ -35,14 +36,13 @@
             {% endfor %}
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-check-lg"></i> Save
+                    <i class="bi bi-check-lg"></i> {% translate "dashboard.action.save" %}
                 </button>
                 <a href="{% url 'dashboard:dashboard_associations' %}" class="btn btn-outline-secondary">
-                    Cancel
+                    {% translate "dashboard.action.cancel" %}
                 </a>
             </div>
         </form>
     </div>
 </div>
 {% endblock %}
-

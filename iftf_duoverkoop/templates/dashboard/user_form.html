@@ -1,17 +1,18 @@
 {% extends "dashboard/base_dashboard.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}{{ action }} User — Dashboard{% endblock %}
+{% block title %}{% translate "dashboard.user_form.title" %} — {% translate "dashboard.home.title" %}{% endblock %}
 
 {% block dashboard_content %}
 <div class="dash-breadcrumb">
-    <a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a> /
-    <a href="{% url 'dashboard:dashboard_users' %}">Users</a> /
+    <a href="{% url 'dashboard:dashboard_home' %}">{% translate "dashboard.home.title" %}</a> /
+    <a href="{% url 'dashboard:dashboard_users' %}">{% translate "dashboard.sidebar.users" %}</a> /
     {{ action }}{% if target %} {{ target.username }}{% endif %}
 </div>
 
 <h4 class="dash-section-title">
-    <i class="bi bi-person-fill"></i> {{ action }} User{% if target %}: {{ target.username }}{% endif %}
+    <i class="bi bi-person-fill"></i> {{ action }} {% translate "dashboard.user_form.user" %}{% if target %}: {{ target.username }}{% endif %}
 </h4>
 
 <div class="card" style="max-width:540px">
@@ -36,14 +37,13 @@
             {% endfor %}
             <div class="d-flex gap-2 mt-3">
                 <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-check-lg"></i> Save
+                    <i class="bi bi-check-lg"></i> {% translate "dashboard.action.save" %}
                 </button>
                 <a href="{% url 'dashboard:dashboard_users' %}" class="btn btn-outline-secondary">
-                    Cancel
+                    {% translate "dashboard.action.cancel" %}
                 </a>
             </div>
         </form>
     </div>
 </div>
 {% endblock %}
-
