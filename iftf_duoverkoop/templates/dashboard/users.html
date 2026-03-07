@@ -24,6 +24,7 @@
                     <th>{% translate "dashboard.col.username" %}</th>
                     <th>{% translate "dashboard.col.email" %}</th>
                     <th>{% translate "dashboard.col.role_group" %}</th>
+                    <th>{% translate "dashboard.col.association" %}</th>
                     <th>{% translate "dashboard.col.staff" %}</th>
                     <th>{% translate "dashboard.col.active" %}</th>
                     <th>{% translate "dashboard.col.last_login" %}</th>
@@ -53,6 +54,13 @@
                             {% else %}bg-success{% endif %}">
                             {{ row.group }}
                         </span>
+                        {% else %}
+                        <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if row.association %}
+                        <small class="text-muted">{{ row.association.name }}</small>
                         {% else %}
                         <span class="text-muted">—</span>
                         {% endif %}
@@ -93,7 +101,7 @@
                     </td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="8" class="text-center text-muted p-4">{% translate "dashboard.empty.users" %}</td></tr>
+                <tr><td colspan="9" class="text-center text-muted p-4">{% translate "dashboard.empty.users" %}</td></tr>
                 {% endfor %}
             </tbody>
         </table>

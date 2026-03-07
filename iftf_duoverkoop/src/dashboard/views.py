@@ -18,8 +18,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_http_methods
 
-from iftf_duoverkoop.src.core.models import Association, Performance, Purchase, PurchaseAuditLog, LoginAuditLog
-from iftf_duoverkoop.src.core.auth import setup_permission_groups
+from iftf_duoverkoop.src.core.models import Association, AssociationRepProfile, Performance, Purchase, PurchaseAuditLog, LoginAuditLog
+from iftf_duoverkoop.src.core.auth import setup_permission_groups, GROUP_ASSOCIATION_REP
 from iftf_duoverkoop.src.dashboard.forms import (
     AssociationForm, PerformanceForm, CreateUserForm, EditUserForm, LogoUploadForm,
 )
@@ -312,14 +312,22 @@ def dashboard_performance_delete(request: HttpRequest, key: str) -> HttpResponse
 
 @staff_required
 def dashboard_users(request: HttpRequest) -> HttpResponse:
-    user_data = [
-        {
+    user_data = []
+    for u in User.objects.prefetch_related('groups').order_by('username'):
+        group = u.groups.first()
+        group_name = group.name if group else '—'
+        association = None
+        if group_name == GROUP_ASSOCIATION_REP:
+            try:
+                association = u.association_rep_profile.association
+            except AssociationRepProfile.DoesNotExist:
+                pass
+        user_data.append({
             'user': u,
-            'group': u.groups.first().name if u.groups.first() else '—',
+            'group': group_name,
             'purchases_created': u.purchases_created.count(),
-        }
-        for u in User.objects.prefetch_related('groups').order_by('username')
-    ]
+            'association': association,
+        })
     return render(request, 'dashboard/users.html', {'user_data': user_data})
 
 
@@ -339,11 +347,18 @@ def dashboard_user_create(request: HttpRequest) -> HttpResponse:
                     user.groups.set([Group.objects.get(name=d['group'])])
                 except Group.DoesNotExist:
                     pass
+            # Create AssociationRepProfile when the rep group is chosen
+            if d.get('group') == GROUP_ASSOCIATION_REP and d.get('association'):
+                assoc = Association.objects.filter(name=d['association']).first()
+                if assoc:
+                    AssociationRepProfile.objects.create(user=user, association=assoc)
             messages.success(request, _('dashboard.users.created') % {'username': user.username})
             return redirect('dashboard:dashboard_users')
     else:
         form = CreateUserForm()
-    return render(request, 'dashboard/user_form.html', {'form': form, 'action': 'Create'})
+    return render(request, 'dashboard/user_form.html', {
+        'form': form, 'action': 'Create', 'rep_group': GROUP_ASSOCIATION_REP,
+    })
 
 
 @staff_required
@@ -366,16 +381,35 @@ def dashboard_user_edit(request: HttpRequest, user_id: int) -> HttpResponse:
                     target.groups.add(Group.objects.get(name=d['group']))
                 except Group.DoesNotExist:
                     pass
+            # Sync AssociationRepProfile
+            if d.get('group') == GROUP_ASSOCIATION_REP and d.get('association'):
+                assoc = Association.objects.filter(name=d['association']).first()
+                if assoc:
+                    AssociationRepProfile.objects.update_or_create(
+                        user=target, defaults={'association': assoc}
+                    )
+            else:
+                # Remove profile if the group is no longer Association Representative
+                AssociationRepProfile.objects.filter(user=target).delete()
             messages.success(request, _('dashboard.users.updated') % {'username': target.username})
             return redirect('dashboard:dashboard_users')
     else:
         current_group = target.groups.first()
+        current_association = ''
+        if current_group and current_group.name == GROUP_ASSOCIATION_REP:
+            try:
+                current_association = target.association_rep_profile.association.name
+            except AssociationRepProfile.DoesNotExist:
+                pass
         form = EditUserForm(initial={
             'email': target.email, 'is_staff': target.is_staff,
             'is_active': target.is_active,
             'group': current_group.name if current_group else '',
+            'association': current_association,
         })
-    return render(request, 'dashboard/user_form.html', {'form': form, 'action': 'Edit', 'target': target})
+    return render(request, 'dashboard/user_form.html', {
+        'form': form, 'action': 'Edit', 'target': target, 'rep_group': GROUP_ASSOCIATION_REP,
+    })
 
 
 @staff_required

@@ -123,15 +123,33 @@ class CreateUserForm(forms.Form):
     group = forms.ChoiceField(
         choices=GROUP_CHOICES,
         required=False,
-        widget=forms.Select(attrs={'class': 'form-select'}),
+        widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_group'}),
         label='Role group',
     )
+    association = forms.ChoiceField(
+        choices=[],
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_association'}),
+        label='Association (for representatives)',
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['association'].choices = [('', '— Select association —')] + [
+            (a.name, a.name) for a in Association.objects.order_by('name')
+        ]
 
     def clean_username(self):
         username = self.cleaned_data['username'].strip()
         if User.objects.filter(username=username).exists():
             raise ValidationError('A user with this username already exists.')
         return username
+
+    def clean(self):
+        cleaned = super().clean()
+        if cleaned.get('group') == GROUP_ASSOCIATION_REP and not cleaned.get('association'):
+            self.add_error('association', 'An association must be selected for Association Representatives.')
+        return cleaned
 
 
 class EditUserForm(forms.Form):
@@ -152,8 +170,14 @@ class EditUserForm(forms.Form):
     group = forms.ChoiceField(
         choices=GROUP_CHOICES,
         required=False,
-        widget=forms.Select(attrs={'class': 'form-select'}),
+        widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_group'}),
         label='Role group',
+    )
+    association = forms.ChoiceField(
+        choices=[],
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_association'}),
+        label='Association (for representatives)',
     )
     new_password = forms.CharField(
         required=False,
@@ -161,6 +185,18 @@ class EditUserForm(forms.Form):
         min_length=8,
         label='New password (leave blank to keep current)',
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['association'].choices = [('', '— Select association —')] + [
+            (a.name, a.name) for a in Association.objects.order_by('name')
+        ]
+
+    def clean(self):
+        cleaned = super().clean()
+        if cleaned.get('group') == GROUP_ASSOCIATION_REP and not cleaned.get('association'):
+            self.add_error('association', 'An association must be selected for Association Representatives.')
+        return cleaned
 
 
 class LogoUploadForm(forms.Form):

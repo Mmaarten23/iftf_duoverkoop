@@ -20,7 +20,7 @@
         <form method="post">
             {% csrf_token %}
             {% for field in form %}
-            <div class="mb-3">
+            <div class="mb-3{% if field.html_name == 'association' %} d-none" id="association-row{% endif %}">
                 {% if field.field.widget.input_type == 'checkbox' %}
                 <div class="form-check">
                     {{ field }}
@@ -46,4 +46,27 @@
         </form>
     </div>
 </div>
+
+<script>
+(function () {
+    var groupSelect = document.getElementById('id_group');
+    var assocRow = document.getElementById('association-row');
+    var assocSelect = document.getElementById('id_association');
+
+    function toggle() {
+        var isRep = groupSelect && groupSelect.value === '{{ rep_group }}';
+        if (assocRow) {
+            assocRow.classList.toggle('d-none', !isRep);
+        }
+        if (assocSelect) {
+            assocSelect.required = isRep;
+        }
+    }
+
+    if (groupSelect) {
+        groupSelect.addEventListener('change', toggle);
+        toggle();  // run on page load to handle pre-selected values
+    }
+})();
+</script>
 {% endblock %}
