@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-07 05:05+0100\n"
+"POT-Creation-Date: 2026-03-07 05:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -76,32 +76,32 @@ msgstr "Kan \"%(key)s\" niet verwijderen: %(sold)s ticket(s) verkocht."
 msgid "dashboard.performances.deleted"
 msgstr "Voorstelling \"%(key)s\" verwijderd."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:342
+#: .\iftf_duoverkoop\src\dashboard\views.py:355
 msgid "dashboard.users.created"
 msgstr "Gebruiker \"%(username)s\" aangemaakt."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:369
+#: .\iftf_duoverkoop\src\dashboard\views.py:394
 msgid "dashboard.users.updated"
 msgstr "Gebruiker \"%(username)s\" bijgewerkt."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:386
+#: .\iftf_duoverkoop\src\dashboard\views.py:420
 msgid "dashboard.users.error.cannot_delete_self"
 msgstr "Je kan je eigen account niet verwijderen."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:388
+#: .\iftf_duoverkoop\src\dashboard\views.py:422
 msgid "dashboard.users.error.has_purchases"
 msgstr ""
 "Kan \"%(username)s\" niet verwijderen: wordt gerefereerd door aankooprecords."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:392
+#: .\iftf_duoverkoop\src\dashboard\views.py:426
 msgid "dashboard.users.deleted"
 msgstr "Gebruiker \"%(username)s\" verwijderd."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:473
+#: .\iftf_duoverkoop\src\dashboard\views.py:507
 msgid "dashboard.system.permissions_synced"
 msgstr "Machtigingsgroepen succesvol opnieuw gesynchroniseerd."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:475
+#: .\iftf_duoverkoop\src\dashboard\views.py:509
 msgid "dashboard.system.permissions_sync_failed"
 msgstr "Synchronisatie van machtigingen mislukt: %(error)s"
 
@@ -135,15 +135,15 @@ msgstr "Vul veld in."
 msgid "error.sold_out"
 msgstr "Deze voorstelling is uitverkocht."
 
-#: .\iftf_duoverkoop\src\views\auth.py:31
+#: .\iftf_duoverkoop\src\views\auth.py:33
 msgid "login.success"
 msgstr "Welkom, %(username)s!"
 
-#: .\iftf_duoverkoop\src\views\auth.py:34
+#: .\iftf_duoverkoop\src\views\auth.py:38
 msgid "login.error"
 msgstr "Ongeldige gebruikersnaam of wachtwoord."
 
-#: .\iftf_duoverkoop\src\views\auth.py:46
+#: .\iftf_duoverkoop\src\views\auth.py:50
 msgid "login.logout_success"
 msgstr "%(username)s is uitgelogd."
 
@@ -160,12 +160,16 @@ msgstr "Ongeldige voorstelling geselecteerd."
 msgid "error.performance_no_longer_available"
 msgstr "Voorstelling %(number)s (%(performance)s) is niet meer beschikbaar."
 
-#: .\iftf_duoverkoop\src\views\order.py:85
+#: .\iftf_duoverkoop\src\views\order.py:26
+msgid "orderpage.error_rep_no_access"
+msgstr "Verenigingsvertegenwoordigers hebben geen toegang tot de bestelpagina."
+
+#: .\iftf_duoverkoop\src\views\order.py:88
 msgid "email.subject"
 msgstr "Bevestiging van je IFTF Duoticket aankoop"
 
 # Email with verification code
-#: .\iftf_duoverkoop\src\views\order.py:86
+#: .\iftf_duoverkoop\src\views\order.py:89
 msgid "email.message_with_code"
 msgstr ""
 "GEHEIME CODE: %(verification_code)s\n"
@@ -196,34 +200,34 @@ msgstr ""
 "\n"
 "IFTF Team"
 
-#: .\iftf_duoverkoop\src\views\order.py:95
+#: .\iftf_duoverkoop\src\views\order.py:98
 msgid "orderpage.success_with_code"
 msgstr "Bestelling succesvol! Jouw verificatiecode: %(code)s"
 
-#: .\iftf_duoverkoop\src\views\order.py:99
+#: .\iftf_duoverkoop\src\views\order.py:102
 msgid "orderpage.success_with_code_no_email"
 msgstr ""
 "Bestelling succesvol! Jouw verificatiecode: %(code)s (E-mail verzending "
 "uitgeschakeld)"
 
-#: .\iftf_duoverkoop\src\views\verify.py:57
+#: .\iftf_duoverkoop\src\views\verify.py:58
 msgid "verify.error_empty"
 msgstr "Voer een verificatiecode in."
 
-#: .\iftf_duoverkoop\src\views\verify.py:59
+#: .\iftf_duoverkoop\src\views\verify.py:60
 msgid "verify.error_invalid_format"
 msgstr "Ongeldige code indeling. Gebruik het formaat: woord-woord-woord"
 
-#: .\iftf_duoverkoop\src\views\verify.py:77
+#: .\iftf_duoverkoop\src\views\verify.py:78
 msgid "verify.error_wrong_association"
 msgstr "Deze code is geldig, maar hoort niet bij jouw vereniging."
 
-#: .\iftf_duoverkoop\src\views\verify.py:86
+#: .\iftf_duoverkoop\src\views\verify.py:99
 msgid "verify.error_wrong_performance"
 msgstr ""
 "Deze code is geldig voor jouw vereniging, maar voor een andere voorstelling:"
 
-#: .\iftf_duoverkoop\src\views\verify.py:94
+#: .\iftf_duoverkoop\src\views\verify.py:111
 msgid "verify.error_not_found"
 msgstr "Code niet gevonden. Controleer de code en probeer het opnieuw."
 
@@ -371,7 +375,7 @@ msgstr "Logobestand"
 # ── Dashboard – shared actions ────────────────────────────────────────────────
 #: .\iftf_duoverkoop\templates\dashboard\associations.html:78
 #: .\iftf_duoverkoop\templates\dashboard\performances.html:60
-#: .\iftf_duoverkoop\templates\dashboard\users.html:79
+#: .\iftf_duoverkoop\templates\dashboard\users.html:87
 msgid "dashboard.action.edit"
 msgstr "Bewerken"
 
@@ -750,6 +754,7 @@ msgid "dashboard.col.key"
 msgstr "Sleutel"
 
 #: .\iftf_duoverkoop\templates\dashboard\performances.html:25
+#: .\iftf_duoverkoop\templates\dashboard\users.html:27
 msgid "dashboard.col.association"
 msgstr "Vereniging"
 
@@ -859,49 +864,49 @@ msgstr "E-mail"
 msgid "dashboard.col.role_group"
 msgstr "Rolgroep"
 
-#: .\iftf_duoverkoop\templates\dashboard\users.html:27
+#: .\iftf_duoverkoop\templates\dashboard\users.html:28
 msgid "dashboard.col.staff"
 msgstr "Staf"
 
-#: .\iftf_duoverkoop\templates\dashboard\users.html:28
+#: .\iftf_duoverkoop\templates\dashboard\users.html:29
 msgid "dashboard.col.active"
 msgstr "Actief"
 
-#: .\iftf_duoverkoop\templates\dashboard\users.html:29
+#: .\iftf_duoverkoop\templates\dashboard\users.html:30
 msgid "dashboard.col.last_login"
 msgstr "Laatste login"
 
-#: .\iftf_duoverkoop\templates\dashboard\users.html:30
+#: .\iftf_duoverkoop\templates\dashboard\users.html:31
 msgid "dashboard.col.purchases_created"
 msgstr "Aankopen aangemaakt"
 
-#: .\iftf_duoverkoop\templates\dashboard\users.html:41
+#: .\iftf_duoverkoop\templates\dashboard\users.html:42
 msgid "dashboard.users.badge_you"
 msgstr "jij"
 
-#: .\iftf_duoverkoop\templates\dashboard\users.html:44
+#: .\iftf_duoverkoop\templates\dashboard\users.html:45
 msgid "dashboard.users.badge_superuser"
 msgstr "supergebruiker"
 
-#: .\iftf_duoverkoop\templates\dashboard\users.html:71
+#: .\iftf_duoverkoop\templates\dashboard\users.html:79
 msgid "dashboard.users.inactive"
 msgstr "Inactief"
 
-#: .\iftf_duoverkoop\templates\dashboard\users.html:74
+#: .\iftf_duoverkoop\templates\dashboard\users.html:82
 msgid "dashboard.users.never_logged_in"
 msgstr "Nooit"
 
-#: .\iftf_duoverkoop\templates\dashboard\users.html:84
+#: .\iftf_duoverkoop\templates\dashboard\users.html:92
 #, fuzzy, python-format
 #| msgid "Delete user {{ username }}?"
 msgid "Delete user %(username)s?"
 msgstr "Gebruiker {{ username }} verwijderen?"
 
-#: .\iftf_duoverkoop\templates\dashboard\users.html:87
+#: .\iftf_duoverkoop\templates\dashboard\users.html:95
 msgid "dashboard.users.has_purchases"
 msgstr "Heeft aankopen op record"
 
-#: .\iftf_duoverkoop\templates\dashboard\users.html:96
+#: .\iftf_duoverkoop\templates\dashboard\users.html:104
 msgid "dashboard.empty.users"
 msgstr "Geen gebruikers gevonden."
 
@@ -1070,74 +1075,76 @@ msgstr ""
 "ongedaan worden gemaakt."
 
 #: .\iftf_duoverkoop\templates\verification\verify_code.html:5
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:80
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:81
 msgid "verify.title"
 msgstr "Code Verificatie"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:90
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:91
 msgid "verify.enter_code"
 msgstr "Voer verificatiecode in"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:102
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:103
 msgid "verify.format_hint"
 msgstr "Formaat: woord-woord-woord (bijv. 'happy-tree-button')"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:109
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:110
 msgid "verify.select_performance"
 msgstr "Selecteer een voorstelling"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:116
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:117
 msgid "verify.select_performance_placeholder"
 msgstr "Kies een voorstelling"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:126
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:127
 msgid "verify.select_performance_hint"
 msgstr "Selecteer de voorstelling waarvoor je de code wilt controleren."
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:147
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:148
 msgid "verify.check_button"
 msgstr "Controleren"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:157
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:158
 msgid "verify.valid"
 msgstr "✓ Geldige Code"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:162
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:163
 msgid "verify.code"
 msgstr "Verificatiecode"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:169
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:170
 msgid "verify.customer_name"
 msgstr "Klantnaam"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:174
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:175
 msgid "verify.email"
 msgstr "E-mailadres"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:179
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:180
 msgid "verify.purchase_date"
 msgstr "Aankoopdatum"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:184
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:185
 msgid "verify.performances"
 msgstr "Voorstellingen"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:187
-msgid "verify.ticket_1"
-msgstr "Ticket 1"
-
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:192
-msgid "verify.ticket_2"
-msgstr "Ticket 2"
-
 #: .\iftf_duoverkoop\templates\verification\verify_code.html:200
+msgid "verify.ticket_other_performance"
+msgstr "Andere voorstelling van jouw vereniging"
+
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:208
 msgid "verify.created_by"
 msgstr "Aangemaakt door"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:206
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:214
 msgid "verify.last_modified"
 msgstr "Laatst gewijzigd"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:209
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:217
 msgid "verify.by"
 msgstr "door"
+
+#~ msgid "verify.ticket_1"
+#~ msgstr "Ticket 1"
+
+#~ msgid "verify.ticket_2"
+#~ msgstr "Ticket 2"

@@ -48,6 +48,7 @@ def verify_code(request: HttpRequest) -> HttpResponse:
             pass  # no profile set → behaves like a support-staff member
 
     selected_performance_key = None
+    ticket_display = []
 
     if request.method == 'POST':
         code = request.POST.get('verification_code', '').strip()
@@ -80,14 +81,30 @@ def verify_code(request: HttpRequest) -> HttpResponse:
                     ):
                         # Code is valid for the selected performance ✓
                         purchase = found_purchase
+                        # Build per-ticket display classification:
+                        # 'selected' = matches the chosen performance (prominent)
+                        # 'other_own' = same association, different performance (greyed)
+                        # tickets from other associations are excluded entirely
+                        ticket_display = []
+                        for ticket in (found_purchase.ticket1, found_purchase.ticket2):
+                            if ticket.association != rep_association:
+                                continue  # hide tickets not belonging to this association
+                            if ticket.key == selected_performance_key:
+                                ticket_display.append({'ticket': ticket, 'style': 'selected'})
+                            else:
+                                ticket_display.append({'ticket': ticket, 'style': 'other_own'})
                     else:
                         # Code belongs to this association, but a different performance
                         error_type = 'wrong_performance'
                         error_message = _('verify.error_wrong_performance')
                         wrong_performances = assoc_tickets
                 else:
-                    # Support staff / no rep profile → show full details as before
+                    # Support staff / no rep profile → show all tickets as normal
                     purchase = found_purchase
+                    ticket_display = [
+                        {'ticket': found_purchase.ticket1, 'style': 'normal'},
+                        {'ticket': found_purchase.ticket2, 'style': 'normal'},
+                    ]
 
             except Purchase.DoesNotExist:
                 error_type = 'not_found'
@@ -95,6 +112,7 @@ def verify_code(request: HttpRequest) -> HttpResponse:
 
     return render(request, 'verification/verify_code.html', {
         'purchase': purchase,
+        'ticket_display': ticket_display,
         'error_message': error_message,
         'error_type': error_type,
         'wrong_performances': wrong_performances,

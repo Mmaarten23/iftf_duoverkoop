@@ -15,13 +15,16 @@ from django.views.decorators.http import require_http_methods
 
 from iftf_duoverkoop.src.forms.order import OrderForm
 from iftf_duoverkoop.src import db
-from iftf_duoverkoop.src.core.auth import get_client_ip, log_purchase_action
+from iftf_duoverkoop.src.core.auth import get_client_ip, log_purchase_action, is_association_rep
 
 
 @login_required
 @require_http_methods(["GET", "POST"])
 def order(request: HttpRequest) -> HttpResponse:
     """Display the main order form with available performances."""
+    if is_association_rep(request.user):
+        messages.error(request, _('orderpage.error_rep_no_access'))
+        return redirect('verify_code')
     if not db.data_ready():
         return HttpResponseServerError(
             "The database has not been filled in correctly yet. "

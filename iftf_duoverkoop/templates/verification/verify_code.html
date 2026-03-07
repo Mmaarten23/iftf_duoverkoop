@@ -66,9 +66,10 @@
         border-radius: 4px;
     }
 
-    .performance-info.highlight-wrong {
-        background-color: #fff3cd;
-        border-left-color: #ffc107;
+    .performance-info.other-own {
+        background-color: #f8f9fa;
+        border-left-color: #adb5bd;
+        opacity: 0.6;
     }
 </style>
 {% endblock %}
@@ -183,16 +184,23 @@
             <div class="detail-row">
                 <div class="detail-label">{% translate "verify.performances" %}</div>
                 <div>
-                    <div class="performance-info {% if is_rep and rep_association and purchase.ticket1.association == rep_association %}{% else %}{% endif %}">
-                        <strong>{% translate "verify.ticket_1" %}</strong><br>
-                        {{ purchase.ticket1.selection }}<br>
-                        <small class="text-muted">{{ purchase.ticket1.date|date:"D d M Y H:i" }}</small>
+                    {% for entry in ticket_display %}
+                    <div class="performance-info{% if entry.style == 'other_own' %} other-own{% endif %}">
+                        {% if entry.style == 'selected' %}
+                        <strong>
+                            <i class="bi bi-check-circle-fill text-success me-1"></i>
+                            {{ entry.ticket.selection }}
+                        </strong>
+                        {% else %}
+                        <span>{{ entry.ticket.selection }}</span>
+                        {% endif %}
+                        <br>
+                        <small class="text-muted">{{ entry.ticket.date|date:"D d M Y H:i" }}</small>
+                        {% if entry.style == 'other_own' %}
+                        <br><small class="text-muted fst-italic">{% translate "verify.ticket_other_performance" %}</small>
+                        {% endif %}
                     </div>
-                    <div class="performance-info">
-                        <strong>{% translate "verify.ticket_2" %}</strong><br>
-                        {{ purchase.ticket2.selection }}<br>
-                        <small class="text-muted">{{ purchase.ticket2.date|date:"D d M Y H:i" }}</small>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
 
