@@ -13,7 +13,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 django.setup()
 
 from django.contrib.auth.models import User
-from iftf_duoverkoop.auth import setup_permission_groups, GROUP_POS_STAFF, GROUP_SUPPORT_STAFF
+from iftf_duoverkoop.src.core.auth import setup_permission_groups, GROUP_POS_STAFF, GROUP_SUPPORT_STAFF, GROUP_ASSOCIATION_REP
 
 
 def main():
@@ -28,6 +28,7 @@ def main():
         setup_permission_groups()
         print(f"✓ Created/updated '{GROUP_POS_STAFF}' group")
         print(f"✓ Created/updated '{GROUP_SUPPORT_STAFF}' group")
+        print(f"✓ Created/updated '{GROUP_ASSOCIATION_REP}' group")
     except Exception as e:
         print(f"✗ Error setting up groups: {e}")
         return False
@@ -45,6 +46,7 @@ def main():
         print("To assign users to groups, run:")
         print(f'  python manage.py assign_user_group <username> "{GROUP_POS_STAFF}"')
         print(f'  python manage.py assign_user_group <username> "{GROUP_SUPPORT_STAFF}"')
+        print(f'  python manage.py assign_user_group <username> "{GROUP_ASSOCIATION_REP}"')
     else:
         print("✓ All non-superuser accounts have group assignments")
     

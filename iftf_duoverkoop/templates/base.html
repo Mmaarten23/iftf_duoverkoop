@@ -15,7 +15,12 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
+            {# Brand link: reps go to verify, everyone else goes to order #}
+            {% if perms.iftf_duoverkoop.verify_purchase and not perms.iftf_duoverkoop.add_purchase %}
+            <a class="navbar-brand" href="{% url 'verify_code' %}">
+            {% else %}
             <a class="navbar-brand" href="{% url 'order' %}">
+            {% endif %}
                 <i class="bi bi-ticket-perforated-fill"></i> IF Theater Festival
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -23,18 +28,25 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
+                    {# Order – only for users who can create purchases (POS Staff, Support Staff) #}
+                    {% if perms.iftf_duoverkoop.add_purchase %}
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'order' %}active{% endif %}"
                            href="{% url 'order' %}">
                             <i class="bi bi-cart-fill"></i> {% translate "navbar.order" %}
                         </a>
                     </li>
+                    {% endif %}
+                    {# Purchase history – only for users who can view AND create purchases (POS Staff, Support Staff; excludes reps) #}
+                    {% if perms.iftf_duoverkoop.view_purchase and perms.iftf_duoverkoop.add_purchase %}
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'purchase_history' %}active{% endif %}"
                            href="{% url 'purchase_history' %}">
                             <i class="bi bi-clock-history"></i> {% translate "navbar.history" %}
                         </a>
                     </li>
+                    {% endif %}
+                    {# Verify – only for users with verify_purchase permission #}
                     {% if perms.iftf_duoverkoop.verify_purchase %}
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'verify_code' %}active{% endif %}"
@@ -43,13 +55,16 @@
                         </a>
                     </li>
                     {% endif %}
+                    {# Export – only for users with export_data permission (Support Staff) #}
                     {% if perms.iftf_duoverkoop.export_data %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'export' %}">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'export' %}active{% endif %}"
+                           href="{% url 'export' %}">
                             <i class="bi bi-download"></i> {% translate "navbar.export" %}
                         </a>
                     </li>
                     {% endif %}
+                    {# Dashboard – only for staff users #}
                     {% if user.is_staff %}
                     <li class="nav-item">
                         <a class="nav-link {% if 'dashboard' in request.resolver_match.url_name %}active{% endif %}"
