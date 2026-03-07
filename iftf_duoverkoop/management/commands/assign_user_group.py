@@ -3,19 +3,19 @@ Management command to assign users to permission groups.
 """
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import User, Group
-from iftf_duoverkoop.auth import GROUP_POS_STAFF, GROUP_SUPPORT_STAFF
+from iftf_duoverkoop.auth import GROUP_POS_STAFF, GROUP_SUPPORT_STAFF, GROUP_ASSOCIATION_REP
 
 
 class Command(BaseCommand):
-    help = 'Assign a user to a permission group (POS Staff or Support Staff)'
+    help = 'Assign a user to a permission group (POS Staff, Support Staff, or Association Representative)'
 
     def add_arguments(self, parser):
         parser.add_argument('username', type=str, help='Username to assign to group')
         parser.add_argument(
             'group',
             type=str,
-            choices=[GROUP_POS_STAFF, GROUP_SUPPORT_STAFF],
-            help=f'Group name: "{GROUP_POS_STAFF}" or "{GROUP_SUPPORT_STAFF}"'
+            choices=[GROUP_POS_STAFF, GROUP_SUPPORT_STAFF, GROUP_ASSOCIATION_REP],
+            help=f'Group name: "{GROUP_POS_STAFF}", "{GROUP_SUPPORT_STAFF}", or "{GROUP_ASSOCIATION_REP}"'
         )
 
     def handle(self, *args, **options):
@@ -45,6 +45,9 @@ class Command(BaseCommand):
         # Show user's permissions
         if group_name == GROUP_POS_STAFF:
             self.stdout.write('  Permissions: Create purchases, View purchase history (read-only)')
+        elif group_name == GROUP_SUPPORT_STAFF:
+            self.stdout.write('  Permissions: Create/Edit/Delete purchases, Export data, Verify tickets, View history')
         else:
-            self.stdout.write('  Permissions: Create/Edit/Delete purchases, Export data, View history')
+            self.stdout.write('  Permissions: Verify tickets by verification code only')
+
 

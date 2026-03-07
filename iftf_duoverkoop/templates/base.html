@@ -35,13 +35,15 @@
                             <i class="bi bi-clock-history"></i> {% translate "navbar.history" %}
                         </a>
                     </li>
-                    {% if perms.iftf_duoverkoop.change_purchase %}
+                    {% if perms.iftf_duoverkoop.verify_purchase %}
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'verify_code' %}active{% endif %}"
                            href="{% url 'verify_code' %}">
                             <i class="bi bi-check-circle"></i> {% translate "navbar.verify" %}
                         </a>
                     </li>
+                    {% endif %}
+                    {% if perms.iftf_duoverkoop.export_data %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'export' %}">
                             <i class="bi bi-download"></i> {% translate "navbar.export" %}

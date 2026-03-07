@@ -3,11 +3,11 @@ Management command to initialize permission groups and security settings.
 """
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
-from iftf_duoverkoop.auth import setup_permission_groups, GROUP_POS_STAFF, GROUP_SUPPORT_STAFF
+from iftf_duoverkoop.auth import setup_permission_groups, GROUP_POS_STAFF, GROUP_SUPPORT_STAFF, GROUP_ASSOCIATION_REP
 
 
 class Command(BaseCommand):
-    help = 'Initialize permission groups for POS Staff and Support Staff'
+    help = 'Initialize permission groups for POS Staff, Support Staff and Association Representatives'
 
     def handle(self, *args, **options):
         self.stdout.write('Setting up permission groups...')
@@ -16,7 +16,8 @@ class Command(BaseCommand):
             setup_permission_groups()
             self.stdout.write(self.style.SUCCESS(f'✓ Successfully created/updated permission groups'))
             self.stdout.write(f'  - {GROUP_POS_STAFF}: Can create purchases and view history')
-            self.stdout.write(f'  - {GROUP_SUPPORT_STAFF}: Can create, edit, delete purchases and export data')
+            self.stdout.write(f'  - {GROUP_SUPPORT_STAFF}: Can create, edit, delete purchases, export data, and verify tickets')
+            self.stdout.write(f'  - {GROUP_ASSOCIATION_REP}: Can verify tickets by verification code only')
 
             # Show existing users without groups
             users_without_groups = User.objects.filter(groups__isnull=True, is_superuser=False)

@@ -14,14 +14,17 @@ from iftf_duoverkoop.models import Purchase, PurchaseAuditLog
 # Permission group names
 GROUP_POS_STAFF = 'POS Staff'
 GROUP_SUPPORT_STAFF = 'Support Staff'
+GROUP_ASSOCIATION_REP = 'Association Representative'
 
 
 def setup_permission_groups() -> None:
     """
     Create and configure permission groups for the application.
 
-    - POS Staff: Can create purchases and view history (read-only)
-    - Support Staff: Can do everything POS Staff can do, plus edit/delete purchases and export data
+    - POS Staff: Can create purchases and view purchase history (read-only).
+    - Support Staff: Everything POS Staff can do, plus edit/delete purchases,
+      export data, and verify purchases by code.
+    - Association Representative: Can only look up purchases by verification code.
     """
     purchase_ct = ContentType.objects.get_for_model(Purchase)
 
@@ -41,8 +44,17 @@ def setup_permission_groups() -> None:
             Permission.objects.get(codename='view_purchase', content_type=purchase_ct),
             Permission.objects.get(codename='change_purchase', content_type=purchase_ct),
             Permission.objects.get(codename='delete_purchase', content_type=purchase_ct),
+            Permission.objects.get(codename='export_data', content_type=purchase_ct),
+            Permission.objects.get(codename='verify_purchase', content_type=purchase_ct),
         ]
         support_group.permissions.set(support_permissions)
+
+        # Create Association Representative group
+        rep_group, _ = Group.objects.get_or_create(name=GROUP_ASSOCIATION_REP)
+        rep_permissions = [
+            Permission.objects.get(codename='verify_purchase', content_type=purchase_ct),
+        ]
+        rep_group.permissions.set(rep_permissions)
 
 
 def is_pos_staff(user: User) -> bool:
@@ -55,14 +67,24 @@ def is_support_staff(user: User) -> bool:
     return user.groups.filter(name=GROUP_SUPPORT_STAFF).exists()
 
 
+def is_association_rep(user: User) -> bool:
+    """Check if user is a member of Association Representative group."""
+    return user.groups.filter(name=GROUP_ASSOCIATION_REP).exists()
+
+
 def can_edit_purchases(user: User) -> bool:
     """Check if user has permission to edit purchases (Support Staff only)."""
     return user.has_perm('iftf_duoverkoop.change_purchase')
 
 
 def can_export_data(user: User) -> bool:
-    """Check if user has permission to export data (Support Staff only)."""
-    return is_support_staff(user)
+    """Check if user has permission to export purchase data (Support Staff only)."""
+    return user.has_perm('iftf_duoverkoop.export_data')
+
+
+def can_verify_tickets(user: User) -> bool:
+    """Check if user has permission to look up purchases by verification code."""
+    return user.has_perm('iftf_duoverkoop.verify_purchase')
 
 
 def get_client_ip(request) -> Optional[str]:

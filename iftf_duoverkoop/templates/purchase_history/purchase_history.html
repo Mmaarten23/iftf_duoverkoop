@@ -167,7 +167,7 @@
     </div>
 </div>
 
-{% if user.is_staff %}
+{% if user_can_edit %}
 <!-- Edit Modal -->
 <div class="modal fade" id="editModal" tabindex="-1">
     <div class="modal-dialog">
@@ -370,7 +370,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    {% if user.is_staff %}
+    {% if user_can_edit %}
     // Edit functionality
     const editModal = new bootstrap.Modal(document.getElementById('editModal'));
     const editForm = document.getElementById('editForm');

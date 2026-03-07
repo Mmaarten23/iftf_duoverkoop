@@ -22,7 +22,6 @@ from iftf_duoverkoop.auth import (
     get_client_ip,
     log_purchase_action,
     can_edit_purchases,
-    can_export_data
 )
 from iftf_duoverkoop.verification_codes import validate_code_format, normalize_code
 
@@ -189,7 +188,7 @@ def purchase_history(request: HttpRequest) -> HttpResponse:
         'purchases': purchases,
         'available_performances': available_performances,
         'associations': associations,
-        'user_can_edit': user_can_edit
+        'user_can_edit': user_can_edit,
     })
 
 
@@ -329,15 +328,13 @@ def delete_purchase(request: HttpRequest, purchase_id: int) -> JsonResponse:
 
 
 @login_required
+@permission_required('iftf_duoverkoop.export_data', raise_exception=True)
 def export(request: HttpRequest) -> HttpResponse:
     """
     Export all purchases to CSV file grouped by association (Support Staff only).
 
-    Access is restricted to Support Staff members only.
+    Access is restricted to users with the export_data permission.
     """
-    # Check if user has export permission
-    if not can_export_data(request.user):
-        return HttpResponse(_('error.no_permission'), status=403)
 
     # generate the file
     file = StringIO()
@@ -364,12 +361,12 @@ def export(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-@permission_required('iftf_duoverkoop.change_purchase', raise_exception=True)
+@permission_required('iftf_duoverkoop.verify_purchase', raise_exception=True)
 def verify_code(request: HttpRequest) -> HttpResponse:
     """
-    Verification code lookup page (Support Staff only).
+    Verification code lookup page (Support Staff and Association Representatives).
 
-    Allows Support Staff to enter a three-word code and see purchase details.
+    Allows authorised users to enter a three-word code and see purchase details.
     """
     purchase = None
     error_message = None
@@ -401,12 +398,14 @@ def main(request: HttpRequest) -> HttpResponse:
     return redirect(reverse('order'), permanent=True)
 
 
+@login_required
 def db_info(request: HttpRequest) -> JsonResponse:
     """Return database type information."""
     from django.db import connection
     return JsonResponse({"database_type": connection.vendor})
 
 
+@login_required
 def get_performances_by_association(request: HttpRequest, association_name: str) -> JsonResponse:
     """Return performances for a specific association."""
     try:
@@ -424,6 +423,7 @@ def get_performances_by_association(request: HttpRequest, association_name: str)
         return JsonResponse({'error': str(e)}, status=500)
 
 
+@login_required
 def get_performance_prices(request: HttpRequest) -> JsonResponse:
     """Return prices for all available performances."""
     try:

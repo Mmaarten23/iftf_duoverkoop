@@ -83,6 +83,10 @@ class Purchase(models.Model):
             models.Index(fields=['verification_code']),
             models.Index(fields=['-date']),
         ]
+        permissions = [
+            ('export_data', 'Can export purchase data to CSV'),
+            ('verify_purchase', 'Can look up purchases by verification code'),
+        ]
 
 
 class PurchaseAuditLog(models.Model):
