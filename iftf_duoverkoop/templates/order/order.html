@@ -120,9 +120,6 @@
 
         <div class="col-lg-8">
             <div class="performances-container">
-                {# Seed the initial availability state so the polling loop has a baseline
-                   without needing an extra fetch on page load.
-                   json_script handles safe HTML-escaping of the JSON automatically. #}
                 {{ availability_seed|json_script:"availability-seed" }}
                 {% include "order/overview.html" %}
             </div>
