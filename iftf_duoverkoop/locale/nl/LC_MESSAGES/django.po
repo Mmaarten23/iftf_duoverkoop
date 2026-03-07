@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-07 05:29+0100\n"
+"POT-Creation-Date: 2026-03-07 15:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -164,12 +164,12 @@ msgstr "Voorstelling %(number)s (%(performance)s) is niet meer beschikbaar."
 msgid "orderpage.error_rep_no_access"
 msgstr "Verenigingsvertegenwoordigers hebben geen toegang tot de bestelpagina."
 
-#: .\iftf_duoverkoop\src\views\order.py:88
+#: .\iftf_duoverkoop\src\views\order.py:103
 msgid "email.subject"
 msgstr "Bevestiging van je IFTF Duoticket aankoop"
 
 # Email with verification code
-#: .\iftf_duoverkoop\src\views\order.py:89
+#: .\iftf_duoverkoop\src\views\order.py:104
 msgid "email.message_with_code"
 msgstr ""
 "GEHEIME CODE: %(verification_code)s\n"
@@ -200,11 +200,11 @@ msgstr ""
 "\n"
 "IFTF Team"
 
-#: .\iftf_duoverkoop\src\views\order.py:98
+#: .\iftf_duoverkoop\src\views\order.py:113
 msgid "orderpage.success_with_code"
 msgstr "Bestelling succesvol! Jouw verificatiecode: %(code)s"
 
-#: .\iftf_duoverkoop\src\views\order.py:102
+#: .\iftf_duoverkoop\src\views\order.py:117
 msgid "orderpage.success_with_code_no_email"
 msgstr ""
 "Bestelling succesvol! Jouw verificatiecode: %(code)s (E-mail verzending "
@@ -237,33 +237,33 @@ msgid "orderpage.title"
 msgstr "IFTF Bestellen"
 
 # Navigation bar translations
-#: .\iftf_duoverkoop\templates\base.html:29
+#: .\iftf_duoverkoop\templates\base.html:36
 msgid "navbar.order"
 msgstr "Bestellen"
 
-#: .\iftf_duoverkoop\templates\base.html:35
+#: .\iftf_duoverkoop\templates\base.html:45
 msgid "navbar.history"
 msgstr "Geschiedenis"
 
 # Verification page
-#: .\iftf_duoverkoop\templates\base.html:42
+#: .\iftf_duoverkoop\templates\base.html:54
 msgid "navbar.verify"
 msgstr "Verifiëren"
 
-#: .\iftf_duoverkoop\templates\base.html:49
+#: .\iftf_duoverkoop\templates\base.html:63
 msgid "navbar.export"
 msgstr "Exporteren"
 
-#: .\iftf_duoverkoop\templates\base.html:57
 #: .\iftf_duoverkoop\templates\base.html:72
+#: .\iftf_duoverkoop\templates\base.html:87
 msgid "navbar.dashboard"
 msgstr "Dashboard"
 
-#: .\iftf_duoverkoop\templates\base.html:77
+#: .\iftf_duoverkoop\templates\base.html:92
 msgid "navbar.logout"
 msgstr "Uitloggen"
 
-#: .\iftf_duoverkoop\templates\base.html:84
+#: .\iftf_duoverkoop\templates\base.html:99
 msgid "navbar.login"
 msgstr "Inloggen"
 
@@ -953,19 +953,26 @@ msgstr "Gegevens vorige klant invullen"
 msgid "orderpage.total_price"
 msgstr "Totaalprijs:"
 
-#: .\iftf_duoverkoop\templates\order\order.html:103
+#: .\iftf_duoverkoop\templates\order\order.html:114
 msgid "orderpage.submit_button"
 msgstr "Bestelling Plaatsen"
+
+# Shown in the warning banner when a selected performance sells out mid-session
+#: .\iftf_duoverkoop\templates\order\order.html:198
+msgid "orderpage.availability.soldout_deselected"
+msgstr "is net uitverkocht en is uit je selectie verwijderd."
+
+#: .\iftf_duoverkoop\templates\order\order.html:210
+#: .\iftf_duoverkoop\templates\order\order.html:214
+#: .\iftf_duoverkoop\templates\order\overview.html:32
+#: .\iftf_duoverkoop\templates\order\overview.html:34
+msgid "orderpage.sold_out"
+msgstr "Uitverkocht"
 
 # Order page overview
 #: .\iftf_duoverkoop\templates\order\overview.html:5
 msgid "orderpage.overview.title"
 msgstr "Beschikbare Voorstellingen"
-
-#: .\iftf_duoverkoop\templates\order\overview.html:32
-#: .\iftf_duoverkoop\templates\order\overview.html:34
-msgid "orderpage.sold_out"
-msgstr "Uitverkocht"
 
 #: .\iftf_duoverkoop\templates\order\overview.html:41
 #: .\iftf_duoverkoop\templates\order\overview.html:51

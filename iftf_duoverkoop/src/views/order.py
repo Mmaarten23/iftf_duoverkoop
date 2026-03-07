@@ -34,17 +34,32 @@ def order(request: HttpRequest) -> HttpResponse:
     form = _process_order_form(request, None, None)
     performances_by_association = db.get_performances_by_association()
 
+    # Build the initial availability snapshot that seeds the JS polling cache.
+    # We collect it here (alongside the template data) so we only call
+    # tickets_left() once per performance rather than twice.
+    # Passed as a plain dict; the template's json_script tag handles safe
+    # serialisation and HTML-escaping.
+    availability_seed: dict[str, dict] = {}
+
     for association, performances in performances_by_association.items():
         for performance in performances:
+            left = performance.tickets_left()
             performance.availability_percentage = (
-                performance.tickets_left() / performance.max_tickets * 100
+                left / performance.max_tickets * 100
             )
+            availability_seed[performance.key] = {
+                'tickets_left': left,
+                'max_tickets': performance.max_tickets,
+            }
         unique_names = sorted({p.name for p in performances})
         association.unique_performance_names = unique_names
 
     return render(request, 'order/order.html', {
         'form': form,
         'performances': performances_by_association,
+        # The json_script template tag serialises this dict into a safe
+        # <script type="application/json"> block on the page.
+        'availability_seed': availability_seed,
     })
 
 

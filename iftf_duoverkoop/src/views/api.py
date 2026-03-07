@@ -3,6 +3,7 @@ views/api.py – Internal JSON API endpoints consumed by the front-end JS.
 """
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, JsonResponse
+from django.views.decorators.http import require_GET
 
 from iftf_duoverkoop.src import db
 
@@ -38,4 +39,40 @@ def get_performance_prices(request: HttpRequest) -> JsonResponse:
         }})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+@require_GET
+def get_availability(request: HttpRequest) -> JsonResponse:
+    """
+    Return current ticket availability for every performance.
+
+    Consumed by the order-page polling loop to keep tile states fresh
+    without a full page reload.  Returns ALL performances (including
+    sold-out ones) so the client can detect transitions in both
+    directions (available → sold-out and back).
+
+    Response shape:
+        {
+            "performances": {
+                "<key>": {
+                    "tickets_left": <int>,
+                    "max_tickets":  <int>
+                },
+                ...
+            }
+        }
+    """
+    try:
+        performances = {
+            p.key: {
+                'tickets_left': p.tickets_left(),
+                'max_tickets': p.max_tickets,
+            }
+            for p in db.get_all_performances()
+        }
+        return JsonResponse({'performances': performances})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
 

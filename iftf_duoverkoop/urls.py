@@ -9,7 +9,7 @@ from iftf_duoverkoop.src.views.order import order, main, get_last_customer
 from iftf_duoverkoop.src.views.history import purchase_history, edit_purchase, delete_purchase
 from iftf_duoverkoop.src.views.export import export
 from iftf_duoverkoop.src.views.verify import verify_code
-from iftf_duoverkoop.src.views.api import db_info, get_performances_by_association, get_performance_prices
+from iftf_duoverkoop.src.views.api import db_info, get_performances_by_association, get_performance_prices, get_availability
 from iftf_duoverkoop.src.dashboard.urls import urlpatterns as dashboard_urlpatterns
 from iftf_duoverkoop import urls_dev
 
@@ -33,6 +33,7 @@ urlpatterns = [
     path('api/performances-by-association/<str:association_name>/', get_performances_by_association, name='get_performances_by_association'),
     path('api/performance-prices/', get_performance_prices, name='get_performance_prices'),
     path('api/last-customer/', get_last_customer, name='get_last_customer'),
+    path('api/availability/', get_availability, name='get_availability'),
 ]
 
 if settings.DEBUG:

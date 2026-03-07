@@ -99,6 +99,17 @@
                             </div>
                         </div>
 
+                        <!-- Live availability: sold-out warning (shown by JS when a selected
+                             performance sells out while the form is open) -->
+                        <div id="soldOutWarning"
+                             class="alert alert-warning alert-dismissible fade show d-none"
+                             role="alert">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <span id="soldOutWarningText"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                        </div>
+
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="bi bi-check-circle-fill"></i> {% translate "orderpage.submit_button" %}
                         </button>
@@ -109,6 +120,10 @@
 
         <div class="col-lg-8">
             <div class="performances-container">
+                {# Seed the initial availability state so the polling loop has a baseline
+                   without needing an extra fetch on page load.
+                   json_script handles safe HTML-escaping of the JSON automatically. #}
+                {{ availability_seed|json_script:"availability-seed" }}
                 {% include "order/overview.html" %}
             </div>
         </div>
@@ -118,77 +133,254 @@
 
 {% block extra_js %}
 <script>
+    // -----------------------------------------------------------------------
+    // Performance prices (used for the total-price display in the form)
+    // -----------------------------------------------------------------------
     let performancePrices = {};
 
-    // Load performance prices
-    fetch('/api/performance-prices/')
-        .then(response => response.json())
-        .then(data => {
-            performancePrices = data.prices;
-        })
-        .catch(error => {
-            console.error('Error loading prices:', error);
-        });
+    fetch('{% url "get_performance_prices" %}')
+        .then(r => r.json())
+        .then(data => { performancePrices = data.prices || {}; })
+        .catch(() => {});
 
-    function updatePriceDisplay() {
-        const perf1Select = document.getElementById('{{ form.performance1.id_for_label }}');
-        const perf2Select = document.getElementById('{{ form.performance2.id_for_label }}');
-        const priceDisplay = document.getElementById('priceDisplay');
-        const totalPrice = document.getElementById('totalPrice');
-
-        const perf1Key = perf1Select.value;
-        const perf2Key = perf2Select.value;
-
-        let total = 0;
-
-        if (perf1Key && performancePrices[perf1Key]) {
-            total += performancePrices[perf1Key];
-        }
-
-        if (perf2Key && performancePrices[perf2Key]) {
-            total += performancePrices[perf2Key];
-        }
-
-        if (total > 0) {
-            totalPrice.textContent = '€' + total.toFixed(2);
-            priceDisplay.style.display = 'block';
-        } else {
-            priceDisplay.style.display = 'none';
-        }
-
-        // Update visual state of performance tiles
-        updateTileStates();
+    // -----------------------------------------------------------------------
+    // Availability state
+    // Seeded from the server at page-load; kept up-to-date by the poll loop.
+    // Shape: { "<key>": { tickets_left: <int>, max_tickets: <int> } }
+    // -----------------------------------------------------------------------
+    let availabilityCache = {};
+    try {
+        const seed = document.getElementById('availability-seed');
+        availabilityCache = JSON.parse(seed ? seed.textContent : '{}');
+    } catch (e) {
+        console.warn('Could not parse availability seed:', e);
     }
 
-    function updateTileStates() {
-        const perf1Select = document.getElementById('{{ form.performance1.id_for_label }}');
-        const perf2Select = document.getElementById('{{ form.performance2.id_for_label }}');
-        const perf1Key = perf1Select.value;
-        const perf2Key = perf2Select.value;
+    // -----------------------------------------------------------------------
+    // Helpers: classify a performance tile based on availability
+    // -----------------------------------------------------------------------
+    const AVAIL_CLASSES = [
+        'performance-high-availability',
+        'performance-medium-availability',
+        'performance-low-availability',
+    ];
 
-        // Reset all tiles to default state
-        document.querySelectorAll('.performance-btn').forEach(btn => {
-            const key = btn.dataset.performanceKey;
+    function availabilityClass(ticketsLeft, maxTickets) {
+        if (maxTickets <= 0) return 'performance-high-availability';
+        const pct = ticketsLeft / maxTickets * 100;
+        if (pct > 50)  return 'performance-high-availability';
+        if (pct > 25)  return 'performance-medium-availability';
+        return 'performance-low-availability';
+    }
 
-            // Remove selected state
-            btn.classList.remove('performance-selected');
+    // -----------------------------------------------------------------------
+    // Flash animation helper
+    // Applies a CSS animation class, then removes it after it finishes so it
+    // can be replayed on subsequent updates.
+    // -----------------------------------------------------------------------
+    function flashTile(el, soldOutSelected) {
+        const cls = soldOutSelected ? 'availability-soldout-selected' : 'availability-changed';
+        // Remove first in case a previous animation hasn't cleaned up yet
+        el.classList.remove('availability-changed', 'availability-soldout-selected');
+        // Force a reflow so the browser re-triggers the animation
+        void el.offsetWidth;
+        el.classList.add(cls);
+        el.addEventListener('animationend', () => el.classList.remove(cls), { once: true });
+    }
 
-            // Check if this tile is selected
-            if (key === perf1Key || key === perf2Key) {
-                // Apply selected state with glowing effect
-                btn.classList.add('performance-selected');
+    // -----------------------------------------------------------------------
+    // Show sold-out warning banner
+    // -----------------------------------------------------------------------
+    function showSoldOutWarning(performanceName) {
+        const banner = document.getElementById('soldOutWarning');
+        const text   = document.getElementById('soldOutWarningText');
+        if (!banner || !text) return;
+        text.textContent = ' "' + performanceName + '" {% translate "orderpage.availability.soldout_deselected" %}';
+        banner.classList.remove('d-none');
+    }
+
+    // -----------------------------------------------------------------------
+    // Convert a live button tile into a sold-out span (mirrors the server-
+    // rendered markup from overview.html so a page refresh looks identical)
+    // -----------------------------------------------------------------------
+    function convertTileToSoldOut(btn) {
+        const span = document.createElement('span');
+        span.className = 'performance-badge performance-sold-out-sm';
+        span.dataset.performanceKey = btn.dataset.performanceKey;
+        span.title = '{% translate "orderpage.sold_out" %}';
+        // Preserve inner HTML (date label etc.) but append sold-out label
+        span.innerHTML =
+            '<small>' + btn.querySelector('small').textContent + '</small>' +
+            '<span class="d-block text-secondary fw-bold small">{% translate "orderpage.sold_out" %}</span>';
+        btn.replaceWith(span);
+        return span;
+    }
+
+    // -----------------------------------------------------------------------
+    // Remove a performance key from both <select> dropdowns.
+    // Returns true if it was actually selected in either slot.
+    // -----------------------------------------------------------------------
+    function removeFromSelects(key) {
+        const sel1 = document.getElementById('{{ form.performance1.id_for_label }}');
+        const sel2 = document.getElementById('{{ form.performance2.id_for_label }}');
+        let wasSelected = false;
+        [sel1, sel2].forEach(sel => {
+            if (!sel) return;
+            if (sel.value === key) {
+                sel.value = '';
+                wasSelected = true;
+            }
+            // Remove the <option> so it can't be re-selected via the dropdown
+            const opt = sel.querySelector('option[value="' + CSS.escape(key) + '"]');
+            if (opt) opt.remove();
+        });
+        return wasSelected;
+    }
+
+    // -----------------------------------------------------------------------
+    // Core diff function – called after each poll response
+    // Compares fresh data against the local cache and updates only changed tiles
+    // -----------------------------------------------------------------------
+    function applyAvailabilityUpdate(freshData) {
+        Object.entries(freshData).forEach(([key, fresh]) => {
+            const cached = availabilityCache[key];
+
+            // Nothing changed – skip
+            if (cached &&
+                cached.tickets_left === fresh.tickets_left &&
+                cached.max_tickets  === fresh.max_tickets) {
+                return;
+            }
+
+            // Update cache immediately
+            availabilityCache[key] = fresh;
+
+            const isSoldOut = fresh.tickets_left <= 0;
+
+            // Find the tile in the DOM (either a button or an existing sold-out span)
+            const tile = document.querySelector('[data-performance-key="' + CSS.escape(key) + '"]');
+            if (!tile) return;
+
+            if (isSoldOut) {
+                // ── Transition to sold out ──────────────────────────────────
+                const wasSelected = removeFromSelects(key);
+
+                // Animate before converting (tile may be replaced)
+                if (tile.tagName === 'BUTTON') {
+                    const displayName = tile.querySelector('small')
+                        ? tile.querySelector('small').textContent.trim()
+                        : key;
+
+                    flashTile(tile, wasSelected);
+
+                    // Short delay so the flash is visible before DOM replacement
+                    setTimeout(() => {
+                        // Re-query because the element is still in the DOM at this point
+                        const current = document.querySelector('[data-performance-key="' + CSS.escape(key) + '"]');
+                        if (current && current.tagName === 'BUTTON') {
+                            convertTileToSoldOut(current);
+                        }
+                    }, 300);
+
+                    if (wasSelected) {
+                        showSoldOutWarning(displayName);
+                        updatePriceDisplay(); // recalculate total without this ticket
+                    }
+                }
+            } else {
+                // ── Availability count changed (but not sold out) ───────────
+                // Update the badge counter text
+                const badge = tile.querySelector('.badge');
+                if (badge) {
+                    badge.textContent = fresh.tickets_left + '/' + fresh.max_tickets;
+                }
+
+                // Re-colour the tile
+                AVAIL_CLASSES.forEach(c => tile.classList.remove(c));
+                tile.classList.add(availabilityClass(fresh.tickets_left, fresh.max_tickets));
+
+                flashTile(tile, false);
             }
         });
     }
 
-    // Track which slot was last updated for cycling behavior
+    // -----------------------------------------------------------------------
+    // Polling loop – fetches /api/availability/ every 20 seconds
+    // Failures are swallowed silently (network blip during festival = OK)
+    // -----------------------------------------------------------------------
+    const POLL_INTERVAL_MS = 20_000;
+
+    function pollAvailability() {
+        fetch('{% url "get_availability" %}', { credentials: 'same-origin' })
+            .then(r => {
+                if (!r.ok) throw new Error('HTTP ' + r.status);
+                return r.json();
+            })
+            .then(data => {
+                if (data && data.performances) {
+                    applyAvailabilityUpdate(data.performances);
+                }
+            })
+            .catch(() => {
+                // Silent – a missed poll is harmless; the server validates on submit
+            });
+    }
+
+    // -----------------------------------------------------------------------
+    // Price display
+    // -----------------------------------------------------------------------
+    function updatePriceDisplay() {
+        const perf1Select = document.getElementById('{{ form.performance1.id_for_label }}');
+        const perf2Select = document.getElementById('{{ form.performance2.id_for_label }}');
+        const priceDisplay = document.getElementById('priceDisplay');
+        const totalPriceEl = document.getElementById('totalPrice');
+
+        const perf1Key = perf1Select ? perf1Select.value : '';
+        const perf2Key = perf2Select ? perf2Select.value : '';
+
+        let total = 0;
+        if (perf1Key && performancePrices[perf1Key]) total += performancePrices[perf1Key];
+        if (perf2Key && performancePrices[perf2Key]) total += performancePrices[perf2Key];
+
+        if (priceDisplay && totalPriceEl) {
+            if (total > 0) {
+                totalPriceEl.textContent = '€' + total.toFixed(2);
+                priceDisplay.style.display = 'block';
+            } else {
+                priceDisplay.style.display = 'none';
+            }
+        }
+
+        updateTileStates();
+    }
+
+    // -----------------------------------------------------------------------
+    // Tile selected-state highlight
+    // -----------------------------------------------------------------------
+    function updateTileStates() {
+        const perf1Key = document.getElementById('{{ form.performance1.id_for_label }}')?.value || '';
+        const perf2Key = document.getElementById('{{ form.performance2.id_for_label }}')?.value || '';
+
+        document.querySelectorAll('.performance-btn').forEach(btn => {
+            const key = btn.dataset.performanceKey;
+            if (key === perf1Key || key === perf2Key) {
+                btn.classList.add('performance-selected');
+            } else {
+                btn.classList.remove('performance-selected');
+            }
+        });
+    }
+
+    // -----------------------------------------------------------------------
+    // Slot-cycling selection logic
+    // -----------------------------------------------------------------------
     let lastUpdatedSlot = null;
 
     function selectPerformance(performanceKey) {
         const perf1Select = document.getElementById('{{ form.performance1.id_for_label }}');
         const perf2Select = document.getElementById('{{ form.performance2.id_for_label }}');
 
-        // Check if clicking on an already selected performance (deselection)
+        // Deselect if already selected
         if (perf1Select.value === performanceKey) {
             perf1Select.value = '';
             lastUpdatedSlot = null;
@@ -202,76 +394,67 @@
             return;
         }
 
-        // If performance 1 is empty, fill it
         if (!perf1Select.value) {
             perf1Select.value = performanceKey;
             lastUpdatedSlot = 1;
-        }
-        // If performance 2 is empty, fill it
-        else if (!perf2Select.value) {
+        } else if (!perf2Select.value) {
             perf2Select.value = performanceKey;
             lastUpdatedSlot = 2;
-        }
-        // Both are filled - cycle based on last updated slot
-        else {
-            // If last updated was slot 1, update slot 2 next (and vice versa)
-            if (lastUpdatedSlot === 1) {
-                perf2Select.value = performanceKey;
-                lastUpdatedSlot = 2;
-            } else {
-                // Default to updating slot 1 if lastUpdatedSlot is null or 2
-                perf1Select.value = performanceKey;
-                lastUpdatedSlot = 1;
-            }
+        } else if (lastUpdatedSlot === 1) {
+            perf2Select.value = performanceKey;
+            lastUpdatedSlot = 2;
+        } else {
+            perf1Select.value = performanceKey;
+            lastUpdatedSlot = 1;
         }
 
         updatePriceDisplay();
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Add Bootstrap classes to form fields
-        document.querySelectorAll('input[type="text"], input[type="email"]').forEach(function(input) {
-            input.classList.add('form-control');
-        });
+    // -----------------------------------------------------------------------
+    // DOM ready
+    // -----------------------------------------------------------------------
+    document.addEventListener('DOMContentLoaded', function () {
+        // Bootstrap form-control classes
+        document.querySelectorAll('input[type="text"], input[type="email"]')
+            .forEach(el => el.classList.add('form-control'));
 
-        document.querySelectorAll('select').forEach(function(select) {
-            select.classList.add('form-select');
-
-            // Add change event listener for price updates and tile synchronization
-            select.addEventListener('change', function() {
-                // Track which slot was changed for cycling behavior
-                if (select.id === '{{ form.performance1.id_for_label }}') {
-                    lastUpdatedSlot = 1;
-                } else if (select.id === '{{ form.performance2.id_for_label }}') {
-                    lastUpdatedSlot = 2;
-                }
+        document.querySelectorAll('select').forEach(sel => {
+            sel.classList.add('form-select');
+            sel.addEventListener('change', function () {
+                lastUpdatedSlot = (sel.id === '{{ form.performance1.id_for_label }}') ? 1 : 2;
                 updatePriceDisplay();
             });
         });
 
-        // Add click handlers to performance tiles
+        // Tile click handlers
         document.querySelectorAll('.performance-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 selectPerformance(this.dataset.performanceKey);
             });
         });
 
-        // Initial price calculation and tile state
         updatePriceDisplay();
 
-        // Prefill button: show if this session has a previous customer on record
-        fetch("{% url 'get_last_customer' %}")
+        // Prefill button
+        fetch('{% url "get_last_customer" %}')
             .then(r => r.json())
             .then(data => {
                 if (data.found) {
                     document.getElementById('prefillContainer').style.display = 'block';
                     document.getElementById('prefillBtn').addEventListener('click', function () {
-                        document.getElementById('{{ form.name.id_for_label }}').value = data.name;
+                        document.getElementById('{{ form.name.id_for_label }}').value  = data.name;
                         document.getElementById('{{ form.email.id_for_label }}').value = data.email;
                     });
                 }
             })
             .catch(() => {});
+
+        // Start polling after the first interval (page just loaded = data is fresh)
+        setTimeout(function tick() {
+            pollAvailability();
+            setTimeout(tick, POLL_INTERVAL_MS);
+        }, POLL_INTERVAL_MS);
     });
 </script>
 {% endblock %}
