@@ -2,6 +2,7 @@
 # All model definitions live in src/core/models.py.
 from iftf_duoverkoop.src.core.models import (  # noqa: F401
     Association,
+    AssociationRepProfile,
     Performance,
     Purchase,
     PurchaseAuditLog,

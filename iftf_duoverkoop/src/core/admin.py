@@ -6,7 +6,7 @@ from django import forms
 import os
 from django.conf import settings
 
-from iftf_duoverkoop.src.core.models import Association, Performance, Purchase, PurchaseAuditLog, LoginAuditLog
+from iftf_duoverkoop.src.core.models import Association, AssociationRepProfile, Performance, Purchase, PurchaseAuditLog, LoginAuditLog
 
 
 class AssociationAdminForm(forms.ModelForm):
@@ -27,6 +27,14 @@ class AssociationAdminForm(forms.ModelForm):
 @admin.register(Association)
 class AssociationAdmin(admin.ModelAdmin):
     form = AssociationAdminForm
+
+
+@admin.register(AssociationRepProfile)
+class AssociationRepProfileAdmin(admin.ModelAdmin):
+    list_display = ['user', 'association']
+    list_filter = ['association']
+    search_fields = ['user__username', 'association__name']
+    autocomplete_fields = []
 
 
 @admin.register(Performance)

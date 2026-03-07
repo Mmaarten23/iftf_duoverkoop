@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-07 04:34+0100\n"
+"POT-Creation-Date: 2026-03-07 04:54+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -121,15 +121,24 @@ msgstr ""
 "Bestelling succesvol! Jouw verificatiecode: %(code)s (E-mail verzending "
 "uitgeschakeld)"
 
-#: .\iftf_duoverkoop\src\views\verify.py:30
+#: .\iftf_duoverkoop\src\views\verify.py:57
 msgid "verify.error_empty"
 msgstr "Voer een verificatiecode in."
 
-#: .\iftf_duoverkoop\src\views\verify.py:32
+#: .\iftf_duoverkoop\src\views\verify.py:59
 msgid "verify.error_invalid_format"
 msgstr "Ongeldige code indeling. Gebruik het formaat: woord-woord-woord"
 
-#: .\iftf_duoverkoop\src\views\verify.py:37
+#: .\iftf_duoverkoop\src\views\verify.py:77
+msgid "verify.error_wrong_association"
+msgstr "Deze code is geldig, maar hoort niet bij jouw vereniging."
+
+#: .\iftf_duoverkoop\src\views\verify.py:86
+msgid "verify.error_wrong_performance"
+msgstr ""
+"Deze code is geldig voor jouw vereniging, maar voor een andere voorstelling:"
+
+#: .\iftf_duoverkoop\src\views\verify.py:94
 msgid "verify.error_not_found"
 msgstr "Code niet gevonden. Controleer de code en probeer het opnieuw."
 
@@ -334,62 +343,74 @@ msgstr ""
 "ongedaan worden gemaakt."
 
 #: .\iftf_duoverkoop\templates\verification\verify_code.html:5
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:75
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:80
 msgid "verify.title"
 msgstr "Code Verificatie"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:85
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:90
 msgid "verify.enter_code"
 msgstr "Voer verificatiecode in"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:97
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:102
 msgid "verify.format_hint"
 msgstr "Formaat: woord-woord-woord (bijv. 'happy-tree-button')"
 
 #: .\iftf_duoverkoop\templates\verification\verify_code.html:109
+msgid "verify.select_performance"
+msgstr "Selecteer een voorstelling"
+
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:116
+msgid "verify.select_performance_placeholder"
+msgstr "Kies een voorstelling"
+
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:126
+msgid "verify.select_performance_hint"
+msgstr "Selecteer de voorstelling waarvoor je de code wilt controleren."
+
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:147
 msgid "verify.check_button"
 msgstr "Controleren"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:119
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:157
 msgid "verify.valid"
 msgstr "✓ Geldige Code"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:124
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:162
 msgid "verify.code"
 msgstr "Verificatiecode"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:131
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:169
 msgid "verify.customer_name"
 msgstr "Klantnaam"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:136
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:174
 msgid "verify.email"
 msgstr "E-mailadres"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:141
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:179
 msgid "verify.purchase_date"
 msgstr "Aankoopdatum"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:146
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:184
 msgid "verify.performances"
 msgstr "Voorstellingen"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:149
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:187
 msgid "verify.ticket_1"
 msgstr "Ticket 1"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:154
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:192
 msgid "verify.ticket_2"
 msgstr "Ticket 2"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:162
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:200
 msgid "verify.created_by"
 msgstr "Aangemaakt door"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:168
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:206
 msgid "verify.last_modified"
 msgstr "Laatst gewijzigd"
 
-#: .\iftf_duoverkoop\templates\verification\verify_code.html:171
+#: .\iftf_duoverkoop\templates\verification\verify_code.html:209
 msgid "verify.by"
 msgstr "door"

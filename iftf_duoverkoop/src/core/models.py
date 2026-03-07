@@ -96,6 +96,34 @@ class Purchase(models.Model):
         ]
 
 
+class AssociationRepProfile(models.Model):
+    """
+    Links an Association Representative user to the association they represent.
+
+    Each rep can be linked to exactly one association.  This is used on the
+    verification page to let reps filter by one of their own performances.
+    """
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='association_rep_profile',
+        help_text="The association representative user account",
+    )
+    association = models.ForeignKey(
+        Association,
+        on_delete=models.CASCADE,
+        related_name='rep_profiles',
+        help_text="The association this representative belongs to",
+    )
+
+    def __str__(self) -> str:
+        return f"{self.user.username} → {self.association.name}"
+
+    class Meta:
+        verbose_name = "Association Rep Profile"
+        verbose_name_plural = "Association Rep Profiles"
+
+
 class PurchaseAuditLog(models.Model):
     """
     Append-only audit log for all purchase operations.
