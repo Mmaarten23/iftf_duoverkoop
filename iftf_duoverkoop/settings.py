@@ -149,7 +149,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # For development; change to SMTP for production
 SEND_EMAILS = True # os.environ.get("SEND_EMAILS", "False").lower() == "true" # Control email sending via environment variable
-EMAIL_HOST = 'smtp.mailgun.org'
+EMAIL_HOST = 'smtp.eu.mailgun.org'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'no-reply@mg.iftfduoverkoop.dpdns.org'
