@@ -147,6 +147,13 @@ def order_form(request: HttpRequest, performance_1: Optional[str], performance_2
                 # Email sending disabled - show success message with code but don't send email
                 messages.success(request, _('orderpage.success_with_code_no_email') % {'code': purchase.verification_code})
 
+            # Store the customer details in the session so the operator can
+            # quickly prefill them for the next ticket (session is per browser
+            # tab/PC, so concurrent frontends never interfere with each other).
+            request.session['last_customer'] = {
+                'name': purchase.name,
+                'email': purchase.email,
+            }
             form = OrderForm()
     else:
         initial = {}
@@ -430,3 +437,12 @@ def get_performance_prices(request: HttpRequest) -> JsonResponse:
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+
+
+@login_required
+def get_last_customer(request: HttpRequest) -> JsonResponse:
+    "Return the name and email of the last customer submitted in this session."
+    last = request.session.get('last_customer')
+    if last:
+        return JsonResponse({'found': True, 'name': last['name'], 'email': last['email']})
+    return JsonResponse({'found': False})

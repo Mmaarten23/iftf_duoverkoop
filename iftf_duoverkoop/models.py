@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext as _
+from django.utils.formats import date_format
 
 
 class Association(models.Model):
@@ -31,7 +32,7 @@ class Performance(models.Model):
 
     def selection(self) -> str:
         return _('performance.tostring') % {
-            'date': self.date.strftime("%d %b"),
+            'date': date_format(self.date, 'd b'),
             'association': self.association,
             'name': self.name
         }

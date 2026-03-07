@@ -34,6 +34,7 @@ urlpatterns = [
     path('db-info/', views.db_info, name='db_info'),
     path('get_performances_by_association/<str:association_name>/', views.get_performances_by_association, name='get_performances_by_association'),
     path('get_performance_prices/', views.get_performance_prices, name='get_performance_prices'),
+    path('get_last_customer/', views.get_last_customer, name='get_last_customer'),
 ]
 
 if settings.DEBUG:

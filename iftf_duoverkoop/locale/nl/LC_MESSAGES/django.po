@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-15 01:24+0100\n"
+"POT-Creation-Date: 2026-03-07 03:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,7 +32,7 @@ msgstr "Emailadres"
 msgid "performance.name"
 msgstr "Voorstelling"
 
-#: .\iftf_duoverkoop\forms.py:23 .\iftf_duoverkoop\views.py:232
+#: .\iftf_duoverkoop\forms.py:23 .\iftf_duoverkoop\views.py:239
 msgid "error.duplicate_performance"
 msgstr "Je kan niet twee keer hetzelfde optreden bestellen."
 
@@ -44,7 +44,7 @@ msgstr "Vul veld in."
 msgid "error.sold_out"
 msgstr "Deze voorstelling is uitverkocht."
 
-#: .\iftf_duoverkoop\models.py:33
+#: .\iftf_duoverkoop\models.py:34
 msgid "performance.tostring"
 msgstr "%(association)s - \"%(name)s\" op %(date)s"
 
@@ -118,12 +118,16 @@ msgstr ""
 "Het is <b>verboden</b> om twee tickets te kopen voor dezelfde voorstelling. "
 "De twee tickets moeten verschillen in dag <b>of</b> voorstelling."
 
+#: .\iftf_duoverkoop\templates\order\order.html:66
+msgid "orderpage.prefill_button"
+msgstr "Gegevens vorige klant invullen"
+
 # Order page - Total Price and Submit Button
-#: .\iftf_duoverkoop\templates\order\order.html:91
+#: .\iftf_duoverkoop\templates\order\order.html:97
 msgid "orderpage.total_price"
 msgstr "Totaalprijs:"
 
-#: .\iftf_duoverkoop\templates\order\order.html:97
+#: .\iftf_duoverkoop\templates\order\order.html:103
 msgid "orderpage.submit_button"
 msgstr "Bestelling Plaatsen"
 
@@ -336,9 +340,9 @@ msgstr ""
 "samenwerking tussen verschillende faculteiten.\n"
 "We hopen je te mogen verwelkomen bij de voorstellingen en dat je zult "
 "genieten van de unieke ervaringen die het IFTF te bieden heeft.\n"
-"Om een vlotte toegang tot de voorstellingen te garanderen, vragen we je "
-"om de geheime code bij de hand te houden wanneer je arriveert. Deze code "
-"is gekoppeld aan jouw aankoop en kan worden gebruikt om je toegang te "
+"Om een vlotte toegang tot de voorstellingen te garanderen, vragen we je om "
+"de geheime code bij de hand te houden wanneer je arriveert. Deze code is "
+"gekoppeld aan jouw aankoop en kan worden gebruikt om je toegang te "
 "verifiëren.\n"
 "\n"
 "De voorstellingen waar dit ticket toegang toe geeft zijn:\n"
@@ -363,30 +367,30 @@ msgstr ""
 "Bestelling succesvol! Jouw verificatiecode: %(code)s (E-mail verzending "
 "uitgeschakeld)"
 
-#: .\iftf_duoverkoop\views.py:219
+#: .\iftf_duoverkoop\views.py:226
 msgid "error.name_email_required"
 msgstr "Naam en emailadres zijn verplicht."
 
-#: .\iftf_duoverkoop\views.py:239
+#: .\iftf_duoverkoop\views.py:246
 msgid "error.invalid_performance"
 msgstr "Ongeldige voorstelling geselecteerd."
 
-#: .\iftf_duoverkoop\views.py:246 .\iftf_duoverkoop\views.py:248
+#: .\iftf_duoverkoop\views.py:253 .\iftf_duoverkoop\views.py:255
 msgid "error.performance_no_longer_available"
 msgstr "Voorstelling %(number)s (%(performance)s) is niet meer beschikbaar."
 
-#: .\iftf_duoverkoop\views.py:333
+#: .\iftf_duoverkoop\views.py:340
 msgid "error.no_permission"
 msgstr "U heeft geen toestemming om deze actie uit te voeren."
 
-#: .\iftf_duoverkoop\views.py:375
+#: .\iftf_duoverkoop\views.py:382
 msgid "verify.error_empty"
 msgstr "Voer een verificatiecode in."
 
-#: .\iftf_duoverkoop\views.py:377
+#: .\iftf_duoverkoop\views.py:384
 msgid "verify.error_invalid_format"
 msgstr "Ongeldige code indeling. Gebruik het formaat: woord-woord-woord"
 
-#: .\iftf_duoverkoop\views.py:383
+#: .\iftf_duoverkoop\views.py:390
 msgid "verify.error_not_found"
 msgstr "Code niet gevonden. Controleer de code en probeer het opnieuw."
