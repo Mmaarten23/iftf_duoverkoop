@@ -46,10 +46,10 @@ class PerformanceAdmin(admin.ModelAdmin):
 
 @admin.register(Purchase)
 class PurchaseAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'email', 'ticket1', 'ticket2', 'date', 'created_by']
-    list_filter = ['date', 'ticket1__association']
+    list_display = ['id', 'name', 'email', 'ticket1', 'ticket2', 'date', 'created_by', 'email_status']
+    list_filter = ['date', 'ticket1__association', 'email_status']
     search_fields = ['name', 'email', 'verification_code']
-    readonly_fields = ['verification_code', 'created_by', 'date']
+    readonly_fields = ['verification_code', 'created_by', 'date', 'email_status']
 
 
 @admin.register(PurchaseAuditLog)

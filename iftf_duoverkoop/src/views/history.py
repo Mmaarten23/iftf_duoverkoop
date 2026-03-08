@@ -1,9 +1,10 @@
 """
-views/history.py – Purchase history, edit, and delete views.
+views/history.py – Purchase history, edit, delete, and resend-email views.
 """
 import json
 from datetime import datetime
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404
@@ -12,6 +13,7 @@ from django.views.decorators.http import require_POST
 
 from iftf_duoverkoop.src.core.models import Purchase
 from iftf_duoverkoop.src.core.auth import get_client_ip, log_purchase_action, can_edit_purchases
+from iftf_duoverkoop.src.core.email import send_confirmation_email_async, build_confirmation_message
 from iftf_duoverkoop.src import db
 
 
@@ -29,6 +31,8 @@ def purchase_history(request: HttpRequest) -> HttpResponse:
         'available_performances': db.get_readable_keyed_performances(),
         'associations': db.get_all_associations(),
         'user_can_edit': can_edit_purchases(request.user),
+        'send_emails_enabled': settings.SEND_EMAILS,
+        'email_status_choices': Purchase.EMAIL_STATUS_CHOICES,
     })
 
 
@@ -153,4 +157,35 @@ def delete_purchase(request: HttpRequest, purchase_id: int) -> JsonResponse:
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+
+@require_POST
+@login_required
+@permission_required('iftf_duoverkoop.change_purchase', raise_exception=True)
+def resend_email(request: HttpRequest, purchase_id: int) -> JsonResponse:
+    """
+    Resend the confirmation email for a purchase.
+
+    Always allowed regardless of current email_status. The caller should
+    warn the user first when the status is already SENT (handled on the
+    front end via a confirmation dialog).
+
+    Returns JSON:
+        { "success": true, "already_sent": <bool> }   on dispatch
+        { "success": false, "error": "…" }             on error
+    """
+    if not settings.SEND_EMAILS:
+        return JsonResponse(
+            {'success': False, 'error': _('purchase_history.resend_email_disabled')},
+            status=400,
+        )
+    try:
+        purchase = get_object_or_404(Purchase, id=purchase_id)
+        already_sent = purchase.email_status == Purchase.EMAIL_SENT
+        subject, message = build_confirmation_message(purchase)
+        send_confirmation_email_async(purchase, subject, message)
+        return JsonResponse({'success': True, 'already_sent': already_sent})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
 

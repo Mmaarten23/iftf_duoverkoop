@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-07 15:13+0100\n"
+"POT-Creation-Date: 2026-03-07 19:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,6 +15,75 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\iftf_duoverkoop\src\core\email.py:69
+msgid "email.subject"
+msgstr ""
+"Bevestiging van je IFTF Duoticket aankoop / Confirmation of your IFTF Duo "
+"ticket purchase"
+
+# Email with verification code
+#: .\iftf_duoverkoop\src\core\email.py:70
+msgid "email.message_with_code"
+msgstr ""
+"GEHEIME CODE: %(verification_code)s\n"
+"\n"
+"\n"
+"Beste %(name)s,\n"
+"\n"
+"Bedankt voor je aankoop van een DUO ticket voor het Interfacultair "
+"Theaterfestival!\n"
+"Dit ticket is je toegang tot een wereld van theater, creativiteit en "
+"samenwerking tussen verschillende faculteiten.\n"
+"We hopen je te mogen verwelkomen bij de voorstellingen en dat je zult "
+"genieten van de unieke ervaringen die het IFTF te bieden heeft.\n"
+"Om een vlotte toegang tot de voorstellingen te garanderen, vragen we je om "
+"de geheime code bij de hand te houden wanneer je arriveert. Deze code is "
+"gekoppeld aan jouw aankoop en kan worden gebruikt om je toegang te "
+"verifiëren.\n"
+"\n"
+"De voorstellingen waar dit ticket toegang toe geeft zijn:\n"
+"Voorstelling 1: %(performance1)s\n"
+"Voorstelling 2: %(performance2)s\n"
+"\n"
+"Aankoopdatum: %(date)s\n"
+"\n"
+"Hou zeker je E-mail in de gaten voor eventuele updates of belangrijke "
+"informatie van de individuele verenigingen!\n"
+"Geniet van de voorstellingen en hopelijk tot snel!\n"
+"\n"
+"IFTF Team\n"
+"\n"
+"\n"
+"--- English below / Engels hieronder ---\n"
+"\n"
+"\n"
+"SECRET CODE: %(verification_code)s\n"
+"\n"
+"\n"
+"Dear %(name)s,\n"
+"\n"
+"Thank you for purchasing a DUO ticket for the Interfaculty Theatre "
+"Festival!\n"
+"This ticket is your gateway to a world of theatre, creativity and "
+"collaboration between different faculties.\n"
+"We hope to welcome you at the performances and that you will enjoy the "
+"unique experiences that IFTF has to offer.\n"
+"To ensure smooth access to the performances, please keep your secret code on "
+"hand when you arrive. This code is linked to your purchase and can be used "
+"to verify your admission.\n"
+"\n"
+"The performances this ticket grants access to are:\n"
+"Performance 1: %(performance1)s\n"
+"Performance 2: %(performance2)s\n"
+"\n"
+"Purchase date: %(date)s\n"
+"\n"
+"Be sure to keep an eye on your e-mail for any updates or important "
+"information from the individual associations!\n"
+"Enjoy the performances and hope to see you soon!\n"
+"\n"
+"IFTF Team"
 
 #: .\iftf_duoverkoop\src\core\models.py:41
 msgid "performance.tostring"
@@ -97,33 +166,33 @@ msgstr ""
 msgid "dashboard.users.deleted"
 msgstr "Gebruiker \"%(username)s\" verwijderd."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:507
+#: .\iftf_duoverkoop\src\dashboard\views.py:514
 msgid "dashboard.system.permissions_synced"
 msgstr "Machtigingsgroepen succesvol opnieuw gesynchroniseerd."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:509
+#: .\iftf_duoverkoop\src\dashboard\views.py:516
 msgid "dashboard.system.permissions_sync_failed"
 msgstr "Synchronisatie van machtigingen mislukt: %(error)s"
 
 #: .\iftf_duoverkoop\src\forms\order.py:20
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:187
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:216
 msgid "person.name"
 msgstr "Naam"
 
 #: .\iftf_duoverkoop\src\forms\order.py:21
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:194
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:223
 msgid "person.email"
 msgstr "Emailadres"
 
 #: .\iftf_duoverkoop\src\forms\order.py:22
 #: .\iftf_duoverkoop\src\forms\order.py:23
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:201
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:213
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:230
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:242
 msgid "performance.name"
 msgstr "Voorstelling"
 
 #: .\iftf_duoverkoop\src\forms\order.py:25
-#: .\iftf_duoverkoop\src\views\history.py:69
+#: .\iftf_duoverkoop\src\views\history.py:73
 msgid "error.duplicate_performance"
 msgstr "Je kan niet twee keer hetzelfde optreden bestellen."
 
@@ -147,105 +216,36 @@ msgstr "Ongeldige gebruikersnaam of wachtwoord."
 msgid "login.logout_success"
 msgstr "%(username)s is uitgelogd."
 
-#: .\iftf_duoverkoop\src\views\history.py:58
+#: .\iftf_duoverkoop\src\views\history.py:62
 msgid "error.name_email_required"
 msgstr "Naam en emailadres zijn verplicht."
 
-#: .\iftf_duoverkoop\src\views\history.py:75
+#: .\iftf_duoverkoop\src\views\history.py:79
 msgid "error.invalid_performance"
 msgstr "Ongeldige voorstelling geselecteerd."
 
-#: .\iftf_duoverkoop\src\views\history.py:80
-#: .\iftf_duoverkoop\src\views\history.py:82
+#: .\iftf_duoverkoop\src\views\history.py:84
+#: .\iftf_duoverkoop\src\views\history.py:86
 msgid "error.performance_no_longer_available"
 msgstr "Voorstelling %(number)s (%(performance)s) is niet meer beschikbaar."
 
-#: .\iftf_duoverkoop\src\views\order.py:26
+#: .\iftf_duoverkoop\src\views\history.py:179
+msgid "purchase_history.resend_email_disabled"
+msgstr "E-mail verzending is uitgeschakeld."
+
+#: .\iftf_duoverkoop\src\views\order.py:29
 msgid "orderpage.error_rep_no_access"
 msgstr "Verenigingsvertegenwoordigers hebben geen toegang tot de bestelpagina."
 
-#: .\iftf_duoverkoop\src\views\order.py:103
-msgid "email.subject"
-msgstr "Bevestiging van je IFTF Duoticket aankoop / Confirmation of your IFTF Duo ticket purchase"
-
-# Email with verification code
-#: .\iftf_duoverkoop\src\views\order.py:104
-msgid "email.message_with_code"
-msgstr ""
-"GEHEIME CODE: %(verification_code)s\n"
-"\n"
-"\n"
-"Beste %(name)s,\n"
-"\n"
-"Bedankt voor je aankoop van een DUO ticket voor het Interfacultair "
-"Theaterfestival!\n"
-"Dit ticket is je toegang tot een wereld van theater, creativiteit en "
-"samenwerking tussen verschillende faculteiten.\n"
-"We hopen je te mogen verwelkomen bij de voorstellingen en dat je zult "
-"genieten van de unieke ervaringen die het IFTF te bieden heeft.\n"
-"Om een vlotte toegang tot de voorstellingen te garanderen, vragen we je om "
-"de geheime code bij de hand te houden wanneer je arriveert. Deze code is "
-"gekoppeld aan jouw aankoop en kan worden gebruikt om je toegang te "
-"verifiëren.\n"
-"\n"
-"De voorstellingen waar dit ticket toegang toe geeft zijn:\n"
-"Voorstelling 1: %(performance1)s\n"
-"Voorstelling 2: %(performance2)s\n"
-"\n"
-"Aankoopdatum: %(date)s\n"
-"\n"
-"Hou zeker je E-mail in de gaten voor eventuele updates of belangrijke "
-"informatie van de individuele verenigingen!\n"
-"Geniet van de voorstellingen en hopelijk tot snel!\n"
-"\n"
-"IFTF Team\n"
-"\n"
-"\n"
-"--- English below / Engels hieronder ---\n"
-"\n"
-"\n"
-"SECRET CODE: %(verification_code)s\n"
-"\n"
-"\n"
-"Dear %(name)s,\n"
-"\n"
-"Thank you for purchasing a DUO ticket for the Interfaculty Theatre "
-"Festival!\n"
-"This ticket is your gateway to a world of theatre, creativity and "
-"collaboration between different faculties.\n"
-"We hope to welcome you at the performances and that you will enjoy the "
-"unique experiences that IFTF has to offer.\n"
-"To ensure smooth access to the performances, please keep your secret code "
-"on hand when you arrive. This code is linked to your purchase and can be "
-"used to verify your admission.\n"
-"\n"
-"The performances this ticket grants access to are:\n"
-"Performance 1: %(performance1)s\n"
-"Performance 2: %(performance2)s\n"
-"\n"
-"Purchase date: %(date)s\n"
-"\n"
-"Be sure to keep an eye on your e-mail for any updates or important "
-"information from the individual associations!\n"
-"Enjoy the performances and hope to see you soon!\n"
-"\n"
-"IFTF Team"
-
-#: .\iftf_duoverkoop\src\views\order.py:113
+#: .\iftf_duoverkoop\src\views\order.py:107
 msgid "orderpage.success_with_code"
 msgstr "Bestelling succesvol! Jouw verificatiecode: %(code)s"
 
-#: .\iftf_duoverkoop\src\views\order.py:117
+#: .\iftf_duoverkoop\src\views\order.py:114
 msgid "orderpage.success_with_code_no_email"
 msgstr ""
 "Bestelling succesvol! Jouw verificatiecode: %(code)s (E-mail verzending "
 "uitgeschakeld)"
-
-#: .\iftf_duoverkoop\src\views\order.py
-msgid "orderpage.email_failed"
-msgstr ""
-"Bestelling succesvol! Jouw verificatiecode: %(code)s — de bevestigingsmail "
-"kon helaas niet worden verstuurd. Noteer de code."
 
 #: .\iftf_duoverkoop\src\views\verify.py:58
 msgid "verify.error_empty"
@@ -461,7 +461,7 @@ msgid "dashboard.audit.filter_action"
 msgstr "Actie"
 
 #: .\iftf_duoverkoop\templates\dashboard\audit.html:35
-#: .\iftf_duoverkoop\templates\dashboard\audit.html:140
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:145
 msgid "dashboard.audit.filter_all"
 msgstr "Alle"
 
@@ -470,7 +470,7 @@ msgid "dashboard.audit.filter_user"
 msgstr "Gebruiker"
 
 #: .\iftf_duoverkoop\templates\dashboard\audit.html:44
-#: .\iftf_duoverkoop\templates\dashboard\audit.html:149
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:154
 msgid "dashboard.audit.filter_username_placeholder"
 msgstr "gebruikersnaam"
 
@@ -479,82 +479,88 @@ msgid "dashboard.audit.filter_purchase"
 msgstr "Aankoop #"
 
 #: .\iftf_duoverkoop\templates\dashboard\audit.html:52
-#: .\iftf_duoverkoop\templates\dashboard\audit.html:152
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:157
 msgid "dashboard.action.filter"
 msgstr "Filteren"
 
 #: .\iftf_duoverkoop\templates\dashboard\audit.html:53
-#: .\iftf_duoverkoop\templates\dashboard\audit.html:153
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:158
 msgid "dashboard.action.clear"
 msgstr "Wissen"
 
 #: .\iftf_duoverkoop\templates\dashboard\audit.html:65
-#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:21
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:25
 msgid "dashboard.audit.col_action"
 msgstr "Actie"
 
 #: .\iftf_duoverkoop\templates\dashboard\audit.html:66
-#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:32
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:35
 msgid "dashboard.audit.col_purchase"
 msgstr "Aankoop"
 
 #: .\iftf_duoverkoop\templates\dashboard\audit.html:67
-#: .\iftf_duoverkoop\templates\dashboard\audit.html:147
-#: .\iftf_duoverkoop\templates\dashboard\audit.html:165
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:152
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:170
 #: .\iftf_duoverkoop\templates\dashboard\users.html:24
 msgid "dashboard.col.username"
 msgstr "Gebruikersnaam"
 
 #: .\iftf_duoverkoop\templates\dashboard\audit.html:68
-#: .\iftf_duoverkoop\templates\dashboard\audit.html:167
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:172
 msgid "dashboard.audit.col_ip"
 msgstr "IP-adres"
 
 #: .\iftf_duoverkoop\templates\dashboard\audit.html:69
-#: .\iftf_duoverkoop\templates\dashboard\audit.html:168
-#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:40
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:173
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:50
 msgid "dashboard.audit.col_timestamp"
 msgstr "Tijdstip"
 
-#: .\iftf_duoverkoop\templates\dashboard\audit.html:94
+# Audit list – deleted purchase badge tooltip
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:89
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:40
+msgid "dashboard.audit.purchase_deleted"
+msgstr "Aankoop verwijderd"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:99
 msgid "dashboard.audit.view_details"
 msgstr "Details bekijken"
 
-#: .\iftf_duoverkoop\templates\dashboard\audit.html:100
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:105
 msgid "dashboard.empty.audit_entries"
 msgstr "Geen vermeldingen overeenkomen met uw filters."
 
 # ── Dashboard – pagination ────────────────────────────────────────────────────
-#: .\iftf_duoverkoop\templates\dashboard\audit.html:113
-#: .\iftf_duoverkoop\templates\dashboard\audit.html:208
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:118
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:213
 msgid "dashboard.pagination.prev"
 msgstr "Vorige"
 
-#: .\iftf_duoverkoop\templates\dashboard\audit.html:118
-#: .\iftf_duoverkoop\templates\dashboard\audit.html:213
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:123
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:218
 #, fuzzy, python-format
 #| msgid "Page {{ num }} of {{ total }}"
 msgid "Page %(num)s of %(total)s"
 msgstr "Pagina {{ num }} van {{ total }}"
 
-#: .\iftf_duoverkoop\templates\dashboard\audit.html:123
-#: .\iftf_duoverkoop\templates\dashboard\audit.html:218
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:128
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:223
 msgid "dashboard.pagination.next"
 msgstr "Volgende"
 
-#: .\iftf_duoverkoop\templates\dashboard\audit.html:138
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:143
 msgid "dashboard.audit.filter_event"
 msgstr "Gebeurtenis"
 
-#: .\iftf_duoverkoop\templates\dashboard\audit.html:164
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:169
 msgid "dashboard.audit.col_event"
 msgstr "Gebeurtenis"
 
-#: .\iftf_duoverkoop\templates\dashboard\audit.html:166
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:171
 msgid "dashboard.audit.col_user_account"
 msgstr "Gebruikersaccount"
 
-#: .\iftf_duoverkoop\templates\dashboard\audit.html:195
+#: .\iftf_duoverkoop\templates\dashboard\audit.html:200
 msgid "dashboard.empty.login_events"
 msgstr "Nog geen logingebeurtenissen geregistreerd."
 
@@ -569,65 +575,60 @@ msgstr "Auditvermelding"
 msgid "Entry #%(id)s"
 msgstr "Vermelding #{{ id }}"
 
-#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:14
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:15
 #, fuzzy, python-format
 #| msgid "Audit Entry #{{ id }}"
 msgid "Audit Entry #%(id)s"
 msgstr "Auditvermelding #{{ id }}"
 
-#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:35
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:45
 msgid "dashboard.audit_detail.performed_by"
 msgstr "Uitgevoerd door"
 
-#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:43
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:53
 msgid "dashboard.audit_detail.ip_address"
 msgstr "IP-adres"
 
-#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:54
-msgid "dashboard.audit_detail.changes_json"
-msgstr "Wijzigingen (JSON)"
-
-#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:63
-msgid "dashboard.audit_detail.back"
-msgstr "Terug naar auditlog"
-
 # Audit detail – structured snapshot labels
-#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:65
 msgid "dashboard.audit_detail.created_with"
 msgstr "Aangemaakt met de volgende gegevens"
 
-#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:88
 msgid "dashboard.audit_detail.changed_fields"
 msgstr "Gewijzigde velden"
 
-#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:94
 msgid "dashboard.audit_detail.field"
 msgstr "Veld"
 
-#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:95
 msgid "dashboard.audit_detail.from"
 msgstr "Van"
 
-#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:96
 msgid "dashboard.audit_detail.to"
 msgstr "Naar"
 
-#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:115
 msgid "dashboard.audit_detail.before"
 msgstr "Voor"
 
-#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:132
 msgid "dashboard.audit_detail.after"
 msgstr "Na"
 
-#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:155
 msgid "dashboard.audit_detail.deleted_state"
 msgstr "Aankoop op moment van verwijdering"
 
-# Audit list – deleted purchase badge tooltip
-#: .\iftf_duoverkoop\templates\dashboard\audit.html
-msgid "dashboard.audit.purchase_deleted"
-msgstr "Aankoop verwijderd"
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:181
+msgid "dashboard.audit_detail.changes_json"
+msgstr "Wijzigingen (JSON)"
+
+#: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:196
+msgid "dashboard.audit_detail.back"
+msgstr "Terug naar auditlog"
 
 # ── Dashboard – sidebar ──────────────────────────────────────────────────────
 #: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:13
@@ -1033,12 +1034,12 @@ msgid "orderpage.submit_button"
 msgstr "Bestelling Plaatsen"
 
 # Shown in the warning banner when a selected performance sells out mid-session
-#: .\iftf_duoverkoop\templates\order\order.html:198
+#: .\iftf_duoverkoop\templates\order\order.html:195
 msgid "orderpage.availability.soldout_deselected"
 msgstr "is net uitverkocht en is uit je selectie verwijderd."
 
-#: .\iftf_duoverkoop\templates\order\order.html:210
-#: .\iftf_duoverkoop\templates\order\order.html:214
+#: .\iftf_duoverkoop\templates\order\order.html:207
+#: .\iftf_duoverkoop\templates\order\order.html:211
 #: .\iftf_duoverkoop\templates\order\overview.html:32
 #: .\iftf_duoverkoop\templates\order\overview.html:34
 msgid "orderpage.sold_out"
@@ -1069,88 +1070,131 @@ msgid "purchase_historypage.filter_all_associations"
 msgstr "Alle verenigingen"
 
 #: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:80
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:308
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:320
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:341
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:353
 msgid "purchase_historypage.filter_all_performances"
 msgstr "Alle voorstellingen"
 
+# Purchase history – email status
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:85
+msgid "purchase_historypage.filter_all_email_statuses"
+msgstr "Alle e-mailstatussen"
+
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:86
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:142
+msgid "purchase_historypage.email_status_pending"
+msgstr "In afwachting"
+
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:87
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:138
+msgid "purchase_historypage.email_status_sent"
+msgstr "Verzonden"
+
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:88
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:140
+msgid "purchase_historypage.email_status_failed"
+msgstr "Mislukt"
+
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:89
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:144
+msgid "purchase_historypage.email_status_not_sent"
+msgstr "Niet verzonden"
+
 # Purchase history - Ticket labels
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:131
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:152
 msgid "purchase_historypage.ticket_1"
 msgstr "Ticket 1:"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:135
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:156
 msgid "purchase_historypage.ticket_2"
 msgstr "Ticket 2:"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:145
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:165
+msgid "purchase_historypage.resend_email"
+msgstr "E-mail opnieuw versturen"
+
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:174
 msgid "purchase_historypage.edit"
 msgstr "Bewerken"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:150
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:179
 msgid "purchase_historypage.delete"
 msgstr "Verwijderen"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:163
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:192
 msgid "purchase_historypage.no_purchases"
 msgstr "Nog geen aankopen geregistreerd."
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:177
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:206
 msgid "purchase_historypage.edit_purchase"
 msgstr "Aankoop Bewerken"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:204
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:216
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:233
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:245
 msgid "orderpage.select_performance"
 msgstr "Selecteer een voorstelling"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:225
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:254
 msgid "purchase_historypage.edit_warning"
 msgstr ""
 "Let op: Controleer of de geselecteerde voorstellingen nog beschikbaar zijn."
 
 # Purchase history - Price comparison
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:231
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:260
 msgid "purchase_historypage.price_comparison"
 msgstr "Prijsvergelijking"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:235
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:264
 msgid "purchase_historypage.original_price"
 msgstr "Oorspronkelijke Prijs"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:239
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:268
 msgid "purchase_historypage.new_price"
 msgstr "Nieuwe Prijs"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:243
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:272
 msgid "purchase_historypage.price_difference"
 msgstr "Verschil"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:252
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:281
 msgid "purchase_historypage.cancel"
 msgstr "Annuleren"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:255
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:284
 msgid "purchase_historypage.save"
 msgstr "Opslaan"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:270
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:299
 msgid "purchase_historypage.extra_charge_required"
 msgstr "Extra betaling vereist:"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:271
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:300
 msgid "purchase_historypage.refund_due"
 msgstr "Terugbetaling verschuldigd:"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:272
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:301
 msgid "purchase_historypage.no_price_change"
 msgstr "Geen prijsverandering"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:273
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:302
 msgid "error.generic_error"
 msgstr "Er is een fout opgetreden."
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:485
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:303
+msgid "purchase_historypage.resend_email_confirm_already_sent"
+msgstr ""
+"Deze koper heeft de bevestigingsmail al succesvol ontvangen. Wil je de e-"
+"mail toch opnieuw versturen?"
+
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:304
+msgid "purchase_historypage.resend_email_success"
+msgstr "E-mail wordt opnieuw verstuurd."
+
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:305
+msgid "purchase_historypage.resend_email_failed"
+msgstr "Het versturen van de e-mail is mislukt."
+
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:562
 msgid "purchase_historypage.delete_confirm"
 msgstr ""
 "Weet je zeker dat je deze aankoop wilt verwijderen? Deze actie kan niet "
@@ -1224,6 +1268,11 @@ msgstr "Laatst gewijzigd"
 #: .\iftf_duoverkoop\templates\verification\verify_code.html:217
 msgid "verify.by"
 msgstr "door"
+
+#~ msgid "orderpage.email_failed"
+#~ msgstr ""
+#~ "Bestelling succesvol! Jouw verificatiecode: %(code)s — de "
+#~ "bevestigingsmail kon helaas niet worden verstuurd. Noteer de code."
 
 #~ msgid "verify.ticket_1"
 #~ msgstr "Ticket 1"

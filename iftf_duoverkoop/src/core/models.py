@@ -53,6 +53,17 @@ class Purchase(models.Model):
     of all modifications through the PurchaseAuditLog model.
     Each purchase has a unique three-word verification code for traceability.
     """
+    EMAIL_PENDING = 'PENDING'
+    EMAIL_SENT = 'SENT'
+    EMAIL_FAILED = 'FAILED'
+    EMAIL_NOT_SENT = 'NOT_SENT'
+    EMAIL_STATUS_CHOICES = [
+        (EMAIL_PENDING, 'Pending'),
+        (EMAIL_SENT, 'Sent'),
+        (EMAIL_FAILED, 'Failed'),
+        (EMAIL_NOT_SENT, 'Not sent (disabled)'),
+    ]
+
     date = models.DateTimeField("Date", auto_now_add=True)
     name = models.CharField("Name", max_length=128)
     email = models.EmailField("Email")
@@ -80,6 +91,14 @@ class Purchase(models.Model):
         help_text="User who last modified this purchase",
     )
     modified_date = models.DateTimeField("Last Modified", null=True, blank=True)
+    email_status = models.CharField(
+        "Email Status",
+        max_length=10,
+        choices=EMAIL_STATUS_CHOICES,
+        default=EMAIL_PENDING,
+        db_index=True,
+        help_text="Tracks whether the confirmation email was successfully delivered.",
+    )
 
     def __str__(self) -> str:
         return f"Purchase {self.id} by {self.name} ({self.verification_code})"

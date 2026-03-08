@@ -67,7 +67,7 @@
                        placeholder="{% translate 'purchase_historypage.search_placeholder_with_code' %}">
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <select class="form-select" id="associationFilter">
                 <option value="">{% translate "purchase_historypage.filter_all_associations" %}</option>
                 {% for association in associations %}
@@ -75,9 +75,18 @@
                 {% endfor %}
             </select>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <select class="form-select" id="performanceFilter" disabled>
                 <option value="">{% translate "purchase_historypage.filter_all_performances" %}</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" id="emailStatusFilter">
+                <option value="">{% translate "purchase_historypage.filter_all_email_statuses" %}</option>
+                <option value="PENDING">{% translate "purchase_historypage.email_status_pending" %}</option>
+                <option value="SENT">{% translate "purchase_historypage.email_status_sent" %}</option>
+                <option value="FAILED">{% translate "purchase_historypage.email_status_failed" %}</option>
+                <option value="NOT_SENT">{% translate "purchase_historypage.email_status_not_sent" %}</option>
             </select>
         </div>
     </div>
@@ -91,7 +100,8 @@
              data-association1="{{ purchase.ticket1.association.name }}"
              data-association2="{{ purchase.ticket2.association.name }}"
              data-ticket1-key="{{ purchase.ticket1.key }}"
-             data-ticket2-key="{{ purchase.ticket2.key }}">
+             data-ticket2-key="{{ purchase.ticket2.key }}"
+             data-email-status="{{ purchase.email_status }}">
             <div class="card purchase-card">
                 <div class="card-body">
                     <div class="row align-items-center">
@@ -123,6 +133,17 @@
                                 <i class="bi bi-shield-check text-primary"></i>
                                 <code class="text-primary">{{ purchase.verification_code }}</code>
                             </div>
+                            <div class="mt-1">
+                                {% if purchase.email_status == 'SENT' %}
+                                <span class="badge bg-success"><i class="bi bi-envelope-check-fill"></i> {% translate "purchase_historypage.email_status_sent" %}</span>
+                                {% elif purchase.email_status == 'FAILED' %}
+                                <span class="badge bg-danger"><i class="bi bi-envelope-x-fill"></i> {% translate "purchase_historypage.email_status_failed" %}</span>
+                                {% elif purchase.email_status == 'PENDING' %}
+                                <span class="badge bg-warning text-dark"><i class="bi bi-envelope-fill"></i> {% translate "purchase_historypage.email_status_pending" %}</span>
+                                {% else %}
+                                <span class="badge bg-secondary"><i class="bi bi-envelope-slash-fill"></i> {% translate "purchase_historypage.email_status_not_sent" %}</span>
+                                {% endif %}
+                            </div>
                         </div>
 
                         <div class="col-md-5">
@@ -137,8 +158,16 @@
                         </div>
 
                         <div class="col-md-1 text-end">
+                            {% if send_emails_enabled %}
+                            <button class="btn btn-sm btn-outline-secondary resend-email-btn mb-1"
+                                    data-purchase-id="{{ purchase.id }}"
+                                    data-email-status="{{ purchase.email_status }}"
+                                    title="{% translate 'purchase_historypage.resend_email' %}">
+                                <i class="bi bi-envelope-plus-fill"></i>
+                            </button>
+                            {% endif %}
                             {% if user_can_edit %}
-                            <button class="btn btn-sm btn-outline-primary edit-btn"
+                            <button class="btn btn-sm btn-outline-primary edit-btn mb-1"
                                     data-purchase-id="{{ purchase.id }}"
                                     data-ticket1-key="{{ purchase.ticket1.key }}"
                                     data-ticket2-key="{{ purchase.ticket2.key }}"
@@ -270,7 +299,10 @@ const translations = {
     extraChargeRequired: "{% translate 'purchase_historypage.extra_charge_required' %}",
     refundDue: "{% translate 'purchase_historypage.refund_due' %}",
     noPriceChange: "{% translate 'purchase_historypage.no_price_change' %}",
-    errorOccurred: "{% translate 'error.generic_error' %}"
+    errorOccurred: "{% translate 'error.generic_error' %}",
+    resendConfirmAlreadySent: "{% translate 'purchase_historypage.resend_email_confirm_already_sent' %}",
+    resendSuccess: "{% translate 'purchase_historypage.resend_email_success' %}",
+    resendFailed: "{% translate 'purchase_historypage.resend_email_failed' %}",
 };
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -279,6 +311,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const filterButtons = document.querySelectorAll('[data-filter]');
     const associationFilter = document.getElementById('associationFilter');
     const performanceFilter = document.getElementById('performanceFilter');
+    const emailStatusFilter = document.getElementById('emailStatusFilter');
     let currentFilter = 'all';
     let performancePrices = {};
 
@@ -344,6 +377,11 @@ document.addEventListener('DOMContentLoaded', function() {
         filterPurchases(searchInput.value.toLowerCase(), currentFilter);
     });
 
+    // Email status filter change
+    emailStatusFilter.addEventListener('change', function() {
+        filterPurchases(searchInput.value.toLowerCase(), currentFilter);
+    });
+
     function filterPurchases(searchTerm, filter) {
         const today = new Date();
         const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -365,10 +403,49 @@ document.addEventListener('DOMContentLoaded', function() {
             // Association and performance filter matching
             const associationMatch = associationFilter.value === '' || item.dataset.association1 === associationFilter.value || item.dataset.association2 === associationFilter.value;
             const performanceMatch = performanceFilter.value === '' || item.dataset.ticket1Key === performanceFilter.value || item.dataset.ticket2Key === performanceFilter.value;
+            const emailStatusMatch = emailStatusFilter.value === '' || item.dataset.emailStatus === emailStatusFilter.value;
 
-            item.style.display = matchesSearch && matchesFilter && associationMatch && performanceMatch ? '' : 'none';
+            item.style.display = matchesSearch && matchesFilter && associationMatch && performanceMatch && emailStatusMatch ? '' : 'none';
         });
     }
+
+    // Resend email functionality
+    document.querySelectorAll('.resend-email-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const purchaseId = this.dataset.purchaseId;
+            const emailStatus = this.dataset.emailStatus;
+
+            if (emailStatus === 'SENT') {
+                if (!confirm(translations.resendConfirmAlreadySent)) {
+                    return;
+                }
+            }
+
+            const button = this;
+            button.disabled = true;
+
+            fetch(`/purchase_history/resend-email/${purchaseId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                button.disabled = false;
+                if (data.success) {
+                    alert(translations.resendSuccess);
+                } else {
+                    alert(data.error || translations.resendFailed);
+                }
+            })
+            .catch(error => {
+                button.disabled = false;
+                console.error('Error:', error);
+                alert(translations.resendFailed);
+            });
+        });
+    });
 
     {% if user_can_edit %}
     // Edit functionality

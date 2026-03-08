@@ -6,7 +6,7 @@ from django.views.static import serve
 
 from iftf_duoverkoop.src.views.auth import login_view, logout_view
 from iftf_duoverkoop.src.views.order import order, main, get_last_customer
-from iftf_duoverkoop.src.views.history import purchase_history, edit_purchase, delete_purchase
+from iftf_duoverkoop.src.views.history import purchase_history, edit_purchase, delete_purchase, resend_email
 from iftf_duoverkoop.src.views.export import export
 from iftf_duoverkoop.src.views.verify import verify_code
 from iftf_duoverkoop.src.views.api import db_info, get_performances_by_association, get_performance_prices, get_availability
@@ -25,6 +25,7 @@ urlpatterns = [
     path('purchase_history/', purchase_history, name='purchase_history'),
     path('purchase_history/edit/<int:purchase_id>/', edit_purchase, name='edit_purchase'),
     path('purchase_history/delete/<int:purchase_id>/', delete_purchase, name='delete_purchase'),
+    path('purchase_history/resend-email/<int:purchase_id>/', resend_email, name='resend_email'),
     path('verify/', verify_code, name='verify_code'),
     path('export/', export, name='export'),
 

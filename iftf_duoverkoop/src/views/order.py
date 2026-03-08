@@ -7,7 +7,6 @@ from typing import Optional
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.mail import send_mail
 from django.http import HttpResponseServerError, HttpResponse, JsonResponse, HttpRequest
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -17,6 +16,7 @@ from django.views.decorators.http import require_http_methods
 from iftf_duoverkoop.src.forms.order import OrderForm
 from iftf_duoverkoop.src import db
 from iftf_duoverkoop.src.core.auth import get_client_ip, log_purchase_action, is_association_rep
+from iftf_duoverkoop.src.core.email import send_confirmation_email_async, build_confirmation_message
 
 logger = logging.getLogger(__name__)
 
@@ -96,30 +96,19 @@ def _process_order_form(
                 # changes=None → helper auto-builds {'state': <full snapshot>}
             )
 
-            subject = _('email.subject')
-            message = _('email.message_with_code') % {
-                'name': purchase.name,
-                'performance1': purchase.ticket1.selection(),
-                'performance2': purchase.ticket2.selection(),
-                'date': purchase.date.strftime('%d/%m/%Y %H:%M'),
-                'verification_code': purchase.verification_code,
-            }
+            subject, message = build_confirmation_message(purchase)
+
             if settings.SEND_EMAILS:
-                try:
-                    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [purchase.email])
-                    messages.success(request, _('orderpage.success_with_code') % {'code': purchase.verification_code})
-                except Exception as e:
-                    # The purchase is already saved — a failed email must never
-                    # crash the view or roll back the order.
-                    logger.error(
-                        "Failed to send confirmation email for purchase %s to %s: %s",
-                        purchase.pk, purchase.email, e,
-                    )
-                    messages.warning(
-                        request,
-                        _('orderpage.email_failed') % {'code': purchase.verification_code},
-                    )
+                # Fire-and-forget: the thread updates email_status when done.
+                # The seller sees the code immediately; no waiting for SMTP.
+                send_confirmation_email_async(purchase, subject, message)
+                messages.success(
+                    request,
+                    _('orderpage.success_with_code') % {'code': purchase.verification_code},
+                )
             else:
+                # Email disabled → mark NOT_SENT and show code right away.
+                send_confirmation_email_async(purchase, subject, message)  # sets NOT_SENT
                 messages.success(
                     request,
                     _('orderpage.success_with_code_no_email') % {'code': purchase.verification_code},
