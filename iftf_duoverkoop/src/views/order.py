@@ -49,7 +49,7 @@ def order(request: HttpRequest) -> HttpResponse:
             left = performance.tickets_left()
             performance.availability_percentage = (
                 left / performance.max_tickets * 100
-            )
+            ) if performance.max_tickets > 0 else 0
             availability_seed[performance.key] = {
                 'tickets_left': left,
                 'max_tickets': performance.max_tickets,
