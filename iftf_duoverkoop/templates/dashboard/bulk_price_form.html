@@ -1,0 +1,44 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{{ title }} — {% translate "dashboard.home.title" %}{% endblock %}
+
+{% block dashboard_content %}
+<div class="dash-breadcrumb">
+    <a href="{% url 'dashboard:dashboard_home' %}">{% translate "dashboard.home.title" %}</a> /
+    <a href="{% url 'dashboard:dashboard_performances' %}">{% translate "dashboard.sidebar.performances" %}</a> /
+    {{ title }}
+</div>
+
+<h4 class="dash-section-title"><i class="bi bi-cash-coin"></i> {{ title }}</h4>
+
+<div class="card" style="max-width:480px">
+    <div class="card-body">
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            {{ description }}
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label fw-semibold">{{ field_label }}</label>
+                {{ form.price }}
+                {% if form.price.errors %}
+                    <div class="text-danger small mt-1">{{ form.price.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-warning">
+                    <i class="bi bi-check-lg"></i> {% translate "dashboard.action.save" %}
+                </button>
+                <a href="{% url 'dashboard:dashboard_performances' %}" class="btn btn-outline-secondary">
+                    {% translate "dashboard.action.cancel" %}
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+placeholder

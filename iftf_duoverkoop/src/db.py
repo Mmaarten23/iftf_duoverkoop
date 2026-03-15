@@ -85,7 +85,15 @@ def validate_purchase(name, performance1, performance2):
     return True
 
 
-def handle_purchase(name: str, email: str, performance1: str, performance2: str, created_by=None) -> Purchase:
+def handle_purchase(
+    name: str,
+    email: str,
+    performance1: str,
+    performance2: str,
+    created_by=None,
+    has_culture_card: bool = False,
+    student_id: str = '',
+) -> Purchase:
     """
     Create a new purchase record with a unique verification code.
 
@@ -95,6 +103,8 @@ def handle_purchase(name: str, email: str, performance1: str, performance2: str,
         performance1: Key of first performance
         performance2: Key of second performance
         created_by: User creating the purchase (required for audit trail)
+        has_culture_card: Whether the buyer has a culture card (cultuurkaart)
+        student_id: Student ID string when culture card discount applies
 
     Returns:
         Created Purchase instance with unique verification code
@@ -121,9 +131,18 @@ def handle_purchase(name: str, email: str, performance1: str, performance2: str,
         ticket1=get_performance(performance1),
         ticket2=get_performance(performance2),
         created_by=created_by,
-        verification_code=verification_code
+        verification_code=verification_code,
+        has_culture_card=has_culture_card,
+        student_id=student_id if has_culture_card else '',
     )
     return purchase
+
+
+def get_effective_price(performance, has_culture_card: bool) -> float:
+    """Return the effective ticket price given the culture-card state."""
+    if has_culture_card and performance.discounted_price is not None:
+        return performance.discounted_price
+    return performance.price
 
 
 def data_ready():

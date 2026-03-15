@@ -86,6 +86,8 @@ def _process_order_form(
                 clean['performance1'],
                 clean['performance2'],
                 created_by=request.user,
+                has_culture_card=clean.get('has_culture_card', False),
+                student_id=clean.get('student_id', ''),
             )
 
             log_purchase_action(

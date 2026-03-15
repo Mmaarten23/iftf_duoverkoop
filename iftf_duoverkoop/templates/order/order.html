@@ -87,6 +87,30 @@
                             {% endif %}
                         </div>
 
+                        <!-- Culture card discount -->
+                        <div class="mb-2">
+                            <div class="form-check">
+                                {{ form.has_culture_card }}
+                                <label class="form-check-label" for="{{ form.has_culture_card.id_for_label }}">
+                                    <i class="bi bi-tag-fill text-info"></i> {{ form.has_culture_card.label }}
+                                </label>
+                            </div>
+                            {% if form.has_culture_card.errors %}
+                                <div class="text-danger small mt-1">{{ form.has_culture_card.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3" id="studentIdContainer" style="display:none;">
+                            <label for="{{ form.student_id.id_for_label }}" class="form-label">
+                                <i class="bi bi-person-badge-fill"></i> {{ form.student_id.label }}
+                            </label>
+                            {{ form.student_id }}
+                            <div class="form-text text-muted">{{ form.student_id.help_text }}</div>
+                            {% if form.student_id.errors %}
+                                <div class="text-danger small mt-1">{{ form.student_id.errors }}</div>
+                            {% endif %}
+                        </div>
+
                         {% if form.non_field_errors %}
                             <div class="alert alert-danger">{{ form.non_field_errors }}</div>
                         {% endif %}
@@ -137,7 +161,7 @@
 
     fetch('{% url "get_performance_prices" %}')
         .then(r => r.json())
-        .then(data => { performancePrices = data.prices || {}; })
+        .then(data => { performancePrices = data.prices || {}; updatePriceDisplay(); })
         .catch(() => {});
 
     // -----------------------------------------------------------------------
@@ -331,17 +355,39 @@
         const perf2Select = document.getElementById('{{ form.performance2.id_for_label }}');
         const priceDisplay = document.getElementById('priceDisplay');
         const totalPriceEl = document.getElementById('totalPrice');
+        const hasCultureCard = document.getElementById('{{ form.has_culture_card.id_for_label }}')?.checked;
 
         const perf1Key = perf1Select ? perf1Select.value : '';
         const perf2Key = perf2Select ? perf2Select.value : '';
 
+        function getEffectivePrice(key) {
+            const info = performancePrices[key];
+            if (!info) return 0;
+            if (hasCultureCard && info.discounted_price !== null) return info.discounted_price;
+            return info.price;
+        }
+
         let total = 0;
-        if (perf1Key && performancePrices[perf1Key]) total += performancePrices[perf1Key];
-        if (perf2Key && performancePrices[perf2Key]) total += performancePrices[perf2Key];
+        let hasDiscount = false;
+        if (perf1Key && performancePrices[perf1Key]) {
+            const p = getEffectivePrice(perf1Key);
+            total += p;
+            if (hasCultureCard && performancePrices[perf1Key].discounted_price !== null) hasDiscount = true;
+        }
+        if (perf2Key && performancePrices[perf2Key]) {
+            const p = getEffectivePrice(perf2Key);
+            total += p;
+            if (hasCultureCard && performancePrices[perf2Key].discounted_price !== null) hasDiscount = true;
+        }
 
         if (priceDisplay && totalPriceEl) {
-            if (total > 0) {
+            if (total > 0 || perf1Key || perf2Key) {
                 totalPriceEl.textContent = '€' + total.toFixed(2);
+                if (hasDiscount) {
+                    totalPriceEl.classList.add('text-info');
+                } else {
+                    totalPriceEl.classList.remove('text-info');
+                }
                 priceDisplay.style.display = 'block';
             } else {
                 priceDisplay.style.display = 'none';
@@ -416,6 +462,10 @@
         document.querySelectorAll('input[type="text"], input[type="email"]')
             .forEach(el => el.classList.add('form-control'));
 
+        // Student ID field styling
+        const studentIdInput = document.getElementById('{{ form.student_id.id_for_label }}');
+        if (studentIdInput) studentIdInput.classList.add('form-control');
+
         document.querySelectorAll('select').forEach(sel => {
             sel.classList.add('form-select');
             sel.addEventListener('change', function () {
@@ -423,6 +473,23 @@
                 updatePriceDisplay();
             });
         });
+
+        // Culture card toggle
+        const cultureCardCheckbox = document.getElementById('{{ form.has_culture_card.id_for_label }}');
+        const studentIdContainer = document.getElementById('studentIdContainer');
+
+        function toggleStudentId() {
+            if (cultureCardCheckbox && studentIdContainer) {
+                studentIdContainer.style.display = cultureCardCheckbox.checked ? 'block' : 'none';
+            }
+            updatePriceDisplay();
+        }
+
+        if (cultureCardCheckbox) {
+            cultureCardCheckbox.addEventListener('change', toggleStudentId);
+            // Show on page load if already checked (re-render after validation error)
+            toggleStudentId();
+        }
 
         // Tile click handlers
         document.querySelectorAll('.performance-btn').forEach(btn => {

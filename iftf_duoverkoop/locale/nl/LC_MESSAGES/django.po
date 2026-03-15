@@ -1279,3 +1279,67 @@ msgstr "door"
 
 #~ msgid "verify.ticket_2"
 #~ msgstr "Ticket 2"
+
+# ── Culture card / discount ───────────────────────────────────────────────────
+
+msgid "orderpage.has_culture_card"
+msgstr "Cultuurkaart (korting)"
+
+msgid "orderpage.student_id"
+msgstr "Studentennummer"
+
+msgid "orderpage.student_id_hint"
+msgstr "Vereist bij cultuurkaartkorting. Formaat: r0000000"
+
+msgid "error.student_id_required"
+msgstr "Vul je studentennummer in bij een cultuurkaartkorting."
+
+msgid "error.student_id_invalid"
+msgstr "Ongeldig studentennummer. Gebruik het formaat r0000000 (bijv. r0123456)."
+
+# Purchase history – culture card
+msgid "purchase_historypage.culture_card"
+msgstr "Cultuurkaart"
+
+msgid "purchase_historypage.total_price"
+msgstr "Totaal"
+
+msgid "purchase_historypage.discount_applied"
+msgstr "korting toegepast"
+
+# Dashboard – performances – discount column
+msgid "dashboard.col.discounted_price"
+msgstr "Cultuurkaartprijs"
+
+# Dashboard – bulk price operations
+msgid "dashboard.performances.bulk_set_price_btn"
+msgstr "Alle prijzen instellen"
+
+msgid "dashboard.performances.bulk_set_discounted_price_btn"
+msgstr "Alle cultuurkaartprijzen instellen"
+
+msgid "dashboard.performances.bulk_set_price_title"
+msgstr "Reguliere prijs instellen voor alle voorstellingen"
+
+msgid "dashboard.performances.bulk_set_price_desc"
+msgstr "Dit overschrijft de reguliere prijs van ALLE voorstellingen tegelijk. Gebruik dit met zorg."
+
+msgid "dashboard.performances.bulk_price_label"
+msgstr "Nieuwe reguliere prijs (€)"
+
+msgid "dashboard.performances.bulk_price_set"
+msgstr "Reguliere prijs ingesteld op €%(price)s voor %(count)s voorstelling(en)."
+
+msgid "dashboard.performances.bulk_set_discounted_price_title"
+msgstr "Cultuurkaartprijs instellen voor alle voorstellingen"
+
+msgid "dashboard.performances.bulk_set_discounted_price_desc"
+msgstr "Dit overschrijft de cultuurkaartprijs van ALLE voorstellingen tegelijk. De nieuwe prijs wordt de kortingsprijs voor kopers met een cultuurkaart."
+
+msgid "dashboard.performances.bulk_discounted_price_label"
+msgstr "Nieuwe cultuurkaartprijs (€)"
+
+msgid "dashboard.performances.bulk_discounted_price_set"
+msgstr "Cultuurkaartprijs ingesteld op €%(price)s voor %(count)s voorstelling(en)."
+
+

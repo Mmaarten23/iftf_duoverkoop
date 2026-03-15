@@ -1,11 +1,15 @@
 """
 forms/order.py – Order form for ticket purchasing.
 """
+import re
+
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
 from iftf_duoverkoop.src import db
+
+STUDENT_ID_RE = re.compile(r'^r\d{7}$', re.IGNORECASE)
 
 
 class OrderForm(forms.Form):
@@ -21,6 +25,16 @@ class OrderForm(forms.Form):
     email = forms.EmailField(label=_('person.email'))
     performance1 = forms.ChoiceField(label=_('performance.name'), choices=[])
     performance2 = forms.ChoiceField(label=_('performance.name'), choices=[])
+    has_culture_card = forms.BooleanField(
+        label=_('orderpage.has_culture_card'),
+        required=False,
+    )
+    student_id = forms.CharField(
+        label=_('orderpage.student_id'),
+        max_length=20,
+        required=False,
+        help_text=_('orderpage.student_id_hint'),
+    )
 
     error_duplicate_performance = _('error.duplicate_performance')
     error_empty_field = _('error.empty_field')
@@ -52,6 +66,10 @@ class OrderForm(forms.Form):
             raise ValidationError(_(self.error_sold_out))
         return key
 
+    def clean_student_id(self):
+        sid = self.cleaned_data.get('student_id', '').strip()
+        return sid
+
     def clean(self):
         cleaned_data = super().clean()
         key_1 = cleaned_data.get('performance1')
@@ -60,3 +78,11 @@ class OrderForm(forms.Form):
             if db.get_performance(key_1) == db.get_performance(key_2):
                 raise ValidationError(self.error_duplicate_performance)
 
+        has_card = cleaned_data.get('has_culture_card', False)
+        student_id = cleaned_data.get('student_id', '').strip()
+        if has_card:
+            if not student_id:
+                self.add_error('student_id', _('error.student_id_required'))
+            elif not STUDENT_ID_RE.match(student_id):
+                self.add_error('student_id', _('error.student_id_invalid'))
+        return cleaned_data

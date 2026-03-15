@@ -2,6 +2,7 @@
 views/history.py – Purchase history, edit, delete, and resend-email views.
 """
 import json
+import re
 from datetime import datetime
 
 from django.conf import settings
@@ -15,6 +16,8 @@ from iftf_duoverkoop.src.core.models import Purchase
 from iftf_duoverkoop.src.core.auth import get_client_ip, log_purchase_action, can_edit_purchases
 from iftf_duoverkoop.src.core.email import send_confirmation_email_async, build_confirmation_message
 from iftf_duoverkoop.src import db
+
+STUDENT_ID_RE = re.compile(r'^r\d{7}$', re.IGNORECASE)
 
 
 @login_required
@@ -40,7 +43,7 @@ def purchase_history(request: HttpRequest) -> HttpResponse:
 @login_required
 @permission_required('iftf_duoverkoop.change_purchase', raise_exception=True)
 def edit_purchase(request: HttpRequest, purchase_id: int) -> JsonResponse:
-    """Edit a purchase's name, email, and tickets (Support Staff only)."""
+    """Edit a purchase's name, email, tickets, and culture-card status (Support Staff only)."""
     try:
         data = json.loads(request.body)
         purchase = get_object_or_404(Purchase, id=purchase_id)
@@ -50,31 +53,46 @@ def edit_purchase(request: HttpRequest, purchase_id: int) -> JsonResponse:
             'email': purchase.email,
             'ticket1': purchase.ticket1.key,
             'ticket2': purchase.ticket2.key,
+            'has_culture_card': purchase.has_culture_card,
+            'student_id': purchase.student_id,
         }
-        original_price = purchase.ticket1.price + purchase.ticket2.price
+        original_price = purchase.total_price()
 
         name = data.get('name', '').strip()
         email = data.get('email', '').strip()
         ticket1_key = data.get('ticket1', '').strip()
         ticket2_key = data.get('ticket2', '').strip()
+        has_culture_card = bool(data.get('has_culture_card', False))
+        student_id = data.get('student_id', '').strip()
 
         if not name or not email:
             return JsonResponse({'success': False, 'error': _('error.name_email_required')}, status=400)
+
+        # Validate student ID when culture card is ticked
+        if has_culture_card:
+            if not student_id:
+                return JsonResponse({'success': False, 'error': _('error.student_id_required')}, status=400)
+            if not STUDENT_ID_RE.match(student_id):
+                return JsonResponse({'success': False, 'error': _('error.student_id_invalid')}, status=400)
 
         diff = {}
         if name != original['name']:
             diff['name'] = {'old': original['name'], 'new': name}
         if email != original['email']:
             diff['email'] = {'old': original['email'], 'new': email}
+        if has_culture_card != original['has_culture_card']:
+            diff['has_culture_card'] = {'old': original['has_culture_card'], 'new': has_culture_card}
+        if student_id != original['student_id']:
+            diff['student_id'] = {'old': original['student_id'], 'new': student_id}
 
-        new_price = original_price
+        new_ticket1 = purchase.ticket1
+        new_ticket2 = purchase.ticket2
         if ticket1_key and ticket2_key:
             if ticket1_key == ticket2_key:
                 return JsonResponse({'success': False, 'error': _('error.duplicate_performance')}, status=400)
             try:
                 new_ticket1 = db.get_performance(ticket1_key)
                 new_ticket2 = db.get_performance(ticket2_key)
-                new_price = new_ticket1.price + new_ticket2.price
             except Exception:
                 return JsonResponse({'success': False, 'error': _('error.invalid_performance')}, status=400)
 
@@ -99,19 +117,28 @@ def edit_purchase(request: HttpRequest, purchase_id: int) -> JsonResponse:
             'email': original['email'],
             'ticket1': original['ticket1'],
             'ticket2': original['ticket2'],
+            'has_culture_card': original['has_culture_card'],
+            'student_id': original['student_id'],
         }
 
         purchase.name = name
         purchase.email = email
+        purchase.has_culture_card = has_culture_card
+        purchase.student_id = student_id if has_culture_card else ''
         purchase.modified_by = request.user
         purchase.modified_date = datetime.now()
         purchase.save()
+
+        # Compute new price using updated purchase state
+        new_price = purchase.total_price()
 
         after_state = {
             'name': purchase.name,
             'email': purchase.email,
             'ticket1': purchase.ticket1.key,
             'ticket2': purchase.ticket2.key,
+            'has_culture_card': purchase.has_culture_card,
+            'student_id': purchase.student_id,
         }
 
         log_purchase_action(
@@ -187,5 +214,4 @@ def resend_email(request: HttpRequest, purchase_id: int) -> JsonResponse:
         return JsonResponse({'success': True, 'already_sent': already_sent})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
-
 

@@ -21,7 +21,7 @@ from django.views.decorators.http import require_POST, require_http_methods
 from iftf_duoverkoop.src.core.models import Association, AssociationRepProfile, Performance, Purchase, PurchaseAuditLog, LoginAuditLog
 from iftf_duoverkoop.src.core.auth import setup_permission_groups, GROUP_ASSOCIATION_REP
 from iftf_duoverkoop.src.dashboard.forms import (
-    AssociationForm, PerformanceForm, CreateUserForm, EditUserForm, LogoUploadForm,
+    AssociationForm, PerformanceForm, BulkSetPriceForm, CreateUserForm, EditUserForm, LogoUploadForm,
 )
 
 
@@ -52,13 +52,18 @@ def _association_stats():
         perfs = Performance.objects.filter(association=assoc)
         total_capacity = sum(p.max_tickets for p in perfs)
         tickets_sold = sum(p.tickets_sold() for p in perfs)
-        t1_rev = sum(
-            p.ticket1.price
-            for p in Purchase.objects.filter(ticket1__association=assoc).select_related('ticket1')
-        )
-        t2_rev = sum(
-            p.ticket2.price
-            for p in Purchase.objects.filter(ticket2__association=assoc).select_related('ticket2')
+        revenue = sum(
+            p.total_price()
+            for p in Purchase.objects.filter(
+                ticket1__association=assoc
+            ).select_related('ticket1', 'ticket2')
+        ) + sum(
+            p.total_price()
+            for p in Purchase.objects.filter(
+                ticket2__association=assoc
+            ).exclude(
+                ticket1__association=assoc
+            ).select_related('ticket1', 'ticket2')
         )
         stats.append({
             'association': assoc,
@@ -66,7 +71,7 @@ def _association_stats():
             'total_capacity': total_capacity,
             'tickets_sold': tickets_sold,
             'tickets_left': total_capacity - tickets_sold,
-            'revenue': t1_rev + t2_rev,
+            'revenue': revenue,
             'fill_pct': round(tickets_sold / total_capacity * 100) if total_capacity else 0,
         })
     return stats
@@ -80,7 +85,7 @@ def _association_stats():
 def dashboard_home(request: HttpRequest) -> HttpResponse:
     total_purchases = Purchase.objects.count()
     total_revenue = sum(
-        p.ticket1.price + p.ticket2.price
+        p.total_price()
         for p in Purchase.objects.select_related('ticket1', 'ticket2')
     )
     total_capacity = sum(p.max_tickets for p in Performance.objects.all())
@@ -241,6 +246,7 @@ def dashboard_performance_create(request: HttpRequest) -> HttpResponse:
                 association=get_object_or_404(Association, name=d['association']),
                 date=d['date'],
                 price=d['price'],
+                discounted_price=d.get('discounted_price'),
                 max_tickets=d['max_tickets'],
             )
             messages.success(request, _('dashboard.performances.created') % {'key': d['key']})
@@ -268,7 +274,9 @@ def dashboard_performance_edit(request: HttpRequest, key: str) -> HttpResponse:
                     if new_key != key:
                         new_perf = Performance.objects.create(
                             key=new_key, name=d['name'], association=assoc,
-                            date=d['date'], price=d['price'], max_tickets=d['max_tickets'],
+                            date=d['date'], price=d['price'],
+                            discounted_price=d.get('discounted_price'),
+                            max_tickets=d['max_tickets'],
                         )
                         Purchase.objects.filter(ticket1=perf).update(ticket1=new_perf)
                         Purchase.objects.filter(ticket2=perf).update(ticket2=new_perf)
@@ -278,6 +286,7 @@ def dashboard_performance_edit(request: HttpRequest, key: str) -> HttpResponse:
                         perf.association = assoc
                         perf.date = d['date']
                         perf.price = d['price']
+                        perf.discounted_price = d.get('discounted_price')
                         perf.max_tickets = d['max_tickets']
                         perf.save()
                 messages.success(request, _('dashboard.performances.updated'))
@@ -286,7 +295,9 @@ def dashboard_performance_edit(request: HttpRequest, key: str) -> HttpResponse:
         form = PerformanceForm(initial={
             'key': perf.key, 'name': perf.name, 'association': perf.association.name,
             'date': perf.date.strftime('%Y-%m-%dT%H:%M'),
-            'price': perf.price, 'max_tickets': perf.max_tickets,
+            'price': perf.price,
+            'discounted_price': perf.discounted_price,
+            'max_tickets': perf.max_tickets,
         }, editing_key=key)
     return render(request, 'dashboard/performance_form.html', {
         'form': form, 'action': 'Edit', 'perf': perf, 'sold': sold,
@@ -304,6 +315,48 @@ def dashboard_performance_delete(request: HttpRequest, key: str) -> HttpResponse
         perf.delete()
         messages.success(request, _('dashboard.performances.deleted') % {'key': key})
     return redirect('dashboard:dashboard_performances')
+
+
+@staff_required
+@require_http_methods(['GET', 'POST'])
+def dashboard_bulk_set_price(request: HttpRequest) -> HttpResponse:
+    """Set the regular price on ALL performances to the same value."""
+    form = BulkSetPriceForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        new_price = form.cleaned_data['price']
+        count = Performance.objects.all().update(price=new_price)
+        messages.success(
+            request,
+            _('dashboard.performances.bulk_price_set') % {'price': f'{new_price:.2f}', 'count': count},
+        )
+        return redirect('dashboard:dashboard_performances')
+    return render(request, 'dashboard/bulk_price_form.html', {
+        'form': form,
+        'title': _('dashboard.performances.bulk_set_price_title'),
+        'description': _('dashboard.performances.bulk_set_price_desc'),
+        'field_label': _('dashboard.performances.bulk_price_label'),
+    })
+
+
+@staff_required
+@require_http_methods(['GET', 'POST'])
+def dashboard_bulk_set_discounted_price(request: HttpRequest) -> HttpResponse:
+    """Set the discounted (culture-card) price on ALL performances to the same value."""
+    form = BulkSetPriceForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        new_price = form.cleaned_data['price']
+        count = Performance.objects.all().update(discounted_price=new_price)
+        messages.success(
+            request,
+            _('dashboard.performances.bulk_discounted_price_set') % {'price': f'{new_price:.2f}', 'count': count},
+        )
+        return redirect('dashboard:dashboard_performances')
+    return render(request, 'dashboard/bulk_price_form.html', {
+        'form': form,
+        'title': _('dashboard.performances.bulk_set_discounted_price_title'),
+        'description': _('dashboard.performances.bulk_set_discounted_price_desc'),
+        'field_label': _('dashboard.performances.bulk_discounted_price_label'),
+    })
 
 
 # ---------------------------------------------------------------------------

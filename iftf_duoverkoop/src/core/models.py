@@ -23,6 +23,12 @@ class Performance(models.Model):
     association = models.ForeignKey(Association, on_delete=models.CASCADE)
     name = models.CharField("Name", max_length=128)
     price = models.FloatField("Price")
+    discounted_price = models.FloatField(
+        "Discounted Price (culture card)",
+        null=True,
+        blank=True,
+        help_text="Reduced price for buyers with a culture card (cultuurkaart). Leave blank if no discount applies.",
+    )
     max_tickets = models.IntegerField("Maximum Tickets")
 
     def tickets_sold(self) -> int:
@@ -99,6 +105,34 @@ class Purchase(models.Model):
         db_index=True,
         help_text="Tracks whether the confirmation email was successfully delivered.",
     )
+    has_culture_card = models.BooleanField(
+        "Has culture card",
+        default=False,
+        help_text="Whether the buyer presented a culture card (cultuurkaart) for a discount.",
+    )
+    student_id = models.CharField(
+        "Student ID",
+        max_length=20,
+        blank=True,
+        default='',
+        help_text="Student ID (e.g. r0000000) required when a culture-card discount is applied.",
+    )
+
+    def ticket1_price(self) -> float:
+        """Return the price actually charged for ticket 1, respecting any culture-card discount."""
+        if self.has_culture_card and self.ticket1.discounted_price is not None:
+            return self.ticket1.discounted_price
+        return self.ticket1.price
+
+    def ticket2_price(self) -> float:
+        """Return the price actually charged for ticket 2, respecting any culture-card discount."""
+        if self.has_culture_card and self.ticket2.discounted_price is not None:
+            return self.ticket2.discounted_price
+        return self.ticket2.price
+
+    def total_price(self) -> float:
+        """Return the total price for this purchase."""
+        return self.ticket1_price() + self.ticket2_price()
 
     def __str__(self) -> str:
         return f"Purchase {self.id} by {self.name} ({self.verification_code})"

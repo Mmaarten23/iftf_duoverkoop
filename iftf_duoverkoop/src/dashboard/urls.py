@@ -20,6 +20,8 @@ urlpatterns = [
     # Performances
     path('performances/', v.dashboard_performances, name='dashboard_performances'),
     path('performances/create/', v.dashboard_performance_create, name='dashboard_performance_create'),
+    path('performances/bulk-set-price/', v.dashboard_bulk_set_price, name='dashboard_bulk_set_price'),
+    path('performances/bulk-set-discounted-price/', v.dashboard_bulk_set_discounted_price, name='dashboard_bulk_set_discounted_price'),
     path('performances/<str:key>/edit/', v.dashboard_performance_edit, name='dashboard_performance_edit'),
     path('performances/<str:key>/delete/', v.dashboard_performance_delete, name='dashboard_performance_delete'),
 

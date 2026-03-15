@@ -30,10 +30,18 @@ def get_performances_by_association(request: HttpRequest, association_name: str)
 
 @login_required
 def get_performance_prices(request: HttpRequest) -> JsonResponse:
-    """Return a {key: price} map for all performances that still have tickets."""
+    """
+    Return a {key: {price, discounted_price}} map for all performances.
+
+    ``discounted_price`` is null when no discount is configured.
+    Sold-out performances are excluded (the order form doesn't show them).
+    """
     try:
         return JsonResponse({'prices': {
-            p.key: float(p.price)
+            p.key: {
+                'price': float(p.price),
+                'discounted_price': float(p.discounted_price) if p.discounted_price is not None else None,
+            }
             for p in db.get_all_performances()
             if p.tickets_left() > 0
         }})
@@ -74,5 +82,4 @@ def get_availability(request: HttpRequest) -> JsonResponse:
         return JsonResponse({'performances': performances})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
-
 

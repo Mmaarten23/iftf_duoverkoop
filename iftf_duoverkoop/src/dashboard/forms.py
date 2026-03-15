@@ -71,6 +71,13 @@ class PerformanceForm(forms.Form):
         widget=forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
         label='Price (€)',
     )
+    discounted_price = forms.FloatField(
+        min_value=0,
+        required=False,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+        label='Discounted price – culture card (€)',
+        help_text='Leave blank if no culture-card discount applies.',
+    )
     max_tickets = forms.IntegerField(
         min_value=1,
         widget=forms.NumberInput(attrs={'class': 'form-control'}),
@@ -92,6 +99,23 @@ class PerformanceForm(forms.Form):
         if qs.exists():
             raise ValidationError('A performance with this key already exists.')
         return key
+
+    def clean(self):
+        cleaned = super().clean()
+        price = cleaned.get('price')
+        discounted = cleaned.get('discounted_price')
+        if price is not None and discounted is not None and discounted >= price:
+            self.add_error('discounted_price', 'Discounted price must be lower than the regular price.')
+        return cleaned
+
+
+class BulkSetPriceForm(forms.Form):
+    """Form used for the two 'set all prices at once' management operations."""
+    price = forms.FloatField(
+        min_value=0,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+        label='New price (€)',
+    )
 
 
 GROUP_CHOICES = [

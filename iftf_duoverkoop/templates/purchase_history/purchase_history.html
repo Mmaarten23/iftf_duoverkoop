@@ -101,7 +101,11 @@
              data-association2="{{ purchase.ticket2.association.name }}"
              data-ticket1-key="{{ purchase.ticket1.key }}"
              data-ticket2-key="{{ purchase.ticket2.key }}"
-             data-email-status="{{ purchase.email_status }}">
+             data-email-status="{{ purchase.email_status }}"
+             data-has-culture-card="{{ purchase.has_culture_card|yesno:'true,false' }}"
+             data-student-id="{{ purchase.student_id }}"
+             data-ticket1-price="{{ purchase.ticket1_price }}"
+             data-ticket2-price="{{ purchase.ticket2_price }}">
             <div class="card purchase-card">
                 <div class="card-body">
                     <div class="row align-items-center">
@@ -143,6 +147,17 @@
                                 {% else %}
                                 <span class="badge bg-secondary"><i class="bi bi-envelope-slash-fill"></i> {% translate "purchase_historypage.email_status_not_sent" %}</span>
                                 {% endif %}
+                            </div>
+                            {% if purchase.has_culture_card %}
+                            <div class="mt-1">
+                                <span class="badge bg-info text-dark">
+                                    <i class="bi bi-tag-fill"></i> {% translate "purchase_historypage.culture_card" %}
+                                    {% if purchase.student_id %}<code class="ms-1">{{ purchase.student_id }}</code>{% endif %}
+                                </span>
+                            </div>
+                            {% endif %}
+                            <div class="mt-1 small text-muted">
+                                {% translate "purchase_historypage.total_price" %}: <strong>€{{ purchase.total_price|floatformat:2 }}</strong>
                             </div>
                         </div>
 
@@ -249,6 +264,24 @@
                         </select>
                     </div>
 
+                    <div class="mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="editHasCultureCard">
+                            <label class="form-check-label" for="editHasCultureCard">
+                                <i class="bi bi-tag-fill text-info"></i> {% translate "orderpage.has_culture_card" %}
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3" id="editStudentIdContainer" style="display:none;">
+                        <label class="form-label">
+                            <i class="bi bi-person-badge-fill"></i> {% translate "orderpage.student_id" %}
+                        </label>
+                        <input type="text" class="form-control" id="editStudentId"
+                               placeholder="r0000000" maxlength="20">
+                        <div class="form-text text-muted">{% translate "orderpage.student_id_hint" %}</div>
+                    </div>
+
                     <div class="alert alert-warning">
                         <i class="bi bi-exclamation-triangle-fill"></i>
                         {% translate "purchase_historypage.edit_warning" %}
@@ -303,6 +336,7 @@ const translations = {
     resendConfirmAlreadySent: "{% translate 'purchase_historypage.resend_email_confirm_already_sent' %}",
     resendSuccess: "{% translate 'purchase_historypage.resend_email_success' %}",
     resendFailed: "{% translate 'purchase_historypage.resend_email_failed' %}",
+    discountApplied: "{% translate 'purchase_historypage.discount_applied' %}",
 };
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -315,7 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentFilter = 'all';
     let performancePrices = {};
 
-    // Load performance prices
+    // Load performance prices (new format: {key: {price, discounted_price}})
     fetch('/api/performance-prices/')
         .then(response => response.json())
         .then(data => {
@@ -325,22 +359,23 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error loading prices:', error);
         });
 
+    function getEffectivePrice(key, hasCultureCard) {
+        const info = performancePrices[key];
+        if (!info) return 0;
+        if (hasCultureCard && info.discounted_price !== null) return info.discounted_price;
+        return info.price;
+    }
+
     // Populate performance filter based on associations
     associationFilter.addEventListener('change', function() {
         const selectedAssociation = this.value;
 
-        // Enable performance filter if an association is selected
         if (selectedAssociation) {
             performanceFilter.disabled = false;
-
-            // Fetch performances for the selected association
             fetch(`/api/performances-by-association/${selectedAssociation}/`)
                 .then(response => response.json())
                 .then(data => {
-                    // Clear existing options
                     performanceFilter.innerHTML = '<option value="">{% translate "purchase_historypage.filter_all_performances" %}</option>';
-
-                    // Add new options
                     data.performances.forEach(performance => {
                         const option = document.createElement('option');
                         option.value = performance.key;
@@ -356,13 +391,10 @@ document.addEventListener('DOMContentLoaded', function() {
         filterPurchases(searchInput.value.toLowerCase(), currentFilter);
     });
 
-    // Search functionality
     searchInput.addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase();
-        filterPurchases(searchTerm, currentFilter);
+        filterPurchases(this.value.toLowerCase(), currentFilter);
     });
 
-    // Filter functionality
     filterButtons.forEach(button => {
         button.addEventListener('click', function() {
             filterButtons.forEach(btn => btn.classList.remove('active'));
@@ -372,12 +404,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Performance filter change
     performanceFilter.addEventListener('change', function() {
         filterPurchases(searchInput.value.toLowerCase(), currentFilter);
     });
 
-    // Email status filter change
     emailStatusFilter.addEventListener('change', function() {
         filterPurchases(searchInput.value.toLowerCase(), currentFilter);
     });
@@ -400,7 +430,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 matchesFilter = itemDate >= weekAgo;
             }
 
-            // Association and performance filter matching
             const associationMatch = associationFilter.value === '' || item.dataset.association1 === associationFilter.value || item.dataset.association2 === associationFilter.value;
             const performanceMatch = performanceFilter.value === '' || item.dataset.ticket1Key === performanceFilter.value || item.dataset.ticket2Key === performanceFilter.value;
             const emailStatusMatch = emailStatusFilter.value === '' || item.dataset.emailStatus === emailStatusFilter.value;
@@ -453,6 +482,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const editForm = document.getElementById('editForm');
     let originalPrice = 0;
 
+    // Culture card toggle in edit modal
+    const editCultureCardCheckbox = document.getElementById('editHasCultureCard');
+    const editStudentIdContainer = document.getElementById('editStudentIdContainer');
+    if (editCultureCardCheckbox && editStudentIdContainer) {
+        editCultureCardCheckbox.addEventListener('change', function() {
+            editStudentIdContainer.style.display = this.checked ? 'block' : 'none';
+            updatePriceComparison();
+        });
+    }
+
     document.querySelectorAll('.edit-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const purchaseId = this.dataset.purchaseId;
@@ -464,16 +503,20 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('editName').value = name;
             document.getElementById('editEmail').value = email;
 
-            // Set performance selections from button data attributes
             const ticket1Key = this.dataset.ticket1Key;
             const ticket2Key = this.dataset.ticket2Key;
             document.getElementById('editPerformance1').value = ticket1Key;
             document.getElementById('editPerformance2').value = ticket2Key;
 
-            // Calculate original price
-            originalPrice = (performancePrices[ticket1Key] || 0) + (performancePrices[ticket2Key] || 0);
+            // Restore culture card state
+            const hasCultureCard = card.dataset.hasCultureCard === 'true';
+            editCultureCardCheckbox.checked = hasCultureCard;
+            editStudentIdContainer.style.display = hasCultureCard ? 'block' : 'none';
+            document.getElementById('editStudentId').value = card.dataset.studentId || '';
 
-            // Reset and hide price comparison
+            // Original price from the data attributes (already effective price)
+            originalPrice = parseFloat(card.dataset.ticket1Price || 0) + parseFloat(card.dataset.ticket2Price || 0);
+
             const originalPriceDiv = document.getElementById('originalPrice');
             const newPriceDiv = document.getElementById('newPrice');
             const priceDifferenceDiv = document.getElementById('priceDifference');
@@ -488,15 +531,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Update price comparison when performance selections change
     document.getElementById('editPerformance1').addEventListener('change', updatePriceComparison);
     document.getElementById('editPerformance2').addEventListener('change', updatePriceComparison);
 
     function updatePriceComparison() {
         const perf1Key = document.getElementById('editPerformance1').value;
         const perf2Key = document.getElementById('editPerformance2').value;
+        const hasCultureCard = document.getElementById('editHasCultureCard').checked;
 
-        const newPrice = (performancePrices[perf1Key] || 0) + (performancePrices[perf2Key] || 0);
+        const newPrice = getEffectivePrice(perf1Key, hasCultureCard) + getEffectivePrice(perf2Key, hasCultureCard);
         const priceDifference = newPrice - originalPrice;
 
         const originalPriceDiv = document.getElementById('originalPrice');
@@ -507,6 +550,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         newPriceDiv.textContent = '€' + newPrice.toFixed(2);
         priceDifferenceDiv.textContent = (priceDifference >= 0 ? '+' : '') + '€' + priceDifference.toFixed(2);
+
+        if (hasCultureCard) {
+            const discountNote = document.createElement('small');
+        }
 
         if (priceDifference > 0) {
             priceDifferenceDiv.className = 'h6 mb-0 text-danger';
@@ -522,6 +569,10 @@ document.addEventListener('DOMContentLoaded', function() {
             priceMessageDiv.className = 'mt-2 small text-muted';
         }
 
+        if (hasCultureCard) {
+            priceMessageDiv.textContent += ' (' + translations.discountApplied + ')';
+        }
+
         priceComparisonDiv.style.display = 'block';
     }
 
@@ -533,6 +584,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const email = document.getElementById('editEmail').value;
         const ticket1 = document.getElementById('editPerformance1').value;
         const ticket2 = document.getElementById('editPerformance2').value;
+        const hasCultureCard = document.getElementById('editHasCultureCard').checked;
+        const studentId = document.getElementById('editStudentId').value;
 
         fetch(`/purchase_history/edit/${purchaseId}/`, {
             method: 'POST',
@@ -540,7 +593,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
             },
-            body: JSON.stringify({ name, email, ticket1, ticket2 })
+            body: JSON.stringify({ name, email, ticket1, ticket2, has_culture_card: hasCultureCard, student_id: studentId })
         })
         .then(response => response.json())
         .then(data => {
