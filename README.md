@@ -87,3 +87,38 @@ Please note that the database has a policy in place to avoid having broken refer
 - Removing a Purchase is always possible
 - Removing a Performance is only possible if no Purchases have their Ticket1 or Ticket2 set to the key of that Performance
 - Removing an Association is only possible if none of the Performances are set to that Association
+
+## Render troubleshooting (500 errors)
+If `/order` and `/dashboard` fail on Render but `/login` works, the most common cause is that app migrations were not applied on the Render database.
+
+### 1) Check migrations on Render
+Run in a Render shell:
+
+```bash
+python manage.py showmigrations iftf_duoverkoop
+python manage.py migrate --noinput
+```
+
+### 2) Ensure startup logs are visible in Render console
+Use a Gunicorn start command that writes logs to stdout/stderr:
+
+```bash
+python manage.py migrate --noinput && gunicorn iftf_duoverkoop.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120 --access-logfile - --error-logfile - --capture-output --log-level info
+```
+
+### 3) Required environment variables on Render
+- `SECRET_KEY` (required)
+- `DEBUG=False`
+- `DATABASE_URL`
+- `SEND_EMAILS` (`True` or `False`)
+- `EMAIL_HOST_PASSWORD` (if mails are enabled)
+- Optional: `LOG_LEVEL=DEBUG` for temporary deeper diagnostics
+
+### 4) What is now logged
+This project includes request-exception logging middleware and stdout logging config in `iftf_duoverkoop/settings.py`, so unhandled exceptions include:
+- request method
+- path
+- user (or anonymous)
+- client IP
+
+This should make 500s visible directly in the Render console logs.

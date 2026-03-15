@@ -15,7 +15,8 @@ import os
 import dj_database_url
 
 SECRET_KEY = os.environ.get("SECRET_KEY") or "django-insecure-CHANGE_ME"
-DEBUG = os.environ.get("DEBUG") == "True" or os.environ.get("DEBUG") is None
+# Default to False in hosted environments; set DEBUG=True explicitly for local dev.
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,6 +33,12 @@ ALLOWED_HOSTS = [
     "mg.iftfduoverkoop.dpdns.org",
     "localhost",
 ]
+# Allow environment override/additions without losing defaults.
+extra_hosts = [h.strip() for h in os.environ.get("ALLOWED_HOSTS", "").split(",") if h.strip()]
+if extra_hosts:
+    ALLOWED_HOSTS = sorted(set(ALLOWED_HOSTS + extra_hosts))
+
+
 CSRF_TRUSTED_ORIGINS = [
     "https://iftf-duoverkoop.onrender.com",
     "https://iftfduoverkoop.dpdns.org",
@@ -62,6 +69,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Log request context for unhandled exceptions to Render stdout/stderr.
+    'iftf_duoverkoop.src.core.middleware.RequestExceptionLoggingMiddleware',
 ]
 
 ROOT_URLCONF = 'iftf_duoverkoop.urls'
@@ -184,3 +193,48 @@ if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
+
+# Render-friendly logging: all key logs go to stdout so they appear in the Render console.
+LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO').upper()
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': LOG_LEVEL,
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': LOG_LEVEL,
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'iftf_duoverkoop': {
+            'handlers': ['console'],
+            'level': LOG_LEVEL,
+            'propagate': False,
+        },
+        # Gunicorn's own Python logger (when run under gunicorn).
+        'gunicorn.error': {
+            'handlers': ['console'],
+            'level': LOG_LEVEL,
+            'propagate': False,
+        },
+    },
+}
