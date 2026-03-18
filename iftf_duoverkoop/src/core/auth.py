@@ -25,8 +25,9 @@ def setup_permission_groups() -> None:
       export data, and verify purchases by code.
     - Association Representative: Can only look up purchases by verification code.
     """
-    from iftf_duoverkoop.src.core.models import Purchase  # local import avoids circularity
+    from iftf_duoverkoop.src.core.models import Purchase, DatabaseOperation  # local import avoids circularity
     purchase_ct = ContentType.objects.get_for_model(Purchase)
+    db_op_ct = ContentType.objects.get_for_model(DatabaseOperation)
 
     with transaction.atomic():
         pos_group, _ = Group.objects.get_or_create(name=GROUP_POS_STAFF)
@@ -43,6 +44,7 @@ def setup_permission_groups() -> None:
             Permission.objects.get(codename='delete_purchase', content_type=purchase_ct),
             Permission.objects.get(codename='export_data', content_type=purchase_ct),
             Permission.objects.get(codename='verify_purchase', content_type=purchase_ct),
+            Permission.objects.get(codename='manage_database_backups', content_type=db_op_ct),
         ])
 
         rep_group, _ = Group.objects.get_or_create(name=GROUP_ASSOCIATION_REP)

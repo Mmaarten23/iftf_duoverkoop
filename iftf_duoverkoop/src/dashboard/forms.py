@@ -229,3 +229,23 @@ class LogoUploadForm(forms.Form):
         widget=forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
     )
 
+
+class RestoreDatabaseForm(forms.Form):
+    backup_file = forms.FileField(
+        label='Backup file (.dump)',
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': '.dump,application/octet-stream'}),
+    )
+    confirmation = forms.CharField(
+        label='Type RESTORE to confirm',
+        max_length=32,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'RESTORE'}),
+        help_text='This operation is destructive and should only be used during planned maintenance.',
+    )
+
+    def clean_confirmation(self):
+        value = (self.cleaned_data.get('confirmation') or '').strip().upper()
+        if value != 'RESTORE':
+            raise ValidationError('Please type RESTORE exactly to confirm.')
+        return value
+
+

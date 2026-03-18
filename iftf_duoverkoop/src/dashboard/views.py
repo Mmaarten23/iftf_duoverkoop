@@ -6,6 +6,7 @@ All views require login + is_staff=True (enforced by @staff_required).
 import os
 import json
 from functools import wraps
+from pathlib import Path
 
 from django.conf import settings
 from django.contrib import messages
@@ -13,15 +14,30 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.http import HttpRequest, HttpResponse
+from django.http import FileResponse, Http404, HttpRequest, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_http_methods
 
-from iftf_duoverkoop.src.core.models import Association, AssociationRepProfile, Performance, Purchase, PurchaseAuditLog, LoginAuditLog
+from iftf_duoverkoop.src.core.backup_restore import (
+    enqueue_backup_job,
+    enqueue_restore_job,
+    has_running_database_operation,
+    has_running_restore_operation,
+)
+from iftf_duoverkoop.src.core.models import (
+    Association,
+    AssociationRepProfile,
+    DatabaseOperation,
+    LoginAuditLog,
+    Performance,
+    Purchase,
+    PurchaseAuditLog,
+)
 from iftf_duoverkoop.src.core.auth import setup_permission_groups, GROUP_ASSOCIATION_REP
 from iftf_duoverkoop.src.dashboard.forms import (
     AssociationForm, PerformanceForm, BulkSetPriceForm, CreateUserForm, EditUserForm, LogoUploadForm,
+    RestoreDatabaseForm,
 )
 
 
@@ -75,6 +91,15 @@ def _association_stats():
             'fill_pct': round(tickets_sold / total_capacity * 100) if total_capacity else 0,
         })
     return stats
+
+
+def _can_manage_database_ops(request: HttpRequest) -> bool:
+    return request.user.is_superuser or request.user.has_perm('iftf_duoverkoop.manage_database_backups')
+
+
+def _backup_file_path(filename: str) -> Path:
+    backup_dir = Path(getattr(settings, 'DATABASE_BACKUP_DIR', Path(settings.MEDIA_ROOT) / 'backups'))
+    return backup_dir / filename
 
 
 # ---------------------------------------------------------------------------
@@ -544,6 +569,10 @@ def dashboard_audit_detail(request: HttpRequest, log_id: int) -> HttpResponse:
 @staff_required
 def dashboard_system(request: HttpRequest) -> HttpResponse:
     from django.db import connection
+
+    operations = DatabaseOperation.objects.select_related('created_by').all()[:25]
+    can_manage_db = _can_manage_database_ops(request)
+
     return render(request, 'dashboard/system.html', {
         'db_vendor': connection.vendor,
         'model_counts': {
@@ -556,6 +585,10 @@ def dashboard_system(request: HttpRequest) -> HttpResponse:
         },
         'send_emails': getattr(settings, 'SEND_EMAILS', False),
         'debug': settings.DEBUG,
+        'can_manage_db': can_manage_db,
+        'db_operations': operations,
+        'restore_form': RestoreDatabaseForm(),
+        'has_running_restore': has_running_restore_operation(),
     })
 
 
@@ -568,4 +601,84 @@ def dashboard_sync_permissions(request: HttpRequest) -> HttpResponse:
     except Exception as e:
         messages.error(request, _('dashboard.system.permissions_sync_failed') % {'error': e})
     return redirect('dashboard:dashboard_system')
+
+
+@staff_required
+@require_POST
+def dashboard_backup_create(request: HttpRequest) -> HttpResponse:
+    if not _can_manage_database_ops(request):
+        messages.error(request, 'You do not have permission to manage database backups.')
+        return redirect('dashboard:dashboard_system')
+
+    if has_running_database_operation():
+        messages.warning(request, 'Another database operation is already running.')
+        return redirect('dashboard:dashboard_system')
+
+    job = enqueue_backup_job(
+        created_by=request.user,
+        notes='Manual backup requested from dashboard.',
+    )
+    messages.success(request, f'Backup job #{job.pk} started in the background.')
+    return redirect('dashboard:dashboard_system')
+
+
+@staff_required
+@require_http_methods(['GET'])
+def dashboard_backup_download(request: HttpRequest, operation_id: int) -> HttpResponse:
+    if not _can_manage_database_ops(request):
+        raise Http404
+
+    operation = get_object_or_404(
+        DatabaseOperation,
+        pk=operation_id,
+        operation_type=DatabaseOperation.TYPE_BACKUP,
+        status=DatabaseOperation.STATUS_SUCCEEDED,
+    )
+    if not operation.backup_filename:
+        raise Http404
+
+    file_path = _backup_file_path(operation.backup_filename)
+    if not file_path.exists() or not file_path.is_file():
+        raise Http404
+
+    return FileResponse(
+        file_path.open('rb'),
+        as_attachment=True,
+        filename=operation.backup_filename,
+        content_type='application/octet-stream',
+    )
+
+
+@staff_required
+@require_POST
+def dashboard_restore_upload(request: HttpRequest) -> HttpResponse:
+    if not _can_manage_database_ops(request):
+        messages.error(request, 'You do not have permission to restore the database.')
+        return redirect('dashboard:dashboard_system')
+
+    if has_running_database_operation():
+        messages.warning(request, 'Another database operation is already running.')
+        return redirect('dashboard:dashboard_system')
+
+    form = RestoreDatabaseForm(request.POST, request.FILES)
+    if not form.is_valid():
+        messages.error(request, 'Restore request is invalid. Please confirm and upload a .dump file.')
+        return redirect('dashboard:dashboard_system')
+
+    uploaded_file = form.cleaned_data['backup_file']
+    if not uploaded_file.name.lower().endswith('.dump'):
+        messages.error(request, 'Only .dump files are supported for restore.')
+        return redirect('dashboard:dashboard_system')
+
+    job = enqueue_restore_job(
+        created_by=request.user,
+        uploaded_file=uploaded_file,
+        notes='Restore requested from dashboard upload.',
+    )
+    messages.success(
+        request,
+        f'Restore job #{job.pk} started in the background. A safety backup is created automatically first.',
+    )
+    return redirect('dashboard:dashboard_system')
+
 

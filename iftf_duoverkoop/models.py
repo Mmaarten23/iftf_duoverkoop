@@ -3,6 +3,7 @@
 from iftf_duoverkoop.src.core.models import (  # noqa: F401
     Association,
     AssociationRepProfile,
+    DatabaseOperation,
     Performance,
     Purchase,
     PurchaseAuditLog,

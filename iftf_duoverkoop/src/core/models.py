@@ -266,6 +266,69 @@ class LoginAuditLog(models.Model):
         ]
 
 
+class DatabaseOperation(models.Model):
+    """Tracks asynchronous PostgreSQL backup and restore operations."""
+    TYPE_BACKUP = 'BACKUP'
+    TYPE_RESTORE = 'RESTORE'
+    TYPE_CHOICES = [
+        (TYPE_BACKUP, 'Backup'),
+        (TYPE_RESTORE, 'Restore'),
+    ]
+
+    STATUS_QUEUED = 'QUEUED'
+    STATUS_RUNNING = 'RUNNING'
+    STATUS_SUCCEEDED = 'SUCCEEDED'
+    STATUS_FAILED = 'FAILED'
+    STATUS_CHOICES = [
+        (STATUS_QUEUED, 'Queued'),
+        (STATUS_RUNNING, 'Running'),
+        (STATUS_SUCCEEDED, 'Succeeded'),
+        (STATUS_FAILED, 'Failed'),
+    ]
+
+    operation_type = models.CharField(max_length=10, choices=TYPE_CHOICES, db_index=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_QUEUED, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    started_at = models.DateTimeField(null=True, blank=True)
+    finished_at = models.DateTimeField(null=True, blank=True)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name='database_operations',
+        help_text='User that triggered this database operation.',
+    )
+    backup_filename = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+        help_text='Filename relative to media/backups.',
+    )
+    original_upload_name = models.CharField(max_length=255, blank=True, default='')
+    file_size_bytes = models.BigIntegerField(null=True, blank=True)
+    file_sha256 = models.CharField(max_length=64, blank=True, default='')
+    is_pre_restore_backup = models.BooleanField(
+        default=False,
+        help_text='True for automatic safety backup created before a restore job.',
+    )
+    notes = models.TextField(blank=True, default='')
+    output_log = models.TextField(blank=True, default='')
+    error_message = models.TextField(blank=True, default='')
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['operation_type', 'status']),
+            models.Index(fields=['-created_at']),
+        ]
+        permissions = [
+            ('manage_database_backups', 'Can run database backup and restore operations'),
+        ]
+
+    def __str__(self) -> str:
+        suffix = ' (pre-restore)' if self.is_pre_restore_backup else ''
+        return f"{self.operation_type} #{self.pk} {self.status}{suffix}"
+
+
 # ---------------------------------------------------------------------------
 # Signal receivers – automatically record login / logout / failed events
 # ---------------------------------------------------------------------------

@@ -6,7 +6,15 @@ from django import forms
 import os
 from django.conf import settings
 
-from iftf_duoverkoop.src.core.models import Association, AssociationRepProfile, Performance, Purchase, PurchaseAuditLog, LoginAuditLog
+from iftf_duoverkoop.src.core.models import (
+    Association,
+    AssociationRepProfile,
+    DatabaseOperation,
+    Performance,
+    Purchase,
+    PurchaseAuditLog,
+    LoginAuditLog,
+)
 
 
 class AssociationAdminForm(forms.ModelForm):
@@ -88,4 +96,31 @@ class LoginAuditLogAdmin(admin.ModelAdmin):
 
     def has_change_permission(self, request, obj=None):
         return False
+
+
+@admin.register(DatabaseOperation)
+class DatabaseOperationAdmin(admin.ModelAdmin):
+    """Read-only admin listing for backup/restore jobs."""
+    list_display = [
+        'id', 'operation_type', 'status', 'created_by', 'created_at',
+        'started_at', 'finished_at', 'is_pre_restore_backup',
+    ]
+    list_filter = ['operation_type', 'status', 'is_pre_restore_backup', 'created_at']
+    search_fields = ['id', 'created_by__username', 'backup_filename', 'original_upload_name']
+    readonly_fields = [
+        'operation_type', 'status', 'created_at', 'started_at', 'finished_at',
+        'created_by', 'backup_filename', 'original_upload_name', 'file_size_bytes',
+        'file_sha256', 'is_pre_restore_backup', 'notes', 'output_log', 'error_message',
+    ]
+    ordering = ['-created_at']
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
 

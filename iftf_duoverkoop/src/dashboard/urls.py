@@ -38,5 +38,8 @@ urlpatterns = [
     # System
     path('system/', v.dashboard_system, name='dashboard_system'),
     path('system/sync-permissions/', v.dashboard_sync_permissions, name='dashboard_sync_permissions'),
+    path('system/database/backup/', v.dashboard_backup_create, name='dashboard_backup_create'),
+    path('system/database/backup/<int:operation_id>/download/', v.dashboard_backup_download, name='dashboard_backup_download'),
+    path('system/database/restore/', v.dashboard_restore_upload, name='dashboard_restore_upload'),
 ]
 

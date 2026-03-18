@@ -67,6 +67,8 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # Block mutating app traffic while a database restore is active.
+    'iftf_duoverkoop.src.core.middleware.RestoreMaintenanceLockMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # Log request context for unhandled exceptions to Render stdout/stderr.
@@ -148,6 +150,8 @@ STATIC_URL = "/static/"
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'iftf_duoverkoop' / 'media'
+DATABASE_BACKUP_DIR = MEDIA_ROOT / 'backups'
+DATABASE_BACKUP_MAX_UPLOAD_MB = int(os.environ.get('DATABASE_BACKUP_MAX_UPLOAD_MB', '300'))
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

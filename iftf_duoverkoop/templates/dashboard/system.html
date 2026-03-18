@@ -88,5 +88,102 @@
             </div>
         </div>
     </div>
+
+    <!-- Database backup & restore -->
+    <div class="col-12">
+        <div class="card border-danger">
+            <div class="card-body">
+                <h6 class="dash-section-title text-danger"><i class="bi bi-hdd-stack-fill"></i> Database backup & restore</h6>
+                {% if can_manage_db %}
+                    {% if has_running_restore %}
+                    <div class="alert alert-warning py-2" role="alert">
+                        A restore operation is queued or running. Avoid creating/editing purchases until it completes.
+                    </div>
+                    {% endif %}
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <h6 class="mb-2">Create backup</h6>
+                            <p class="text-muted small mb-2">Starts an asynchronous PostgreSQL dump. Download is available after success.</p>
+                            <form method="post" action="{% url 'dashboard:dashboard_backup_create' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-cloud-arrow-down-fill"></i> Start backup
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="mb-2">Restore from backup upload</h6>
+                            <p class="text-muted small mb-2">Uploads a <code>.dump</code> file and starts restore in background. A safety backup is created first.</p>
+                            <form method="post" action="{% url 'dashboard:dashboard_restore_upload' %}" enctype="multipart/form-data" class="vstack gap-2">
+                                {% csrf_token %}
+                                {{ restore_form.backup_file }}
+                                {{ restore_form.confirmation }}
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-arrow-repeat"></i> Start restore
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <h6 class="mb-2">Recent database operations</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>User</th>
+                                    <th>Created</th>
+                                    <th>File</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for op in db_operations %}
+                                <tr>
+                                    <td>#{{ op.id }}</td>
+                                    <td>{{ op.operation_type }}{% if op.is_pre_restore_backup %} (auto){% endif %}</td>
+                                    <td>
+                                        {% if op.status == 'SUCCEEDED' %}
+                                        <span class="badge bg-success">{{ op.status }}</span>
+                                        {% elif op.status == 'FAILED' %}
+                                        <span class="badge bg-danger">{{ op.status }}</span>
+                                        {% elif op.status == 'RUNNING' %}
+                                        <span class="badge bg-warning text-dark">{{ op.status }}</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">{{ op.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ op.created_by.username }}</td>
+                                    <td>{{ op.created_at|date:"Y-m-d H:i" }}</td>
+                                    <td class="font-monospace small">{{ op.backup_filename|default:'—' }}</td>
+                                    <td>
+                                        {% if op.operation_type == 'BACKUP' and op.status == 'SUCCEEDED' and op.backup_filename %}
+                                        <a class="btn btn-sm btn-outline-secondary" href="{% url 'dashboard:dashboard_backup_download' op.id %}">
+                                            Download
+                                        </a>
+                                        {% else %}
+                                        <span class="text-muted">—</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% if op.error_message %}
+                                <tr>
+                                    <td colspan="7" class="small text-danger"><strong>Error:</strong> {{ op.error_message }}</td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted small mb-0">You do not have permission to manage database backups.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
