@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-07 19:20+0100\n"
+"POT-Creation-Date: 2026-03-18 18:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -85,124 +85,189 @@ msgstr ""
 "\n"
 "IFTF Team"
 
-#: .\iftf_duoverkoop\src\core\models.py:41
+#: .\iftf_duoverkoop\src\core\models.py:47
 msgid "performance.tostring"
 msgstr "%(association)s - \"%(name)s\" op %(date)s"
 
 # ── Dashboard – flash messages (views.py) ─────────────────────────────────────
-#: .\iftf_duoverkoop\src\dashboard\views.py:38
+#: .\iftf_duoverkoop\src\dashboard\views.py:54
 msgid "dashboard.error.no_permission"
 msgstr "Je hebt geen toegang tot het dashboard."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:142
-#: .\iftf_duoverkoop\src\dashboard\views.py:162
+#: .\iftf_duoverkoop\src\dashboard\views.py:172
+#: .\iftf_duoverkoop\src\dashboard\views.py:192
 msgid "dashboard.associations.error.name_exists"
 msgstr "Er bestaat al een vereniging met deze naam."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:145
+#: .\iftf_duoverkoop\src\dashboard\views.py:175
 msgid "dashboard.associations.created"
 msgstr "Vereniging \"%(name)s\" aangemaakt."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:172
+#: .\iftf_duoverkoop\src\dashboard\views.py:202
 msgid "dashboard.associations.updated"
 msgstr "Vereniging bijgewerkt."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:186
+#: .\iftf_duoverkoop\src\dashboard\views.py:216
 msgid "dashboard.associations.error.has_performances"
 msgstr ""
 "Kan \"%(name)s\" niet verwijderen: heeft nog gekoppelde voorstellingen."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:189
+#: .\iftf_duoverkoop\src\dashboard\views.py:219
 msgid "dashboard.associations.deleted"
 msgstr "Vereniging \"%(name)s\" verwijderd."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:204
+#: .\iftf_duoverkoop\src\dashboard\views.py:234
 msgid "dashboard.associations.logo_uploaded"
 msgstr "Logo \"%(name)s\" geüpload."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:206
+#: .\iftf_duoverkoop\src\dashboard\views.py:236
 msgid "dashboard.associations.error.invalid_logo"
 msgstr "Ongeldig bestand. Upload een geldig afbeeldingsbestand."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:246
+#: .\iftf_duoverkoop\src\dashboard\views.py:277
 msgid "dashboard.performances.created"
 msgstr "Voorstelling \"%(key)s\" aangemaakt."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:263
+#: .\iftf_duoverkoop\src\dashboard\views.py:294
 msgid "dashboard.performances.error.below_sold"
 msgstr ""
 "Kan niet lager instellen dan het huidige aantal verkochte tickets (%(sold)s)."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:283
+#: .\iftf_duoverkoop\src\dashboard\views.py:317
 msgid "dashboard.performances.updated"
 msgstr "Voorstelling bijgewerkt."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:302
+#: .\iftf_duoverkoop\src\dashboard\views.py:338
 msgid "dashboard.performances.error.has_tickets"
 msgstr "Kan \"%(key)s\" niet verwijderen: %(sold)s ticket(s) verkocht."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:305
+#: .\iftf_duoverkoop\src\dashboard\views.py:341
 msgid "dashboard.performances.deleted"
 msgstr "Voorstelling \"%(key)s\" verwijderd."
 
 #: .\iftf_duoverkoop\src\dashboard\views.py:355
+msgid "dashboard.performances.bulk_price_set"
+msgstr ""
+"Reguliere prijs ingesteld op €%(price)s voor %(count)s voorstelling(en)."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:360
+msgid "dashboard.performances.bulk_set_price_title"
+msgstr "Reguliere prijs instellen voor alle voorstellingen"
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:361
+msgid "dashboard.performances.bulk_set_price_desc"
+msgstr ""
+"Dit overschrijft de reguliere prijs van ALLE voorstellingen tegelijk. "
+"Gebruik dit met zorg."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:362
+msgid "dashboard.performances.bulk_price_label"
+msgstr "Nieuwe reguliere prijs (€)"
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:376
+msgid "dashboard.performances.bulk_discounted_price_set"
+msgstr ""
+"Cultuurkaartprijs ingesteld op €%(price)s voor %(count)s voorstelling(en)."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:381
+msgid "dashboard.performances.bulk_set_discounted_price_title"
+msgstr "Cultuurkaartprijs instellen voor alle voorstellingen"
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:382
+msgid "dashboard.performances.bulk_set_discounted_price_desc"
+msgstr ""
+"Dit overschrijft de cultuurkaartprijs van ALLE voorstellingen tegelijk. De "
+"nieuwe prijs wordt de kortingsprijs voor kopers met een cultuurkaart."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:383
+msgid "dashboard.performances.bulk_discounted_price_label"
+msgstr "Nieuwe cultuurkaartprijs (€)"
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:433
 msgid "dashboard.users.created"
 msgstr "Gebruiker \"%(username)s\" aangemaakt."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:394
+#: .\iftf_duoverkoop\src\dashboard\views.py:472
 msgid "dashboard.users.updated"
 msgstr "Gebruiker \"%(username)s\" bijgewerkt."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:420
+#: .\iftf_duoverkoop\src\dashboard\views.py:498
 msgid "dashboard.users.error.cannot_delete_self"
 msgstr "Je kan je eigen account niet verwijderen."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:422
+#: .\iftf_duoverkoop\src\dashboard\views.py:500
 msgid "dashboard.users.error.has_purchases"
 msgstr ""
 "Kan \"%(username)s\" niet verwijderen: wordt gerefereerd door aankooprecords."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:426
+#: .\iftf_duoverkoop\src\dashboard\views.py:504
 msgid "dashboard.users.deleted"
 msgstr "Gebruiker \"%(username)s\" verwijderd."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:514
+#: .\iftf_duoverkoop\src\dashboard\views.py:600
 msgid "dashboard.system.permissions_synced"
 msgstr "Machtigingsgroepen succesvol opnieuw gesynchroniseerd."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:516
+#: .\iftf_duoverkoop\src\dashboard\views.py:602
 msgid "dashboard.system.permissions_sync_failed"
 msgstr "Synchronisatie van machtigingen mislukt: %(error)s"
 
-#: .\iftf_duoverkoop\src\forms\order.py:20
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:216
+#: .\iftf_duoverkoop\src\forms\order.py:24
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:231
 msgid "person.name"
 msgstr "Naam"
 
-#: .\iftf_duoverkoop\src\forms\order.py:21
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:223
+#: .\iftf_duoverkoop\src\forms\order.py:25
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:238
 msgid "person.email"
 msgstr "Emailadres"
 
-#: .\iftf_duoverkoop\src\forms\order.py:22
-#: .\iftf_duoverkoop\src\forms\order.py:23
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:230
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:242
+#: .\iftf_duoverkoop\src\forms\order.py:26
+#: .\iftf_duoverkoop\src\forms\order.py:27
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:245
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:257
 msgid "performance.name"
 msgstr "Voorstelling"
 
-#: .\iftf_duoverkoop\src\forms\order.py:25
-#: .\iftf_duoverkoop\src\views\history.py:73
+# ── Culture card / discount ───────────────────────────────────────────────────
+#: .\iftf_duoverkoop\src\forms\order.py:29
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:271
+msgid "orderpage.has_culture_card"
+msgstr "Cultuurkaart (korting)"
+
+#: .\iftf_duoverkoop\src\forms\order.py:33
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:278
+msgid "orderpage.student_id"
+msgstr "Studentennummer"
+
+#: .\iftf_duoverkoop\src\forms\order.py:36
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:282
+msgid "orderpage.student_id_hint"
+msgstr "Vereist bij cultuurkaartkorting. Formaat: r0000000"
+
+#: .\iftf_duoverkoop\src\forms\order.py:39
+#: .\iftf_duoverkoop\src\views\history.py:92
 msgid "error.duplicate_performance"
 msgstr "Je kan niet twee keer hetzelfde optreden bestellen."
 
-#: .\iftf_duoverkoop\src\forms\order.py:26
+#: .\iftf_duoverkoop\src\forms\order.py:40
 msgid "error.empty_field"
 msgstr "Vul veld in."
 
-#: .\iftf_duoverkoop\src\forms\order.py:27
+#: .\iftf_duoverkoop\src\forms\order.py:41
 msgid "error.sold_out"
 msgstr "Deze voorstelling is uitverkocht."
+
+#: .\iftf_duoverkoop\src\forms\order.py:85
+#: .\iftf_duoverkoop\src\views\history.py:74
+msgid "error.student_id_required"
+msgstr "Vul je studentennummer in bij een cultuurkaartkorting."
+
+#: .\iftf_duoverkoop\src\forms\order.py:87
+#: .\iftf_duoverkoop\src\views\history.py:76
+msgid "error.student_id_invalid"
+msgstr ""
+"Ongeldig studentennummer. Gebruik het formaat r0000000 (bijv. r0123456)."
 
 #: .\iftf_duoverkoop\src\views\auth.py:33
 msgid "login.success"
@@ -216,20 +281,20 @@ msgstr "Ongeldige gebruikersnaam of wachtwoord."
 msgid "login.logout_success"
 msgstr "%(username)s is uitgelogd."
 
-#: .\iftf_duoverkoop\src\views\history.py:62
+#: .\iftf_duoverkoop\src\views\history.py:69
 msgid "error.name_email_required"
 msgstr "Naam en emailadres zijn verplicht."
 
-#: .\iftf_duoverkoop\src\views\history.py:79
+#: .\iftf_duoverkoop\src\views\history.py:97
 msgid "error.invalid_performance"
 msgstr "Ongeldige voorstelling geselecteerd."
 
-#: .\iftf_duoverkoop\src\views\history.py:84
-#: .\iftf_duoverkoop\src\views\history.py:86
+#: .\iftf_duoverkoop\src\views\history.py:102
+#: .\iftf_duoverkoop\src\views\history.py:104
 msgid "error.performance_no_longer_available"
 msgstr "Voorstelling %(number)s (%(performance)s) is niet meer beschikbaar."
 
-#: .\iftf_duoverkoop\src\views\history.py:179
+#: .\iftf_duoverkoop\src\views\history.py:206
 msgid "purchase_history.resend_email_disabled"
 msgstr "E-mail verzending is uitgeschakeld."
 
@@ -237,11 +302,11 @@ msgstr "E-mail verzending is uitgeschakeld."
 msgid "orderpage.error_rep_no_access"
 msgstr "Verenigingsvertegenwoordigers hebben geen toegang tot de bestelpagina."
 
-#: .\iftf_duoverkoop\src\views\order.py:107
+#: .\iftf_duoverkoop\src\views\order.py:109
 msgid "orderpage.success_with_code"
 msgstr "Bestelling succesvol! Jouw verificatiecode: %(code)s"
 
-#: .\iftf_duoverkoop\src\views\order.py:114
+#: .\iftf_duoverkoop\src\views\order.py:116
 msgid "orderpage.success_with_code_no_email"
 msgstr ""
 "Bestelling succesvol! Jouw verificatiecode: %(code)s (E-mail verzending "
@@ -316,6 +381,8 @@ msgstr "Vereniging"
 #: .\iftf_duoverkoop\templates\dashboard\audit.html:9
 #: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:5
 #: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:9
+#: .\iftf_duoverkoop\templates\dashboard\bulk_price_form.html:5
+#: .\iftf_duoverkoop\templates\dashboard\bulk_price_form.html:9
 #: .\iftf_duoverkoop\templates\dashboard\home.html:5
 #: .\iftf_duoverkoop\templates\dashboard\home.html:8
 #: .\iftf_duoverkoop\templates\dashboard\performance_form.html:5
@@ -350,12 +417,14 @@ msgstr ""
 "gekoppelde voorstellingen automatisch bijwerken via een databasetransactie."
 
 #: .\iftf_duoverkoop\templates\dashboard\association_form.html:39
+#: .\iftf_duoverkoop\templates\dashboard\bulk_price_form.html:34
 #: .\iftf_duoverkoop\templates\dashboard\performance_form.html:42
 #: .\iftf_duoverkoop\templates\dashboard\user_form.html:40
 msgid "dashboard.action.save"
 msgstr "Opslaan"
 
 #: .\iftf_duoverkoop\templates\dashboard\association_form.html:42
+#: .\iftf_duoverkoop\templates\dashboard\bulk_price_form.html:37
 #: .\iftf_duoverkoop\templates\dashboard\performance_form.html:45
 #: .\iftf_duoverkoop\templates\dashboard\user_form.html:43
 msgid "dashboard.action.cancel"
@@ -385,7 +454,7 @@ msgid "dashboard.action.upload"
 msgstr "Uploaden"
 
 #: .\iftf_duoverkoop\templates\dashboard\associations.html:41
-#: .\iftf_duoverkoop\templates\dashboard\performances.html:26
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:34
 msgid "dashboard.col.name"
 msgstr "Naam"
 
@@ -411,7 +480,7 @@ msgstr "Logobestand"
 
 # ── Dashboard – shared actions ────────────────────────────────────────────────
 #: .\iftf_duoverkoop\templates\dashboard\associations.html:78
-#: .\iftf_duoverkoop\templates\dashboard\performances.html:60
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:78
 #: .\iftf_duoverkoop\templates\dashboard\users.html:87
 msgid "dashboard.action.edit"
 msgstr "Bewerken"
@@ -644,6 +713,7 @@ msgid "dashboard.sidebar.data"
 msgstr "Data"
 
 #: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:26
+#: .\iftf_duoverkoop\templates\dashboard\bulk_price_form.html:10
 #: .\iftf_duoverkoop\templates\dashboard\performance_form.html:10
 #: .\iftf_duoverkoop\templates\dashboard\performances.html:9
 #: .\iftf_duoverkoop\templates\dashboard\performances.html:13
@@ -744,23 +814,23 @@ msgid "dashboard.col.date"
 msgstr "Datum"
 
 #: .\iftf_duoverkoop\templates\dashboard\home.html:61
-#: .\iftf_duoverkoop\templates\dashboard\performances.html:29
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:38
 msgid "dashboard.col.sold_max"
 msgstr "Verkocht / Max"
 
 #: .\iftf_duoverkoop\templates\dashboard\home.html:62
-#: .\iftf_duoverkoop\templates\dashboard\performances.html:30
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:39
 msgid "dashboard.col.fill"
 msgstr "Bezetting"
 
 #: .\iftf_duoverkoop\templates\dashboard\home.html:70
-#: .\iftf_duoverkoop\templates\dashboard\performances.html:41
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:50
 msgid "dashboard.badge.sold_out"
 msgstr "UITVERKOCHT"
 
 # ── Dashboard – empty states ──────────────────────────────────────────────────
 #: .\iftf_duoverkoop\templates\dashboard\home.html:88
-#: .\iftf_duoverkoop\templates\dashboard\performances.html:75
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:93
 msgid "dashboard.empty.performances"
 msgstr "Nog geen voorstellingen."
 
@@ -806,7 +876,7 @@ msgid "dashboard.performance_form.performance"
 msgstr "Voorstelling"
 
 #: .\iftf_duoverkoop\templates\dashboard\performance_form.html:19
-#: .\iftf_duoverkoop\templates\dashboard\performances.html:67
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:85
 #, fuzzy, python-format
 #| msgid "{{ sold }} ticket(s) sold"
 msgid "%(sold)s ticket(s) sold"
@@ -821,28 +891,42 @@ msgstr "Je kan het maximum aantal tickets niet verlagen tot onder dit aantal."
 msgid "dashboard.performances.title"
 msgstr "Voorstellingen — Dashboard"
 
-#: .\iftf_duoverkoop\templates\dashboard\performances.html:15
+# Dashboard – bulk price operations
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:16
+msgid "dashboard.performances.bulk_set_price_btn"
+msgstr "Alle prijzen instellen"
+
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:19
+msgid "dashboard.performances.bulk_set_discounted_price_btn"
+msgstr "Alle cultuurkaartprijzen instellen"
+
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:22
 msgid "dashboard.performances.new"
 msgstr "Nieuwe Voorstelling"
 
-#: .\iftf_duoverkoop\templates\dashboard\performances.html:24
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:32
 msgid "dashboard.col.key"
 msgstr "Sleutel"
 
-#: .\iftf_duoverkoop\templates\dashboard\performances.html:25
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:33
 #: .\iftf_duoverkoop\templates\dashboard\users.html:27
 msgid "dashboard.col.association"
 msgstr "Vereniging"
 
-#: .\iftf_duoverkoop\templates\dashboard\performances.html:27
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:35
 msgid "dashboard.col.date_time"
 msgstr "Datum & Tijd"
 
-#: .\iftf_duoverkoop\templates\dashboard\performances.html:28
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:36
 msgid "dashboard.col.price"
 msgstr "Prijs"
 
-#: .\iftf_duoverkoop\templates\dashboard\performances.html:64
+# Dashboard – performances – discount column
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:37
+msgid "dashboard.col.discounted_price"
+msgstr "Cultuurkaartprijs"
+
+#: .\iftf_duoverkoop\templates\dashboard\performances.html:82
 #, fuzzy, python-format
 #| msgid "Delete performance {{ key }}?"
 msgid "Delete performance %(key)s?"
@@ -1025,21 +1109,21 @@ msgid "orderpage.prefill_button"
 msgstr "Gegevens vorige klant invullen"
 
 # Order page - Total Price and Submit Button
-#: .\iftf_duoverkoop\templates\order\order.html:97
+#: .\iftf_duoverkoop\templates\order\order.html:121
 msgid "orderpage.total_price"
 msgstr "Totaalprijs:"
 
-#: .\iftf_duoverkoop\templates\order\order.html:114
+#: .\iftf_duoverkoop\templates\order\order.html:138
 msgid "orderpage.submit_button"
 msgstr "Bestelling Plaatsen"
 
 # Shown in the warning banner when a selected performance sells out mid-session
-#: .\iftf_duoverkoop\templates\order\order.html:195
+#: .\iftf_duoverkoop\templates\order\order.html:219
 msgid "orderpage.availability.soldout_deselected"
 msgstr "is net uitverkocht en is uit je selectie verwijderd."
 
-#: .\iftf_duoverkoop\templates\order\order.html:207
-#: .\iftf_duoverkoop\templates\order\order.html:211
+#: .\iftf_duoverkoop\templates\order\order.html:231
+#: .\iftf_duoverkoop\templates\order\order.html:235
 #: .\iftf_duoverkoop\templates\order\overview.html:32
 #: .\iftf_duoverkoop\templates\order\overview.html:34
 msgid "orderpage.sold_out"
@@ -1070,8 +1154,8 @@ msgid "purchase_historypage.filter_all_associations"
 msgstr "Alle verenigingen"
 
 #: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:80
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:341
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:353
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:378
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:388
 msgid "purchase_historypage.filter_all_performances"
 msgstr "Alle voorstellingen"
 
@@ -1081,120 +1165,133 @@ msgid "purchase_historypage.filter_all_email_statuses"
 msgstr "Alle e-mailstatussen"
 
 #: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:86
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:142
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:146
 msgid "purchase_historypage.email_status_pending"
 msgstr "In afwachting"
 
 #: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:87
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:138
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:142
 msgid "purchase_historypage.email_status_sent"
 msgstr "Verzonden"
 
 #: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:88
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:140
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:144
 msgid "purchase_historypage.email_status_failed"
 msgstr "Mislukt"
 
 #: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:89
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:144
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:148
 msgid "purchase_historypage.email_status_not_sent"
 msgstr "Niet verzonden"
 
+# Purchase history – culture card
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:154
+msgid "purchase_historypage.culture_card"
+msgstr "Cultuurkaart"
+
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:160
+msgid "purchase_historypage.total_price"
+msgstr "Totaal"
+
 # Purchase history - Ticket labels
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:152
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:167
 msgid "purchase_historypage.ticket_1"
 msgstr "Ticket 1:"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:156
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:171
 msgid "purchase_historypage.ticket_2"
 msgstr "Ticket 2:"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:165
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:180
 msgid "purchase_historypage.resend_email"
 msgstr "E-mail opnieuw versturen"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:174
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:189
 msgid "purchase_historypage.edit"
 msgstr "Bewerken"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:179
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:194
 msgid "purchase_historypage.delete"
 msgstr "Verwijderen"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:192
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:207
 msgid "purchase_historypage.no_purchases"
 msgstr "Nog geen aankopen geregistreerd."
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:206
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:221
 msgid "purchase_historypage.edit_purchase"
 msgstr "Aankoop Bewerken"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:233
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:245
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:248
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:260
 msgid "orderpage.select_performance"
 msgstr "Selecteer een voorstelling"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:254
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:287
 msgid "purchase_historypage.edit_warning"
 msgstr ""
 "Let op: Controleer of de geselecteerde voorstellingen nog beschikbaar zijn."
 
 # Purchase history - Price comparison
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:260
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:293
 msgid "purchase_historypage.price_comparison"
 msgstr "Prijsvergelijking"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:264
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:297
 msgid "purchase_historypage.original_price"
 msgstr "Oorspronkelijke Prijs"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:268
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:301
 msgid "purchase_historypage.new_price"
 msgstr "Nieuwe Prijs"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:272
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:305
 msgid "purchase_historypage.price_difference"
 msgstr "Verschil"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:281
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:314
 msgid "purchase_historypage.cancel"
 msgstr "Annuleren"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:284
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:317
 msgid "purchase_historypage.save"
 msgstr "Opslaan"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:299
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:332
 msgid "purchase_historypage.extra_charge_required"
 msgstr "Extra betaling vereist:"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:300
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:333
 msgid "purchase_historypage.refund_due"
 msgstr "Terugbetaling verschuldigd:"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:301
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:334
 msgid "purchase_historypage.no_price_change"
 msgstr "Geen prijsverandering"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:302
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:335
 msgid "error.generic_error"
 msgstr "Er is een fout opgetreden."
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:303
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:336
 msgid "purchase_historypage.resend_email_confirm_already_sent"
 msgstr ""
 "Deze koper heeft de bevestigingsmail al succesvol ontvangen. Wil je de e-"
 "mail toch opnieuw versturen?"
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:304
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:337
 msgid "purchase_historypage.resend_email_success"
 msgstr "E-mail wordt opnieuw verstuurd."
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:305
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:338
 msgid "purchase_historypage.resend_email_failed"
 msgstr "Het versturen van de e-mail is mislukt."
 
-#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:562
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:339
+msgid "purchase_historypage.discount_applied"
+msgstr "korting toegepast"
+
+#: .\iftf_duoverkoop\templates\purchase_history\purchase_history.html:615
 msgid "purchase_historypage.delete_confirm"
 msgstr ""
 "Weet je zeker dat je deze aankoop wilt verwijderen? Deze actie kan niet "
@@ -1279,67 +1376,3 @@ msgstr "door"
 
 #~ msgid "verify.ticket_2"
 #~ msgstr "Ticket 2"
-
-# ── Culture card / discount ───────────────────────────────────────────────────
-
-msgid "orderpage.has_culture_card"
-msgstr "Cultuurkaart (korting)"
-
-msgid "orderpage.student_id"
-msgstr "Studentennummer"
-
-msgid "orderpage.student_id_hint"
-msgstr "Vereist bij cultuurkaartkorting. Formaat: r0000000"
-
-msgid "error.student_id_required"
-msgstr "Vul je studentennummer in bij een cultuurkaartkorting."
-
-msgid "error.student_id_invalid"
-msgstr "Ongeldig studentennummer. Gebruik het formaat r0000000 (bijv. r0123456)."
-
-# Purchase history – culture card
-msgid "purchase_historypage.culture_card"
-msgstr "Cultuurkaart"
-
-msgid "purchase_historypage.total_price"
-msgstr "Totaal"
-
-msgid "purchase_historypage.discount_applied"
-msgstr "korting toegepast"
-
-# Dashboard – performances – discount column
-msgid "dashboard.col.discounted_price"
-msgstr "Cultuurkaartprijs"
-
-# Dashboard – bulk price operations
-msgid "dashboard.performances.bulk_set_price_btn"
-msgstr "Alle prijzen instellen"
-
-msgid "dashboard.performances.bulk_set_discounted_price_btn"
-msgstr "Alle cultuurkaartprijzen instellen"
-
-msgid "dashboard.performances.bulk_set_price_title"
-msgstr "Reguliere prijs instellen voor alle voorstellingen"
-
-msgid "dashboard.performances.bulk_set_price_desc"
-msgstr "Dit overschrijft de reguliere prijs van ALLE voorstellingen tegelijk. Gebruik dit met zorg."
-
-msgid "dashboard.performances.bulk_price_label"
-msgstr "Nieuwe reguliere prijs (€)"
-
-msgid "dashboard.performances.bulk_price_set"
-msgstr "Reguliere prijs ingesteld op €%(price)s voor %(count)s voorstelling(en)."
-
-msgid "dashboard.performances.bulk_set_discounted_price_title"
-msgstr "Cultuurkaartprijs instellen voor alle voorstellingen"
-
-msgid "dashboard.performances.bulk_set_discounted_price_desc"
-msgstr "Dit overschrijft de cultuurkaartprijs van ALLE voorstellingen tegelijk. De nieuwe prijs wordt de kortingsprijs voor kopers met een cultuurkaart."
-
-msgid "dashboard.performances.bulk_discounted_price_label"
-msgstr "Nieuwe cultuurkaartprijs (€)"
-
-msgid "dashboard.performances.bulk_discounted_price_set"
-msgstr "Cultuurkaartprijs ingesteld op €%(price)s voor %(count)s voorstelling(en)."
-
-
