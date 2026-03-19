@@ -130,7 +130,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'nl'
 
-TIME_ZONE = os.environ.get('TIME_ZONE', 'Europe/Brussels')
+# Use an app-specific timezone env var to avoid accidental host defaults (for example UTC on PaaS).
+TIME_ZONE = os.environ.get('DJANGO_TIME_ZONE', 'Europe/Brussels')
 
 USE_I18N = True
 

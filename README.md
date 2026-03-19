@@ -116,8 +116,26 @@ python manage.py migrate --noinput && gunicorn iftf_duoverkoop.wsgi:application 
 - Optional: `MAILGUN_API_BASE_URL` (default `https://api.eu.mailgun.net`)
 - Optional: `MAILGUN_FROM_EMAIL` and `MAILGUN_FROM_NAME`
 - Optional: `IFTF_LOGO_URL` (logo shown in confirmation/follow-up emails)
-- Optional: `TIME_ZONE` (defaults to `Europe/Brussels`; affects UI + ICS times)
+- Optional: `DJANGO_TIME_ZONE` (defaults to `Europe/Brussels`; affects UI + ICS times)
 - Optional: `LOG_LEVEL=DEBUG` for temporary deeper diagnostics
+
+### 6) Timezone drift fix (performances show +1h/+2h)
+If performance hours were entered as Brussels wall time while Django was running with UTC timezone, existing data can look shifted in admin/UI/ICS.
+
+1. Set `DJANGO_TIME_ZONE=Europe/Brussels` on Render and redeploy.
+2. Dry-run the repair command:
+
+```bash
+python manage.py fix_performance_timezones --from-tz UTC --to-tz Europe/Brussels
+```
+
+3. If preview output looks correct, apply it:
+
+```bash
+python manage.py fix_performance_timezones --from-tz UTC --to-tz Europe/Brussels --apply
+```
+
+Always make a DB backup first before running `--apply`.
 
 ### 5) Email system notes
 - Confirmation mails are sent asynchronously and update `Purchase.email_status` (`PENDING`, `SENT`, `FAILED`, `NOT_SENT`).

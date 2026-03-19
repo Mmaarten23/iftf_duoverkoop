@@ -17,6 +17,7 @@ from django.db import transaction
 from django.http import FileResponse, Http404, HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import gettext as _
+from django.utils import timezone
 from django.views.decorators.http import require_POST, require_http_methods
 
 from iftf_duoverkoop.src.core.backup_restore import (
@@ -26,6 +27,7 @@ from iftf_duoverkoop.src.core.backup_restore import (
     has_running_restore_operation,
 )
 from iftf_duoverkoop.src.core.models import (
+    Address,
     Association,
     AssociationRepProfile,
     DatabaseOperation,
@@ -118,6 +120,28 @@ def _backup_file_path(filename: str) -> Path:
     return backup_dir / filename
 
 
+def _address_from_form_data(cleaned: dict) -> Address | None:
+    street = (cleaned.get('address_street') or '').strip()
+    house_number = (cleaned.get('address_house_number') or '').strip()
+    box = (cleaned.get('address_box') or '').strip()
+    postal_code = cleaned.get('address_postal_code')
+    city = (cleaned.get('address_city') or '').strip()
+    country = (cleaned.get('address_country') or 'Belgium').strip() or 'Belgium'
+
+    if not street:
+        return None
+
+    address, _ = Address.objects.get_or_create(
+        street=street,
+        house_number=house_number,
+        box=box,
+        postal_code=postal_code,
+        city=city,
+        country=country,
+    )
+    return address
+
+
 # ---------------------------------------------------------------------------
 # 1. Overview
 # ---------------------------------------------------------------------------
@@ -184,10 +208,11 @@ def dashboard_association_create(request: HttpRequest) -> HttpResponse:
         if form.is_valid():
             name = form.cleaned_data['name']
             image = form.cleaned_data.get('image') or None
+            address = _address_from_form_data(form.cleaned_data)
             if Association.objects.filter(name=name).exists():
                 form.add_error('name', _('dashboard.associations.error.name_exists'))
             else:
-                Association.objects.create(name=name, image=image)
+                Association.objects.create(name=name, image=image, address=address)
                 messages.success(request, _('dashboard.associations.created') % {'name': name})
                 return redirect('dashboard:dashboard_associations')
     else:
@@ -204,21 +229,33 @@ def dashboard_association_edit(request: HttpRequest, name: str) -> HttpResponse:
         if form.is_valid():
             new_name = form.cleaned_data['name']
             image = form.cleaned_data.get('image') or None
+            address = _address_from_form_data(form.cleaned_data)
             if new_name != assoc.name and Association.objects.filter(name=new_name).exists():
                 form.add_error('name', _('dashboard.associations.error.name_exists'))
             else:
                 with transaction.atomic():
                     if new_name != assoc.name:
-                        new_assoc = Association.objects.create(name=new_name, image=image)
+                        new_assoc = Association.objects.create(name=new_name, image=image, address=address)
                         Performance.objects.filter(association=assoc).update(association=new_assoc)
                         assoc.delete()
                     else:
                         assoc.image = image
+                        assoc.address = address
                         assoc.save()
                 messages.success(request, _('dashboard.associations.updated'))
                 return redirect('dashboard:dashboard_associations')
     else:
-        form = AssociationForm(initial={'name': assoc.name, 'image': assoc.image or ''})
+        address = assoc.address
+        form = AssociationForm(initial={
+            'name': assoc.name,
+            'image': assoc.image or '',
+            'address_street': address.street if address else '',
+            'address_house_number': address.house_number if address else '',
+            'address_box': address.box if address else '',
+            'address_postal_code': address.postal_code if address else '',
+            'address_city': address.city if address else '',
+            'address_country': address.country if address else 'Belgium',
+        })
     return render(request, 'dashboard/association_form.html', {
         'form': form, 'action': 'Edit', 'assoc': assoc,
     })
@@ -281,11 +318,14 @@ def dashboard_performance_create(request: HttpRequest) -> HttpResponse:
         form = PerformanceForm(request.POST)
         if form.is_valid():
             d = form.cleaned_data
+            perf_date = d['date']
+            if timezone.is_naive(perf_date):
+                perf_date = timezone.make_aware(perf_date, timezone.get_default_timezone())
             Performance.objects.create(
                 key=d['key'],
                 name=d['name'],
                 association=get_object_or_404(Association, name=d['association']),
-                date=d['date'],
+                date=perf_date,
                 price=d['price'],
                 discounted_price=d.get('discounted_price'),
                 max_tickets=d['max_tickets'],
@@ -306,6 +346,9 @@ def dashboard_performance_edit(request: HttpRequest, key: str) -> HttpResponse:
         form = PerformanceForm(request.POST, editing_key=key)
         if form.is_valid():
             d = form.cleaned_data
+            perf_date = d['date']
+            if timezone.is_naive(perf_date):
+                perf_date = timezone.make_aware(perf_date, timezone.get_default_timezone())
             if d['max_tickets'] < sold:
                 form.add_error('max_tickets', _('dashboard.performances.error.below_sold') % {'sold': sold})
             else:
@@ -315,7 +358,7 @@ def dashboard_performance_edit(request: HttpRequest, key: str) -> HttpResponse:
                     if new_key != key:
                         new_perf = Performance.objects.create(
                             key=new_key, name=d['name'], association=assoc,
-                            date=d['date'], price=d['price'],
+                            date=perf_date, price=d['price'],
                             discounted_price=d.get('discounted_price'),
                             max_tickets=d['max_tickets'],
                         )
@@ -325,7 +368,7 @@ def dashboard_performance_edit(request: HttpRequest, key: str) -> HttpResponse:
                     else:
                         perf.name = d['name']
                         perf.association = assoc
-                        perf.date = d['date']
+                        perf.date = perf_date
                         perf.price = d['price']
                         perf.discounted_price = d.get('discounted_price')
                         perf.max_tickets = d['max_tickets']
@@ -335,7 +378,7 @@ def dashboard_performance_edit(request: HttpRequest, key: str) -> HttpResponse:
     else:
         form = PerformanceForm(initial={
             'key': perf.key, 'name': perf.name, 'association': perf.association.name,
-            'date': perf.date.strftime('%Y-%m-%dT%H:%M'),
+            'date': timezone.localtime(perf.date).strftime('%Y-%m-%dT%H:%M'),
             'price': perf.price,
             'discounted_price': perf.discounted_price,
             'max_tickets': perf.max_tickets,

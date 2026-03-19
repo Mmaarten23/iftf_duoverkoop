@@ -4,6 +4,7 @@ import mimetypes
 import threading
 from datetime import timedelta
 from pathlib import Path
+from urllib.parse import quote_plus
 from zoneinfo import ZoneInfo
 
 import requests
@@ -222,6 +223,24 @@ def build_purchase_ics_bytes(purchase: Purchase) -> bytes:
     for index, performance in enumerate((purchase.ticket1, purchase.ticket2), start=1):
         start = dj_timezone.localtime(performance.date, tz)
         end = start + timedelta(hours=2)
+        association_name = performance.association.name
+        if performance.association.address:
+            location_value = performance.association.address.single_line()
+            maps_url = (
+                'https://www.google.com/maps/search/?api=1&query='
+                f'{quote_plus(performance.association.address.google_maps_query())}'
+            )
+        else:
+            location_value = association_name
+            maps_url = ''
+
+        description = (
+            f'{_ics_escape("Ticket purchased by " + purchase.name)} as IFTF DuoTicket. '
+            f"Don't forget to bring your secret code: {_ics_escape(purchase.verification_code)}"
+        )
+        if maps_url:
+            description = f'{description}. {_ics_escape("Maps: " + maps_url)}'
+
         events.append(
             [
                 'BEGIN:VEVENT',
@@ -229,16 +248,14 @@ def build_purchase_ics_bytes(purchase: Purchase) -> bytes:
                 f'DTSTAMP:{dtstamp}',
                 f'DTSTART;TZID={tzid}:{start.strftime("%Y%m%dT%H%M%S")}',
                 f'DTEND;TZID={tzid}:{end.strftime("%Y%m%dT%H%M%S")}',
-                f'SUMMARY:{_ics_escape(performance.name)}',
-                f'LOCATION:{_ics_escape(performance.association.name)}',
-                (
-                    'DESCRIPTION:'
-                    f'{_ics_escape("Ticket purchased by " + purchase.name)} as IFTF DuoTicket.'
-                    f'Don\'t forget to bring your secret code: {_ics_escape(purchase.verification_code)})'
-                ),
+                f'SUMMARY:{_ics_escape(f"{association_name} - {performance.name}")}',
+                f'LOCATION:{_ics_escape(location_value)}',
+                f'DESCRIPTION:{description}',
                 'END:VEVENT',
             ]
         )
+        if maps_url:
+            events[-1].insert(-1, f'URL:{_ics_escape(maps_url)}')
 
     lines = [
         'BEGIN:VCALENDAR',
@@ -428,7 +445,10 @@ def _send_and_update(purchase_id: int, subject: str | None, message: str | None)
     Never raises – all exceptions are caught and logged.
     """
     try:
-        purchase = Purchase.objects.select_related('ticket1__association', 'ticket2__association').get(pk=purchase_id)
+        purchase = Purchase.objects.select_related(
+            'ticket1__association__address',
+            'ticket2__association__address',
+        ).get(pk=purchase_id)
         resolved_subject, text_body, html_body = _build_confirmation_parts(purchase, subject, message)
         _send_via_mailgun(
             recipient=purchase.email,

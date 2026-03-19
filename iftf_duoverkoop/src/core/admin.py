@@ -7,6 +7,7 @@ import os
 from django.conf import settings
 
 from iftf_duoverkoop.src.core.models import (
+    Address,
     Association,
     AssociationRepProfile,
     DatabaseOperation,
@@ -38,6 +39,13 @@ class AssociationAdminForm(forms.ModelForm):
 @admin.register(Association)
 class AssociationAdmin(admin.ModelAdmin):
     form = AssociationAdminForm
+    list_display = ['name', 'address', 'image']
+
+
+@admin.register(Address)
+class AddressAdmin(admin.ModelAdmin):
+    list_display = ['street', 'house_number', 'box', 'postal_code', 'city', 'country']
+    search_fields = ['street', 'city', 'postal_code']
 
 
 @admin.register(AssociationRepProfile)

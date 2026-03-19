@@ -37,6 +37,44 @@ class AssociationForm(forms.Form):
         widget=forms.Select(attrs={'class': 'form-select'}),
         label='Logo',
     )
+    address_street = forms.CharField(
+        max_length=120,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label='Street',
+    )
+    address_house_number = forms.CharField(
+        max_length=10,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label='House number',
+    )
+    address_box = forms.CharField(
+        max_length=10,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label='Box',
+    )
+    address_postal_code = forms.IntegerField(
+        required=False,
+        min_value=1000,
+        max_value=9999,
+        widget=forms.NumberInput(attrs={'class': 'form-control'}),
+        label='Postal code',
+    )
+    address_city = forms.CharField(
+        max_length=120,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label='City',
+    )
+    address_country = forms.CharField(
+        max_length=40,
+        required=False,
+        initial='Belgium',
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label='Country',
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -44,6 +82,20 @@ class AssociationForm(forms.Form):
 
     def clean_name(self):
         return self.cleaned_data['name'].strip()
+
+    def clean(self):
+        cleaned = super().clean()
+        address_fields = [
+            cleaned.get('address_street'),
+            cleaned.get('address_house_number'),
+            cleaned.get('address_postal_code'),
+            cleaned.get('address_city'),
+        ]
+        if any(address_fields) and not all(address_fields):
+            raise ValidationError('To set an address, fill in street, house number, postal code and city.')
+        if cleaned.get('address_street') and not cleaned.get('address_country'):
+            cleaned['address_country'] = 'Belgium'
+        return cleaned
 
 
 class PerformanceForm(forms.Form):

@@ -2,6 +2,7 @@
 core/models.py – All database models for iftf_duoverkoop.
 """
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import User
 from django.contrib.auth.signals import user_logged_in, user_logged_out, user_login_failed
 from django.dispatch import receiver
@@ -12,6 +13,7 @@ from django.utils.formats import date_format
 class Association(models.Model):
     name = models.CharField(max_length=100, unique=True, primary_key=True)
     image = models.CharField(max_length=255, blank=True, null=True)
+    address = models.ForeignKey('Address', null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self) -> str:
         return self.name
@@ -49,6 +51,34 @@ class Performance(models.Model):
             'association': self.association,
             'name': self.name,
         }
+
+
+class Address(models.Model):
+    """Belgian postal address used for association locations and ICS exports."""
+    street = models.CharField(max_length=120)
+    house_number = models.CharField(max_length=10)
+    box = models.CharField(max_length=10, blank=True, default='')
+    postal_code = models.IntegerField(validators=[MinValueValidator(1000), MaxValueValidator(9999)])
+    city = models.CharField(max_length=120)
+    country = models.CharField(max_length=40, default='Belgium')
+
+    def single_line(self) -> str:
+        box_part = f' bus {self.box}' if self.box else ''
+        return f'{self.street} {self.house_number}{box_part}, {self.postal_code} {self.city}, {self.country}'
+
+    def google_maps_query(self) -> str:
+        return self.single_line()
+
+    def __str__(self) -> str:
+        return self.single_line()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['street', 'house_number', 'box', 'postal_code', 'city', 'country'],
+                name='unique_belgian_address',
+            ),
+        ]
 
 
 class Purchase(models.Model):
