@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-18 18:37+0100\n"
+"POT-Creation-Date: 2026-03-19 16:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,14 +16,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\iftf_duoverkoop\src\core\email.py:69
+#: .\iftf_duoverkoop\src\core\email.py:423
 msgid "email.subject"
 msgstr ""
 "Bevestiging van je IFTF Duoticket aankoop / Confirmation of your IFTF Duo "
 "ticket purchase"
 
 # Email with verification code
-#: .\iftf_duoverkoop\src\core\email.py:70
+#: .\iftf_duoverkoop\src\core\email.py:424
 msgid "email.message_with_code"
 msgstr ""
 "GEHEIME CODE: %(verification_code)s\n"
@@ -89,126 +89,225 @@ msgstr ""
 msgid "performance.tostring"
 msgstr "%(association)s - \"%(name)s\" op %(date)s"
 
+#: .\iftf_duoverkoop\src\dashboard\forms.py:293
+msgid "dashboard.email.campaign_name"
+msgstr "Campagnenaam"
+
+#: .\iftf_duoverkoop\src\dashboard\forms.py:298
+#: .\iftf_duoverkoop\templates\dashboard\email.html:211
+msgid "dashboard.email.audience"
+msgstr "Doelgroep"
+
+#: .\iftf_duoverkoop\src\dashboard\forms.py:304
+msgid "dashboard.email.associations"
+msgstr "Verenigingen"
+
+#: .\iftf_duoverkoop\src\dashboard\forms.py:305
+msgid "dashboard.email.associations_help"
+msgstr "Wordt gebruikt wanneer de doelgroep op specifieke verenigingen staat."
+
+#: .\iftf_duoverkoop\src\dashboard\forms.py:311
+msgid "dashboard.email.performance"
+msgstr "Voorstelling"
+
+#: .\iftf_duoverkoop\src\dashboard\forms.py:312
+msgid "dashboard.email.performance_help"
+msgstr ""
+"Wordt gebruikt wanneer de doelgroep op een specifieke voorstelling staat."
+
+#: .\iftf_duoverkoop\src\dashboard\forms.py:316
+#: .\iftf_duoverkoop\templates\dashboard\email.html:56
+msgid "dashboard.email.subject_template"
+msgstr "Onderwerp-template"
+
+#: .\iftf_duoverkoop\src\dashboard\forms.py:321
+msgid "dashboard.email.text_body"
+msgstr "Platte tekst"
+
+#: .\iftf_duoverkoop\src\dashboard\forms.py:331
+msgid "dashboard.email.html_body"
+msgstr "HTML-inhoud"
+
+#: .\iftf_duoverkoop\src\dashboard\forms.py:347
+msgid "dashboard.email.associations_required"
+msgstr "Selecteer minstens één vereniging voor deze doelgroep."
+
+#: .\iftf_duoverkoop\src\dashboard\forms.py:349
+msgid "dashboard.email.performance_required"
+msgstr "Selecteer één voorstelling voor deze doelgroep."
+
+#: .\iftf_duoverkoop\src\dashboard\forms.py:352
+msgid "dashboard.email.body_required"
+msgstr "Voorzie minstens platte tekst of HTML-inhoud."
+
 # ── Dashboard – flash messages (views.py) ─────────────────────────────────────
-#: .\iftf_duoverkoop\src\dashboard\views.py:54
+#: .\iftf_duoverkoop\src\dashboard\views.py:58
 msgid "dashboard.error.no_permission"
 msgstr "Je hebt geen toegang tot het dashboard."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:172
-#: .\iftf_duoverkoop\src\dashboard\views.py:192
+#: .\iftf_duoverkoop\src\dashboard\views.py:188
+#: .\iftf_duoverkoop\src\dashboard\views.py:208
 msgid "dashboard.associations.error.name_exists"
 msgstr "Er bestaat al een vereniging met deze naam."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:175
+#: .\iftf_duoverkoop\src\dashboard\views.py:191
 msgid "dashboard.associations.created"
 msgstr "Vereniging \"%(name)s\" aangemaakt."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:202
+#: .\iftf_duoverkoop\src\dashboard\views.py:218
 msgid "dashboard.associations.updated"
 msgstr "Vereniging bijgewerkt."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:216
+#: .\iftf_duoverkoop\src\dashboard\views.py:232
 msgid "dashboard.associations.error.has_performances"
 msgstr ""
 "Kan \"%(name)s\" niet verwijderen: heeft nog gekoppelde voorstellingen."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:219
+#: .\iftf_duoverkoop\src\dashboard\views.py:235
 msgid "dashboard.associations.deleted"
 msgstr "Vereniging \"%(name)s\" verwijderd."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:234
+#: .\iftf_duoverkoop\src\dashboard\views.py:250
 msgid "dashboard.associations.logo_uploaded"
 msgstr "Logo \"%(name)s\" geüpload."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:236
+#: .\iftf_duoverkoop\src\dashboard\views.py:252
 msgid "dashboard.associations.error.invalid_logo"
 msgstr "Ongeldig bestand. Upload een geldig afbeeldingsbestand."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:277
+#: .\iftf_duoverkoop\src\dashboard\views.py:293
 msgid "dashboard.performances.created"
 msgstr "Voorstelling \"%(key)s\" aangemaakt."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:294
+#: .\iftf_duoverkoop\src\dashboard\views.py:310
 msgid "dashboard.performances.error.below_sold"
 msgstr ""
 "Kan niet lager instellen dan het huidige aantal verkochte tickets (%(sold)s)."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:317
+#: .\iftf_duoverkoop\src\dashboard\views.py:333
 msgid "dashboard.performances.updated"
 msgstr "Voorstelling bijgewerkt."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:338
+#: .\iftf_duoverkoop\src\dashboard\views.py:354
 msgid "dashboard.performances.error.has_tickets"
 msgstr "Kan \"%(key)s\" niet verwijderen: %(sold)s ticket(s) verkocht."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:341
+#: .\iftf_duoverkoop\src\dashboard\views.py:357
 msgid "dashboard.performances.deleted"
 msgstr "Voorstelling \"%(key)s\" verwijderd."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:355
+#: .\iftf_duoverkoop\src\dashboard\views.py:371
 msgid "dashboard.performances.bulk_price_set"
 msgstr ""
 "Reguliere prijs ingesteld op €%(price)s voor %(count)s voorstelling(en)."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:360
+#: .\iftf_duoverkoop\src\dashboard\views.py:376
 msgid "dashboard.performances.bulk_set_price_title"
 msgstr "Reguliere prijs instellen voor alle voorstellingen"
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:361
+#: .\iftf_duoverkoop\src\dashboard\views.py:377
 msgid "dashboard.performances.bulk_set_price_desc"
 msgstr ""
 "Dit overschrijft de reguliere prijs van ALLE voorstellingen tegelijk. "
 "Gebruik dit met zorg."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:362
+#: .\iftf_duoverkoop\src\dashboard\views.py:378
 msgid "dashboard.performances.bulk_price_label"
 msgstr "Nieuwe reguliere prijs (€)"
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:376
+#: .\iftf_duoverkoop\src\dashboard\views.py:392
 msgid "dashboard.performances.bulk_discounted_price_set"
 msgstr ""
 "Cultuurkaartprijs ingesteld op €%(price)s voor %(count)s voorstelling(en)."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:381
+#: .\iftf_duoverkoop\src\dashboard\views.py:397
 msgid "dashboard.performances.bulk_set_discounted_price_title"
 msgstr "Cultuurkaartprijs instellen voor alle voorstellingen"
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:382
+#: .\iftf_duoverkoop\src\dashboard\views.py:398
 msgid "dashboard.performances.bulk_set_discounted_price_desc"
 msgstr ""
 "Dit overschrijft de cultuurkaartprijs van ALLE voorstellingen tegelijk. De "
 "nieuwe prijs wordt de kortingsprijs voor kopers met een cultuurkaart."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:383
+#: .\iftf_duoverkoop\src\dashboard\views.py:399
 msgid "dashboard.performances.bulk_discounted_price_label"
 msgstr "Nieuwe cultuurkaartprijs (€)"
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:433
+#: .\iftf_duoverkoop\src\dashboard\views.py:449
 msgid "dashboard.users.created"
 msgstr "Gebruiker \"%(username)s\" aangemaakt."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:472
+#: .\iftf_duoverkoop\src\dashboard\views.py:488
 msgid "dashboard.users.updated"
 msgstr "Gebruiker \"%(username)s\" bijgewerkt."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:498
+#: .\iftf_duoverkoop\src\dashboard\views.py:514
 msgid "dashboard.users.error.cannot_delete_self"
 msgstr "Je kan je eigen account niet verwijderen."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:500
+#: .\iftf_duoverkoop\src\dashboard\views.py:516
 msgid "dashboard.users.error.has_purchases"
 msgstr ""
 "Kan \"%(username)s\" niet verwijderen: wordt gerefereerd door aankooprecords."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:504
+#: .\iftf_duoverkoop\src\dashboard\views.py:520
 msgid "dashboard.users.deleted"
 msgstr "Gebruiker \"%(username)s\" verwijderd."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:600
+#: .\iftf_duoverkoop\src\dashboard\views.py:668
+#: .\iftf_duoverkoop\templates\dashboard\email.html:194
+msgid "dashboard.email.no_campaign_permission"
+msgstr "Je hebt geen rechten om opvolgcampagnes te maken."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:673
+msgid "dashboard.email.campaign_create_invalid"
+msgstr ""
+"Campagne kon niet worden aangemaakt. Controleer doelgroep en templatevelden."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:690
+msgid "dashboard.email.campaign_queued"
+msgstr ""
+"Campagne #%(id)s staat in wachtrij. Rapportage verschijnt op deze pagina."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:698
+#: .\iftf_duoverkoop\templates\dashboard\email.html:130
+msgid "dashboard.email.no_template_permission"
+msgstr "Je hebt geen rechten om bevestigingstemplates te bewerken."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:704
+msgid "dashboard.email.template_model_not_ready"
+msgstr "E-mailtemplatemodel is nog niet klaar. Heb je migraties uitgevoerd?"
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:711
+msgid "dashboard.email.template_saved"
+msgstr "E-mailtemplate-instellingen bijgewerkt."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:713
+msgid "dashboard.email.template_save_invalid"
+msgstr ""
+"E-mailtemplate-instellingen konden niet worden opgeslagen. Controleer de "
+"velden."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:721
+msgid "dashboard.email.preview_permission_denied"
+msgstr "Geen toestemming."
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:752
+#, python-format
+msgid "%(name)s (%(code)s)"
+msgstr ""
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:757
+#: .\iftf_duoverkoop\templates\dashboard\email.html:336
+msgid "dashboard.email.preview_dummy_data"
+msgstr "Voorbeeld met dummygegevens"
+
+#: .\iftf_duoverkoop\src\dashboard\views.py:774
 msgid "dashboard.system.permissions_synced"
 msgstr "Machtigingsgroepen succesvol opnieuw gesynchroniseerd."
 
-#: .\iftf_duoverkoop\src\dashboard\views.py:602
+#: .\iftf_duoverkoop\src\dashboard\views.py:776
 msgid "dashboard.system.permissions_sync_failed"
 msgstr "Synchronisatie van machtigingen mislukt: %(error)s"
 
@@ -383,12 +482,13 @@ msgstr "Vereniging"
 #: .\iftf_duoverkoop\templates\dashboard\audit_detail.html:9
 #: .\iftf_duoverkoop\templates\dashboard\bulk_price_form.html:5
 #: .\iftf_duoverkoop\templates\dashboard\bulk_price_form.html:9
+#: .\iftf_duoverkoop\templates\dashboard\email.html:28
 #: .\iftf_duoverkoop\templates\dashboard\home.html:5
 #: .\iftf_duoverkoop\templates\dashboard\home.html:8
 #: .\iftf_duoverkoop\templates\dashboard\performance_form.html:5
 #: .\iftf_duoverkoop\templates\dashboard\performance_form.html:9
 #: .\iftf_duoverkoop\templates\dashboard\performances.html:9
-#: .\iftf_duoverkoop\templates\dashboard\system.html:9
+#: .\iftf_duoverkoop\templates\dashboard\system.html:10
 #: .\iftf_duoverkoop\templates\dashboard\user_form.html:5
 #: .\iftf_duoverkoop\templates\dashboard\user_form.html:9
 #: .\iftf_duoverkoop\templates\dashboard\users.html:9
@@ -736,31 +836,200 @@ msgid "dashboard.sidebar.monitoring"
 msgstr "Monitoring"
 
 #: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:42
-#: .\iftf_duoverkoop\templates\dashboard\system.html:9
-#: .\iftf_duoverkoop\templates\dashboard\system.html:12
+msgid "dashboard.sidebar.email_center"
+msgstr "E-mailcentrum"
+
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:46
+#: .\iftf_duoverkoop\templates\dashboard\system.html:10
+#: .\iftf_duoverkoop\templates\dashboard\system.html:13
 msgid "dashboard.sidebar.system"
 msgstr "Systeem"
 
-#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:45
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:49
 msgid "dashboard.sidebar.links"
 msgstr "Links"
 
-#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:47
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:51
 msgid "dashboard.sidebar.purchase_history"
 msgstr "Aankoopgeschiedenis"
 
-#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:50
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:54
 msgid "dashboard.sidebar.export_csv"
 msgstr "Exporteer CSV"
 
-#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:53
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:57
 msgid "dashboard.sidebar.verify_code"
 msgstr "Verifieer Code"
 
-#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:56
-#: .\iftf_duoverkoop\templates\dashboard\system.html:86
+#: .\iftf_duoverkoop\templates\dashboard\base_dashboard.html:60
+#: .\iftf_duoverkoop\templates\dashboard\system.html:102
 msgid "dashboard.sidebar.django_admin"
 msgstr "Django Admin"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:4
+#: .\iftf_duoverkoop\templates\dashboard\email.html:28
+#: .\iftf_duoverkoop\templates\dashboard\email.html:31
+msgid "dashboard.email.title"
+msgstr "E-mailcentrum"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:37
+msgid "dashboard.email.confirmation_template"
+msgstr "Bevestigingstemplate voor nieuwe aankopen"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:39
+msgid "dashboard.email.template_variables"
+msgstr "Template-variabelen"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:49
+msgid "dashboard.email.mailgun_endpoint"
+msgstr "Mailgun-endpoint"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:60
+msgid "dashboard.email.plain_text_template"
+msgstr "Platte tekst-template"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:61
+msgid "dashboard.email.plain_text_help"
+msgstr "Fallback-inhoud voor clients die geen HTML tonen."
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:65
+msgid "dashboard.email.html_template"
+msgstr "HTML-template"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:66
+msgid "dashboard.email.html_help"
+msgstr ""
+"Gestileerde versie voor moderne e-mailclients. Inline-stijlen zijn "
+"aanbevolen."
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:72
+msgid "dashboard.email.live_preview"
+msgstr "Live voorbeeld"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:74
+msgid "dashboard.email.preview_purchase"
+msgstr "Voorbeeld-aankoop"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:76
+msgid "dashboard.email.preview_newest"
+msgstr "Nieuwste aankoop gebruiken"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:91
+msgid "dashboard.email.color_primary"
+msgstr "Primair"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:95
+msgid "dashboard.email.color_accent"
+msgstr "Accent"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:99
+msgid "dashboard.email.color_background"
+msgstr "Achtergrond"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:103
+msgid "dashboard.email.color_card"
+msgstr "Kaart"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:107
+msgid "dashboard.email.color_border"
+msgstr "Rand"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:111
+msgid "dashboard.email.content_width"
+msgstr "Breedte (px)"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:117
+msgid "dashboard.email.footer_text"
+msgstr "Voettekst"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:123
+msgid "dashboard.email.save_confirmation_template"
+msgstr "Bevestigingstemplate opslaan"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:128
+msgid "dashboard.email.template_settings_unavailable"
+msgstr ""
+"E-mailtemplate-instellingen zijn nog niet beschikbaar. Voer eerst migraties "
+"uit."
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:139
+msgid "dashboard.email.followup_campaign"
+msgstr "Opvolgcampagne"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:141
+msgid "dashboard.email.reporting_note"
+msgstr ""
+"Rapportage registreert verzendresultaten per ontvanger op basis van Mailgun "
+"API-aanvaarding (sent/failed). Definitieve inboxaflevering vereist webhook-"
+"tracking."
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:189
+msgid "dashboard.email.start_campaign"
+msgstr "Campagne starten"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:203
+msgid "dashboard.email.campaign_reporting"
+msgstr "Campagnerapportage"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:209
+msgid "dashboard.email.id"
+msgstr "ID"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:210
+msgid "dashboard.email.name"
+msgstr "Naam"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:212
+msgid "dashboard.email.status"
+msgstr "Status"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:213
+msgid "dashboard.email.created"
+msgstr "Aangemaakt"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:214
+msgid "dashboard.email.recipients"
+msgstr "Ontvangers"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:215
+msgid "dashboard.email.sent"
+msgstr "Verzonden"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:216
+msgid "dashboard.email.failed"
+msgstr "Mislukt"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:245
+msgid "dashboard.email.error"
+msgstr "Fout"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:251
+msgid "dashboard.email.failed_recipients"
+msgstr "Mislukte ontvangers"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:253
+msgid "dashboard.email.unknown_error"
+msgstr "Onbekende fout"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:259
+msgid "dashboard.email.no_campaigns"
+msgstr "Nog geen campagnes."
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:265
+msgid "dashboard.email.no_reports_permission"
+msgstr "Je hebt geen rechten om campagnerapporten te bekijken."
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:328
+msgid "dashboard.email.preview_render_failed"
+msgstr "Kon voorbeeld niet renderen."
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:335
+msgid "dashboard.email.preview_using"
+msgstr "Voorbeeld met"
+
+#: .\iftf_duoverkoop\templates\dashboard\email.html:351
+msgid "dashboard.email.preview_request_failed"
+msgstr "Voorbeeldaanvraag mislukt."
 
 #: .\iftf_duoverkoop\templates\dashboard\home.html:9
 msgid "dashboard.home.overview"
@@ -937,62 +1206,63 @@ msgstr "Voorstelling {{ key }} verwijderen?"
 msgid "dashboard.system.title"
 msgstr "Systeem — Dashboard"
 
-#: .\iftf_duoverkoop\templates\dashboard\system.html:19
+#: .\iftf_duoverkoop\templates\dashboard\system.html:20
 msgid "dashboard.system.database"
 msgstr "Database"
 
-#: .\iftf_duoverkoop\templates\dashboard\system.html:21
+#: .\iftf_duoverkoop\templates\dashboard\system.html:22
 msgid "dashboard.system.engine"
 msgstr "Engine"
 
-#: .\iftf_duoverkoop\templates\dashboard\system.html:38
+#: .\iftf_duoverkoop\templates\dashboard\system.html:39
 msgid "dashboard.system.environment"
 msgstr "Omgeving"
 
-#: .\iftf_duoverkoop\templates\dashboard\system.html:40
+#: .\iftf_duoverkoop\templates\dashboard\system.html:41
 msgid "dashboard.system.debug_mode"
 msgstr "DEBUG-modus"
 
-#: .\iftf_duoverkoop\templates\dashboard\system.html:42
+#: .\iftf_duoverkoop\templates\dashboard\system.html:43
 msgid "dashboard.system.on"
 msgstr "AAN"
 
-#: .\iftf_duoverkoop\templates\dashboard\system.html:44
+#: .\iftf_duoverkoop\templates\dashboard\system.html:45
 msgid "dashboard.system.off_production"
 msgstr "UIT (productie)"
 
-#: .\iftf_duoverkoop\templates\dashboard\system.html:48
+#: .\iftf_duoverkoop\templates\dashboard\system.html:49
 msgid "dashboard.system.email_sending"
 msgstr "E-mailverzending"
 
-#: .\iftf_duoverkoop\templates\dashboard\system.html:50
+#: .\iftf_duoverkoop\templates\dashboard\system.html:51
 msgid "dashboard.system.enabled"
 msgstr "INGESCHAKELD"
 
-#: .\iftf_duoverkoop\templates\dashboard\system.html:52
+#: .\iftf_duoverkoop\templates\dashboard\system.html:53
 msgid "dashboard.system.disabled"
 msgstr "UITGESCHAKELD"
 
-#: .\iftf_duoverkoop\templates\dashboard\system.html:63
+
+#: .\iftf_duoverkoop\templates\dashboard\system.html:79
 msgid "dashboard.system.permission_groups"
 msgstr "Machtigingsgroepen"
 
-#: .\iftf_duoverkoop\templates\dashboard\system.html:65
+#: .\iftf_duoverkoop\templates\dashboard\system.html:81
 msgid "dashboard.system.permission_groups_hint"
 msgstr ""
 "Voer de setup van de machtigingsgroepen opnieuw uit om er zeker van te zijn "
 "dat alle drie de groepen bestaan en precies de juiste machtigingen hebben "
 "(bijv. na een deployment of migratie)."
 
-#: .\iftf_duoverkoop\templates\dashboard\system.html:70
+#: .\iftf_duoverkoop\templates\dashboard\system.html:86
 msgid "dashboard.system.resync_permissions"
 msgstr "Machtigingsgroepen opnieuw synchroniseren"
 
-#: .\iftf_duoverkoop\templates\dashboard\system.html:81
+#: .\iftf_duoverkoop\templates\dashboard\system.html:97
 msgid "dashboard.system.escape_hatch"
 msgstr "Nooduitgang"
 
-#: .\iftf_duoverkoop\templates\dashboard\system.html:83
+#: .\iftf_duoverkoop\templates\dashboard\system.html:99
 msgid "dashboard.system.escape_hatch_hint"
 msgstr ""
 "De Django-beheerdersinterface is nog steeds beschikbaar voor bewerkingen die "
@@ -1376,3 +1646,4 @@ msgstr "door"
 
 #~ msgid "verify.ticket_2"
 #~ msgstr "Ticket 2"
+

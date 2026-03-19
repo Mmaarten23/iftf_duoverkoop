@@ -111,8 +111,20 @@ python manage.py migrate --noinput && gunicorn iftf_duoverkoop.wsgi:application 
 - `DEBUG=False`
 - `DATABASE_URL`
 - `SEND_EMAILS` (`True` or `False`)
-- `EMAIL_HOST_PASSWORD` (if mails are enabled)
+- `MAILGUN_API_KEY` (if mails are enabled)
+- `MAILGUN_DOMAIN` (if mails are enabled)
+- Optional: `MAILGUN_API_BASE_URL` (default `https://api.eu.mailgun.net`)
+- Optional: `MAILGUN_FROM_EMAIL` and `MAILGUN_FROM_NAME`
+- Optional: `IFTF_LOGO_URL` (logo shown in confirmation/follow-up emails)
+- Optional: `TIME_ZONE` (defaults to `Europe/Brussels`; affects UI + ICS times)
 - Optional: `LOG_LEVEL=DEBUG` for temporary deeper diagnostics
+
+### 5) Email system notes
+- Confirmation mails are sent asynchronously and update `Purchase.email_status` (`PENDING`, `SENT`, `FAILED`, `NOT_SENT`).
+- Each confirmation mail includes an `.ics` calendar attachment with both purchased performances.
+- Subject/body/styling can be edited in the dashboard Email Center at `/dashboard/email/` (when user has permission).
+- Follow-up campaigns can target all customers, selected associations, or a specific performance.
+- Campaign reporting logs recipient-level status (`PENDING`, `SENT`, `FAILED`) and keeps failure messages for troubleshooting.
 
 ### 4) What is now logged
 This project includes request-exception logging middleware and stdout logging config in `iftf_duoverkoop/settings.py`, so unhandled exceptions include:

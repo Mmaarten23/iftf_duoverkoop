@@ -37,6 +37,10 @@
            href="{% url 'dashboard:dashboard_audit' %}">
             <i class="bi bi-journal-text"></i> {% translate "dashboard.sidebar.audit_log" %}
         </a>
+        <a class="nav-link {% if 'dashboard_email' == request.resolver_match.url_name or 'email_template' in request.resolver_match.url_name or 'email_campaign' in request.resolver_match.url_name %}active{% endif %}"
+           href="{% url 'dashboard:dashboard_email' %}">
+            <i class="bi bi-envelope-fill"></i> {% translate "dashboard.sidebar.email_center" %}
+        </a>
         <a class="nav-link {% if request.resolver_match.url_name == 'dashboard_system' %}active{% endif %}"
            href="{% url 'dashboard:dashboard_system' %}">
             <i class="bi bi-gear-fill"></i> {% translate "dashboard.sidebar.system" %}

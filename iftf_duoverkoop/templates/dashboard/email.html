@@ -1,0 +1,398 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "dashboard.email.title" %}{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<style>
+    .email-html-editor {
+        white-space: pre;
+        overflow: auto;
+        tab-size: 2;
+        min-height: 20rem;
+        resize: vertical;
+    }
+    .email-preview-frame {
+        width: 100%;
+        min-height: 22rem;
+        border: 1px solid #dbe3ec;
+        border-radius: 0.375rem;
+        background: #fff;
+    }
+</style>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="dash-breadcrumb">
+    <a href="{% url 'dashboard:dashboard_home' %}">{% translate "dashboard.home.title" %}</a> / {% translate "dashboard.email.title" %}
+</div>
+
+<h4 class="dash-section-title"><i class="bi bi-envelope-fill"></i> {% translate "dashboard.email.title" %}</h4>
+
+<div class="row g-4">
+    <div class="col-12">
+        <div class="card border-primary">
+            <div class="card-body">
+                <h6 class="dash-section-title text-primary mb-2"><i class="bi bi-layout-text-window"></i> {% translate "dashboard.email.confirmation_template" %}</h6>
+                <p class="text-muted small mb-2">
+                    {% translate "dashboard.email.template_variables" %}:
+                    <code>{% templatetag openvariable %} name {% templatetag closevariable %}</code>,
+                    <code>{% templatetag openvariable %} verification_code {% templatetag closevariable %}</code>,
+                    <code>{% templatetag openvariable %} performance1 {% templatetag closevariable %}</code>,
+                    <code>{% templatetag openvariable %} performance2 {% templatetag closevariable %}</code>,
+                    <code>{% templatetag openvariable %} purchase_date {% templatetag closevariable %}</code>,
+                    <code>{% templatetag openvariable %} total_price {% templatetag closevariable %}</code>,
+                    <code>{% templatetag openvariable %} culture_card_line {% templatetag closevariable %}</code>.
+                </p>
+                <p class="text-muted small mb-3">
+                    {% translate "dashboard.email.mailgun_endpoint" %}: <span class="font-monospace">{{ mailgun_base_url }}/v3/{{ mailgun_domain }}/messages</span>
+                </p>
+
+                {% if can_manage_email and email_template_form %}
+                <form method="post" action="{% url 'dashboard:dashboard_email_template_save' %}" class="vstack gap-3" id="emailTemplateForm">
+                    {% csrf_token %}
+                    <div>
+                        <label class="form-label"><strong>{% translate "dashboard.email.subject_template" %}</strong></label>
+                        {{ email_template_form.subject_template }}
+                    </div>
+                    <div>
+                        <label class="form-label"><strong>{% translate "dashboard.email.plain_text_template" %}</strong></label>
+                        <div class="form-text mb-1">{% translate "dashboard.email.plain_text_help" %}</div>
+                        {{ email_template_form.text_template }}
+                    </div>
+                    <div>
+                        <label class="form-label"><strong>{% translate "dashboard.email.html_template" %}</strong></label>
+                        <div class="form-text mb-2">{% translate "dashboard.email.html_help" %}</div>
+                        <div class="row g-3">
+                            <div class="col-lg-7">
+                                {{ email_template_form.html_template }}
+                            </div>
+                            <div class="col-lg-5">
+                                <label class="form-label"><strong>{% translate "dashboard.email.live_preview" %}</strong></label>
+                                <div class="mb-2">
+                                    <label class="form-label small" for="previewPurchaseSelect">{% translate "dashboard.email.preview_purchase" %}</label>
+                                    <select id="previewPurchaseSelect" class="form-select form-select-sm">
+                                        <option value="">{% translate "dashboard.email.preview_newest" %}</option>
+                                        {% for p in preview_purchases %}
+                                        <option value="{{ p.id }}" {% if default_preview_purchase_id == p.id %}selected{% endif %}>#{{ p.id }} - {{ p.name }} - {{ p.verification_code }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div id="previewDataSource" class="small text-muted mb-2"></div>
+                                <div id="emailPreviewError" class="alert alert-warning py-2 small d-none"></div>
+                                <iframe id="emailHtmlPreviewFrame" class="email-preview-frame" title="Email HTML preview"></iframe>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-2">
+                            <label class="form-label">{% translate "dashboard.email.color_primary" %}</label>
+                            {{ email_template_form.primary_color }}
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">{% translate "dashboard.email.color_accent" %}</label>
+                            {{ email_template_form.accent_color }}
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">{% translate "dashboard.email.color_background" %}</label>
+                            {{ email_template_form.background_color }}
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">{% translate "dashboard.email.color_card" %}</label>
+                            {{ email_template_form.card_background_color }}
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">{% translate "dashboard.email.color_border" %}</label>
+                            {{ email_template_form.border_color }}
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">{% translate "dashboard.email.content_width" %}</label>
+                            {{ email_template_form.content_width }}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="form-label"><strong>{% translate "dashboard.email.footer_text" %}</strong></label>
+                        {{ email_template_form.footer_text }}
+                    </div>
+
+                    <div>
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="bi bi-save-fill"></i> {% translate "dashboard.email.save_confirmation_template" %}
+                        </button>
+                    </div>
+                </form>
+                {% elif can_manage_email %}
+                <p class="text-muted small mb-0">{% translate "dashboard.email.template_settings_unavailable" %}</p>
+                {% else %}
+                <p class="text-muted small mb-0">{% translate "dashboard.email.no_template_permission" %}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="card border-success">
+            <div class="card-body">
+                <h6 class="dash-section-title text-success"><i class="bi bi-send-fill"></i> {% translate "dashboard.email.followup_campaign" %}</h6>
+                <p class="text-muted small mb-3">
+                    {% translate "dashboard.email.reporting_note" %}
+                </p>
+
+                {% if can_manage_campaigns %}
+                <form method="post" action="{% url 'dashboard:dashboard_email_campaign_create' %}" id="campaignCreateForm" class="vstack gap-3">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>{{ campaign_form.name.label }}</strong></label>
+                            {{ campaign_form.name }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>{{ campaign_form.audience_type.label }}</strong></label>
+                            {{ campaign_form.audience_type }}
+                        </div>
+                    </div>
+
+                    <div class="row g-3" id="campaignAssociationGroup" style="display:none;">
+                        <div class="col-md-12">
+                            <label class="form-label"><strong>{{ campaign_form.associations.label }}</strong></label>
+                            {{ campaign_form.associations }}
+                            <div class="form-text">{{ campaign_form.associations.help_text }}</div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3" id="campaignPerformanceGroup" style="display:none;">
+                        <div class="col-md-12">
+                            <label class="form-label"><strong>{{ campaign_form.performance.label }}</strong></label>
+                            {{ campaign_form.performance }}
+                            <div class="form-text">{{ campaign_form.performance.help_text }}</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="form-label"><strong>{{ campaign_form.subject_template.label }}</strong></label>
+                        {{ campaign_form.subject_template }}
+                    </div>
+                    <div>
+                        <label class="form-label"><strong>{{ campaign_form.text_template.label }}</strong></label>
+                        {{ campaign_form.text_template }}
+                    </div>
+                    <div>
+                        <label class="form-label"><strong>{{ campaign_form.html_template.label }}</strong></label>
+                        {{ campaign_form.html_template }}
+                    </div>
+
+                    <div>
+                        <button type="submit" class="btn btn-success btn-sm">
+                            <i class="bi bi-play-fill"></i> {% translate "dashboard.email.start_campaign" %}
+                        </button>
+                    </div>
+                </form>
+                {% else %}
+                <p class="text-muted small mb-0">{% translate "dashboard.email.no_campaign_permission" %}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="card border-secondary">
+            <div class="card-body">
+                <h6 class="dash-section-title"><i class="bi bi-bar-chart-fill"></i> {% translate "dashboard.email.campaign_reporting" %}</h6>
+                {% if can_view_reports %}
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle">
+                        <thead>
+                            <tr>
+                                <th>{% translate "dashboard.email.id" %}</th>
+                                <th>{% translate "dashboard.email.name" %}</th>
+                                <th>{% translate "dashboard.email.audience" %}</th>
+                                <th>{% translate "dashboard.email.status" %}</th>
+                                <th>{% translate "dashboard.email.created" %}</th>
+                                <th>{% translate "dashboard.email.recipients" %}</th>
+                                <th>{% translate "dashboard.email.sent" %}</th>
+                                <th>{% translate "dashboard.email.failed" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for campaign in campaigns %}
+                            <tr>
+                                <td>#{{ campaign.id }}</td>
+                                <td>{{ campaign.name }}</td>
+                                <td>{{ campaign.get_audience_type_display }}</td>
+                                <td>
+                                    {% if campaign.status == 'SUCCEEDED' %}
+                                    <span class="badge bg-success">{{ campaign.status }}</span>
+                                    {% elif campaign.status == 'PARTIAL_FAILED' %}
+                                    <span class="badge bg-warning text-dark">{{ campaign.status }}</span>
+                                    {% elif campaign.status == 'FAILED' %}
+                                    <span class="badge bg-danger">{{ campaign.status }}</span>
+                                    {% elif campaign.status == 'RUNNING' %}
+                                    <span class="badge bg-info text-dark">{{ campaign.status }}</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">{{ campaign.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ campaign.created_at|date:"Y-m-d H:i" }}</td>
+                                <td>{{ campaign.total_recipients }}</td>
+                                <td>{{ campaign.sent_count }}</td>
+                                <td>{{ campaign.failed_count }}</td>
+                            </tr>
+                            {% if campaign.error_message %}
+                            <tr>
+                                <td colspan="8" class="small text-danger"><strong>{% translate "dashboard.email.error" %}:</strong> {{ campaign.error_message }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if campaign.failed_rows %}
+                            <tr>
+                                <td colspan="8" class="small">
+                                    <strong>{% translate "dashboard.email.failed_recipients" %}:</strong>
+                                    {% for row in campaign.failed_rows %}
+                                        <div><code>{{ row.email }}</code> - {% if row.error_message %}{{ row.error_message }}{% else %}{% translate "dashboard.email.unknown_error" %}{% endif %}</div>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% empty %}
+                            <tr><td colspan="8" class="text-muted">{% translate "dashboard.email.no_campaigns" %}</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted small mb-0">{% translate "dashboard.email.no_reports_permission" %}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if can_manage_email and email_template_form %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const templateForm = document.getElementById('emailTemplateForm');
+    const htmlField = document.getElementById('id_html_template');
+    const primary = document.getElementById('id_primary_color');
+    const accent = document.getElementById('id_accent_color');
+    const background = document.getElementById('id_background_color');
+    const card = document.getElementById('id_card_background_color');
+    const border = document.getElementById('id_border_color');
+    const width = document.getElementById('id_content_width');
+    const footer = document.getElementById('id_footer_text');
+    const frame = document.getElementById('emailHtmlPreviewFrame');
+    const errorBox = document.getElementById('emailPreviewError');
+    const previewSource = document.getElementById('previewDataSource');
+    const previewPurchaseSelect = document.getElementById('previewPurchaseSelect');
+    const previewUrl = "{% url 'dashboard:dashboard_email_template_preview' %}";
+    const csrfInput = templateForm ? templateForm.querySelector('input[name="csrfmiddlewaretoken"]') : null;
+    const csrfToken = csrfInput ? csrfInput.value : '';
+
+    function basicHtmlFormat(input) {
+        return (input || '').replace(/>\s*</g, '>\n<').replace(/\n{3,}/g, '\n\n').trim();
+    }
+
+    let timer = null;
+    function schedulePreview() {
+        if (timer) window.clearTimeout(timer);
+        timer = window.setTimeout(renderPreview, 350);
+    }
+
+    function renderPreview() {
+        if (!templateForm || !htmlField || !frame) return;
+        const formData = new FormData();
+        formData.append('html_template', htmlField.value || '');
+        formData.append('primary_color', primary ? primary.value : '');
+        formData.append('accent_color', accent ? accent.value : '');
+        formData.append('background_color', background ? background.value : '');
+        formData.append('card_background_color', card ? card.value : '');
+        formData.append('border_color', border ? border.value : '');
+        formData.append('content_width', width ? width.value : '');
+        formData.append('footer_text', footer ? footer.value : '');
+        formData.append('purchase_id', previewPurchaseSelect ? previewPurchaseSelect.value : '');
+
+        fetch(previewUrl, {
+            method: 'POST',
+            headers: {'X-CSRFToken': csrfToken},
+            body: formData,
+            credentials: 'same-origin',
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success) {
+                    if (errorBox) {
+                        errorBox.classList.remove('d-none');
+                        errorBox.textContent = data.error || "{% translate 'dashboard.email.preview_render_failed' %}";
+                    }
+                    return;
+                }
+                frame.srcdoc = data.html || '';
+                if (previewSource) {
+                    previewSource.textContent = data.preview_purchase_label
+                        ? "{% translate 'dashboard.email.preview_using' %}: " + data.preview_purchase_label
+                        : "{% translate 'dashboard.email.preview_dummy_data' %}";
+                }
+                if (errorBox) {
+                    if (data.error) {
+                        errorBox.classList.remove('d-none');
+                        errorBox.textContent = data.error;
+                    } else {
+                        errorBox.classList.add('d-none');
+                        errorBox.textContent = '';
+                    }
+                }
+            })
+            .catch(() => {
+                if (errorBox) {
+                    errorBox.classList.remove('d-none');
+                    errorBox.textContent = "{% translate 'dashboard.email.preview_request_failed' %}";
+                }
+            });
+    }
+
+
+    [htmlField, primary, accent, background, card, border, width, footer].forEach(function (el) {
+        if (!el) return;
+        el.addEventListener('input', schedulePreview);
+        el.addEventListener('change', schedulePreview);
+    });
+
+    if (previewPurchaseSelect) {
+        previewPurchaseSelect.addEventListener('change', schedulePreview);
+    }
+
+    if (htmlField && htmlField.value && !htmlField.value.includes('\n')) {
+        htmlField.value = basicHtmlFormat(htmlField.value);
+    }
+
+    renderPreview();
+});
+</script>
+{% endif %}
+
+{% if can_manage_campaigns %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const audienceType = document.getElementById('id_campaign_audience_type');
+    const assocGroup = document.getElementById('campaignAssociationGroup');
+    const perfGroup = document.getElementById('campaignPerformanceGroup');
+
+    function refreshAudienceFields() {
+        if (!audienceType) return;
+        const mode = audienceType.value;
+        if (assocGroup) assocGroup.style.display = (mode === 'ASSOCIATIONS') ? '' : 'none';
+        if (perfGroup) perfGroup.style.display = (mode === 'PERFORMANCE') ? '' : 'none';
+    }
+
+    if (audienceType) {
+        audienceType.addEventListener('change', refreshAudienceFields);
+        refreshAudienceFields();
+    }
+});
+</script>
+{% endif %}
+{% endblock %}
+

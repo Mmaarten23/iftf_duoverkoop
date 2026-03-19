@@ -16,7 +16,7 @@ import dj_database_url
 
 SECRET_KEY = os.environ.get("SECRET_KEY") or "django-insecure-CHANGE_ME"
 # Default to False in hosted environments; set DEBUG=True explicitly for local dev.
-DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -130,7 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'nl'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = os.environ.get('TIME_ZONE', 'Europe/Brussels')
 
 USE_I18N = True
 
@@ -158,18 +158,19 @@ DATABASE_BACKUP_MAX_UPLOAD_MB = int(os.environ.get('DATABASE_BACKUP_MAX_UPLOAD_M
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Email settings
-# https://docs.djangoproject.com/en/4.1/topics/email/
+# Email settings (Mailgun HTTP API)
+SEND_EMAILS = os.environ.get("SEND_EMAILS", "False").lower() == "true"
+MAILGUN_API_KEY = os.environ.get("MAILGUN_API_KEY", "")
+MAILGUN_DOMAIN = os.environ.get("MAILGUN_DOMAIN", "mg.iftfduoverkoop.dpdns.org")
+MAILGUN_API_BASE_URL = os.environ.get("MAILGUN_API_BASE_URL", "https://api.eu.mailgun.net")
+MAILGUN_FROM_EMAIL = os.environ.get("MAILGUN_FROM_EMAIL", "no-reply@mg.iftfduoverkoop.dpdns.org")
+MAILGUN_FROM_NAME = os.environ.get("MAILGUN_FROM_NAME", "IFTF Duoverkoop")
+MAIL_REQUEST_TIMEOUT = int(os.environ.get("MAIL_REQUEST_TIMEOUT", "15"))
+IFTF_LOGO_URL = os.environ.get("IFTF_LOGO_URL", "/static/Site%20logo.png")
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # For development; change to SMTP for production
-SEND_EMAILS = os.environ.get("SEND_EMAILS", "False").lower() == "true" # Control email sending via environment variable
-EMAIL_HOST = 'smtp.eu.mailgun.org'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'no-reply@mg.iftfduoverkoop.dpdns.org'
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = "no-reply@mg.iftfduoverkoop.dpdns.org"
-SERVER_EMAIL = "no-reply@mg.iftfduoverkoop.dpdns.org"
+# Kept for compatibility with parts of Django that rely on DEFAULT_FROM_EMAIL.
+DEFAULT_FROM_EMAIL = MAILGUN_FROM_EMAIL
+SERVER_EMAIL = MAILGUN_FROM_EMAIL
 
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

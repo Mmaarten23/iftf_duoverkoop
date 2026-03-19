@@ -35,6 +35,12 @@ urlpatterns = [
     path('audit/', v.dashboard_audit, name='dashboard_audit'),
     path('audit/<int:log_id>/', v.dashboard_audit_detail, name='dashboard_audit_detail'),
 
+    # Email center
+    path('email/', v.dashboard_email, name='dashboard_email'),
+    path('email/campaigns/create/', v.dashboard_email_campaign_create, name='dashboard_email_campaign_create'),
+    path('email/template/save/', v.dashboard_email_template_save, name='dashboard_email_template_save'),
+    path('email/template/preview/', v.dashboard_email_template_preview, name='dashboard_email_template_preview'),
+
     # System
     path('system/', v.dashboard_system, name='dashboard_system'),
     path('system/sync-permissions/', v.dashboard_sync_permissions, name='dashboard_sync_permissions'),

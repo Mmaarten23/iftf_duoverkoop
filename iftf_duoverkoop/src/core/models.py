@@ -149,6 +149,183 @@ class Purchase(models.Model):
         ]
 
 
+class EmailTemplateSettings(models.Model):
+    """
+    Singleton-like settings row for purchase confirmation emails.
+
+    Managed via dashboard/system so staff can tune content and styling
+    without a code deploy.
+    """
+    singleton_key = models.CharField(max_length=20, unique=True, default='default', editable=False)
+    subject_template = models.TextField(
+        default='IFTF duo ticket confirmation - {{ verification_code }}',
+        help_text='Template variables: {{ name }}, {{ verification_code }}, {{ performance1 }}, {{ performance2 }}, {{ purchase_date }}, {{ total_price }}.',
+    )
+    text_template = models.TextField(
+        default=(
+            'Hi {{ name }},\n\n'
+            'Your duo ticket was registered successfully.\n\n'
+            'Ticket 1: {{ performance1 }}\n'
+            'Ticket 2: {{ performance2 }}\n'
+            'Order date: {{ purchase_date }}\n'
+            'Total paid: EUR {{ total_price }}\n\n'
+            'Verification code: {{ verification_code }}\n\n'
+            '{{ culture_card_line }}\n'
+            '1. This email only confirms your duo ticket sale. Practical details are shared by each association.\n'
+            '2. Information sent by the associations is the source of truth. Associations may send separate tickets through their own systems.\n'
+            '3. Keep your verification code easily accessible. It may be used at performance entrances, depending on association policy.\n'
+            '4. Report disputes or incorrect recipient information to https://iftf.be/contact/.\n'
+            '5. More information: https://iftf.be\n'
+        ),
+        help_text='Plain-text fallback body (Django template syntax).',
+    )
+    html_template = models.TextField(
+        default=(
+            '<!doctype html>'
+            '<html><body style="margin:0;padding:0;background:{{ background_color }};font-family:Arial,sans-serif;">'
+            '<div style="max-width:{{ content_width }}px;margin:24px auto;background:{{ card_background_color }};'
+            'border:1px solid {{ border_color }};border-radius:10px;overflow:hidden;">'
+            '<div style="padding:16px 20px;background:{{ primary_color }};color:#fff;display:flex;align-items:center;gap:16px;">'
+            '{% if iftf_logo_url %}'
+            '<img src="{{ iftf_logo_url }}" alt="IFTF" '
+            'style="max-height:28px;max-width:28px;object-fit:contain;background:#fff;border-radius:4px;padding:2px;">'
+            '{% endif %}'
+            '<h2 style="margin:0;font-size:20px;">IFTF DuoVerkoop</h2>'
+            '</div>'
+            '<div style="padding:20px;color:#212529;line-height:1.5;">'
+            '<p style="margin-top:0;">Hi <strong>{{ name }}</strong>, your duo ticket is confirmed.</p>'
+            '<p>'
+            '<strong>Ticket 1:</strong> {{ performance1 }}<br>'
+            '<strong>Ticket 2:</strong> {{ performance2 }}<br>'
+            '<strong>Order date:</strong> {{ purchase_date }}<br>'
+            '<strong>Total paid:</strong> EUR {{ total_price }}'
+            '</p>'
+            '<p style="padding:12px 14px;background:#f8f9fa;border:1px solid {{ border_color }};border-radius:8px;">'
+            '<strong>Verification code:</strong> '
+            '<span style="color:{{ accent_color }};font-size:17px;">{{ verification_code }}</span>'
+            '</p>'
+            '{% if culture_card_line %}<p style="margin:0 0 10px 0;">{{ culture_card_line }}</p>{% endif %}'
+            '<div style="margin-top:16px;padding-top:12px;border-top:1px solid {{ border_color }};">'
+            '<p style="margin:0 0 8px 0;"><strong>Important information</strong></p>'
+            '<ol style="margin:0 0 10px 20px;padding:0;">'
+            '<li style="margin-bottom:6px;">This email only confirms your duo ticket sale. Practical details are shared by each association.</li>'
+            '<li style="margin-bottom:6px;">Information sent by the associations is the source of truth. Associations may send separate tickets through their own systems.</li>'
+            '<li style="margin-bottom:6px;">Keep your verification code easily accessible. It may be used at performance entrances, depending on association policy.</li>'
+            '<li style="margin-bottom:6px;">Report disputes or incorrect recipient information to <a href="https://iftf.be/contact/">https://iftf.be/contact/</a>.</li>'
+            '<li>More information: <a href="https://iftf.be">https://iftf.be</a></li>'
+            '</ol>'
+            '</div>'
+            '<p style="margin-bottom:0;">{{ footer_text }}</p>'
+            '</div></div></body></html>'
+        ),
+        help_text='HTML body (Django template syntax).',
+    )
+    primary_color = models.CharField(max_length=7, default='#0d6efd')
+    accent_color = models.CharField(max_length=7, default='#198754')
+    background_color = models.CharField(max_length=7, default='#f5f7fb')
+    card_background_color = models.CharField(max_length=7, default='#ffffff')
+    border_color = models.CharField(max_length=7, default='#dbe3ec')
+    content_width = models.PositiveIntegerField(default=640)
+    footer_text = models.CharField(max_length=255, default='See you at the IFTF performances.')
+    updated_at = models.DateTimeField(auto_now=True)
+    updated_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+
+    @classmethod
+    def get_solo(cls):
+        obj, _ = cls.objects.get_or_create(singleton_key='default')
+        return obj
+
+    def __str__(self) -> str:
+        return 'Email Template Settings'
+
+    class Meta:
+        verbose_name = 'Email Template Settings'
+        verbose_name_plural = 'Email Template Settings'
+
+
+class EmailCampaign(models.Model):
+    """Represents a follow-up email campaign to a selected audience."""
+    AUDIENCE_ALL = 'ALL'
+    AUDIENCE_ASSOCIATIONS = 'ASSOCIATIONS'
+    AUDIENCE_PERFORMANCE = 'PERFORMANCE'
+    AUDIENCE_CHOICES = [
+        (AUDIENCE_ALL, 'All customers'),
+        (AUDIENCE_ASSOCIATIONS, 'Specific associations'),
+        (AUDIENCE_PERFORMANCE, 'Specific performance'),
+    ]
+
+    STATUS_QUEUED = 'QUEUED'
+    STATUS_RUNNING = 'RUNNING'
+    STATUS_SUCCEEDED = 'SUCCEEDED'
+    STATUS_PARTIAL_FAILED = 'PARTIAL_FAILED'
+    STATUS_FAILED = 'FAILED'
+    STATUS_CHOICES = [
+        (STATUS_QUEUED, 'Queued'),
+        (STATUS_RUNNING, 'Running'),
+        (STATUS_SUCCEEDED, 'Succeeded'),
+        (STATUS_PARTIAL_FAILED, 'Partially failed'),
+        (STATUS_FAILED, 'Failed'),
+    ]
+
+    name = models.CharField(max_length=150)
+    created_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='email_campaigns_created')
+    created_at = models.DateTimeField(auto_now_add=True)
+    started_at = models.DateTimeField(null=True, blank=True)
+    finished_at = models.DateTimeField(null=True, blank=True)
+
+    audience_type = models.CharField(max_length=20, choices=AUDIENCE_CHOICES)
+    audience_associations = models.ManyToManyField('Association', blank=True)
+    audience_performance = models.ForeignKey('Performance', null=True, blank=True, on_delete=models.SET_NULL)
+
+    subject_template = models.TextField()
+    text_template = models.TextField(blank=True, default='')
+    html_template = models.TextField(blank=True, default='')
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_QUEUED, db_index=True)
+    total_recipients = models.PositiveIntegerField(default=0)
+    sent_count = models.PositiveIntegerField(default=0)
+    failed_count = models.PositiveIntegerField(default=0)
+    error_message = models.TextField(blank=True, default='')
+
+    def __str__(self) -> str:
+        return f'Campaign {self.id}: {self.name}'
+
+    class Meta:
+        ordering = ['-created_at']
+        permissions = [
+            ('manage_email_campaigns', 'Can create and send email campaigns'),
+            ('view_email_campaign_reports', 'Can view email campaign reports'),
+        ]
+
+
+class EmailCampaignRecipient(models.Model):
+    """Delivery status row for one recipient inside a campaign."""
+    STATUS_PENDING = 'PENDING'
+    STATUS_SENT = 'SENT'
+    STATUS_FAILED = 'FAILED'
+    STATUS_CHOICES = [
+        (STATUS_PENDING, 'Pending'),
+        (STATUS_SENT, 'Sent'),
+        (STATUS_FAILED, 'Failed'),
+    ]
+
+    campaign = models.ForeignKey(EmailCampaign, on_delete=models.CASCADE, related_name='recipients')
+    purchase = models.ForeignKey('Purchase', null=True, blank=True, on_delete=models.SET_NULL)
+    email = models.EmailField(db_index=True)
+    customer_name = models.CharField(max_length=128, blank=True, default='')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_PENDING, db_index=True)
+    sent_at = models.DateTimeField(null=True, blank=True)
+    error_message = models.TextField(blank=True, default='')
+    audience_context = models.TextField(blank=True, default='')
+
+    class Meta:
+        ordering = ['email']
+        unique_together = [('campaign', 'email')]
+
+    def __str__(self) -> str:
+        return f'{self.campaign_id} -> {self.email} ({self.status})'
+
+
 class AssociationRepProfile(models.Model):
     """
     Links an Association Representative user to the association they represent.

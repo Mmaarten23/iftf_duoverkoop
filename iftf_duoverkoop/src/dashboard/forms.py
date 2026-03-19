@@ -6,8 +6,9 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
-from iftf_duoverkoop.src.core.models import Association, Performance
+from iftf_duoverkoop.src.core.models import Association, EmailCampaign, EmailTemplateSettings, Performance
 from iftf_duoverkoop.src.core.auth import GROUP_POS_STAFF, GROUP_SUPPORT_STAFF, GROUP_ASSOCIATION_REP
 
 
@@ -247,5 +248,108 @@ class RestoreDatabaseForm(forms.Form):
         if value != 'RESTORE':
             raise ValidationError('Please type RESTORE exactly to confirm.')
         return value
+
+
+class EmailTemplateSettingsForm(forms.ModelForm):
+    class Meta:
+        model = EmailTemplateSettings
+        fields = [
+            'subject_template',
+            'text_template',
+            'html_template',
+            'primary_color',
+            'accent_color',
+            'background_color',
+            'card_background_color',
+            'border_color',
+            'content_width',
+            'footer_text',
+        ]
+        widgets = {
+            'subject_template': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'text_template': forms.Textarea(attrs={'class': 'form-control', 'rows': 10}),
+            'html_template': forms.Textarea(attrs={
+                'class': 'form-control font-monospace email-html-editor',
+                'rows': 22,
+                'spellcheck': 'false',
+                'autocapitalize': 'off',
+                'autocomplete': 'off',
+                'autocorrect': 'off',
+            }),
+            'primary_color': forms.TextInput(attrs={'class': 'form-control', 'type': 'color'}),
+            'accent_color': forms.TextInput(attrs={'class': 'form-control', 'type': 'color'}),
+            'background_color': forms.TextInput(attrs={'class': 'form-control', 'type': 'color'}),
+            'card_background_color': forms.TextInput(attrs={'class': 'form-control', 'type': 'color'}),
+            'border_color': forms.TextInput(attrs={'class': 'form-control', 'type': 'color'}),
+            'content_width': forms.NumberInput(attrs={'class': 'form-control', 'min': 360, 'max': 900}),
+            'footer_text': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+
+class EmailCampaignForm(forms.Form):
+    name = forms.CharField(
+        max_length=150,
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label=_('dashboard.email.campaign_name'),
+    )
+    audience_type = forms.ChoiceField(
+        choices=EmailCampaign.AUDIENCE_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_campaign_audience_type'}),
+        label=_('dashboard.email.audience'),
+    )
+    associations = forms.ModelMultipleChoiceField(
+        queryset=Association.objects.none(),
+        required=False,
+        widget=forms.SelectMultiple(attrs={'class': 'form-select', 'size': '6', 'id': 'id_campaign_associations'}),
+        label=_('dashboard.email.associations'),
+        help_text=_('dashboard.email.associations_help'),
+    )
+    performance = forms.ModelChoiceField(
+        queryset=Performance.objects.none(),
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_campaign_performance'}),
+        label=_('dashboard.email.performance'),
+        help_text=_('dashboard.email.performance_help'),
+    )
+    subject_template = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+        label=_('dashboard.email.subject_template'),
+    )
+    text_template = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 8}),
+        label=_('dashboard.email.text_body'),
+    )
+    html_template = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={
+            'class': 'form-control font-monospace email-html-editor',
+            'rows': 12,
+            'spellcheck': 'false',
+            'autocomplete': 'off',
+        }),
+        label=_('dashboard.email.html_body'),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['associations'].queryset = Association.objects.order_by('name')
+        self.fields['performance'].queryset = Performance.objects.select_related('association').order_by('date')
+        self.fields['performance'].label_from_instance = lambda p: f'{p.association.name} - {p.selection()}'
+
+    def clean(self):
+        cleaned = super().clean()
+        audience_type = cleaned.get('audience_type')
+        associations = cleaned.get('associations')
+        performance = cleaned.get('performance')
+
+        if audience_type == EmailCampaign.AUDIENCE_ASSOCIATIONS and not associations:
+            self.add_error('associations', _('dashboard.email.associations_required'))
+        if audience_type == EmailCampaign.AUDIENCE_PERFORMANCE and not performance:
+            self.add_error('performance', _('dashboard.email.performance_required'))
+
+        if not cleaned.get('text_template') and not cleaned.get('html_template'):
+            self.add_error('text_template', _('dashboard.email.body_required'))
+        return cleaned
 
 

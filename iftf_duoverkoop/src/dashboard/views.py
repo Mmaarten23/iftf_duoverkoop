@@ -14,7 +14,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.http import FileResponse, Http404, HttpRequest, HttpResponse
+from django.http import FileResponse, Http404, HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_http_methods
@@ -29,15 +29,19 @@ from iftf_duoverkoop.src.core.models import (
     Association,
     AssociationRepProfile,
     DatabaseOperation,
+    EmailCampaign,
+    EmailCampaignRecipient,
+    EmailTemplateSettings,
     LoginAuditLog,
     Performance,
     Purchase,
     PurchaseAuditLog,
 )
 from iftf_duoverkoop.src.core.auth import setup_permission_groups, GROUP_ASSOCIATION_REP
+from iftf_duoverkoop.src.core.email import render_email_html_preview, send_email_campaign_async
 from iftf_duoverkoop.src.dashboard.forms import (
     AssociationForm, PerformanceForm, BulkSetPriceForm, CreateUserForm, EditUserForm, LogoUploadForm,
-    RestoreDatabaseForm,
+    RestoreDatabaseForm, EmailTemplateSettingsForm, EmailCampaignForm,
 )
 
 
@@ -95,6 +99,18 @@ def _association_stats():
 
 def _can_manage_database_ops(request: HttpRequest) -> bool:
     return request.user.is_superuser or request.user.has_perm('iftf_duoverkoop.manage_database_backups')
+
+
+def _can_manage_email_templates(request: HttpRequest) -> bool:
+    return request.user.is_superuser or request.user.has_perm('iftf_duoverkoop.change_emailtemplatesettings')
+
+
+def _can_manage_email_campaigns(request: HttpRequest) -> bool:
+    return request.user.is_superuser or request.user.has_perm('iftf_duoverkoop.manage_email_campaigns')
+
+
+def _can_view_email_reports(request: HttpRequest) -> bool:
+    return request.user.is_superuser or request.user.has_perm('iftf_duoverkoop.view_email_campaign_reports')
 
 
 def _backup_file_path(filename: str) -> Path:
@@ -572,6 +588,12 @@ def dashboard_system(request: HttpRequest) -> HttpResponse:
 
     operations = DatabaseOperation.objects.select_related('created_by').all()[:25]
     can_manage_db = _can_manage_database_ops(request)
+    can_manage_email = _can_manage_email_templates(request)
+    try:
+        email_template = EmailTemplateSettings.get_solo()
+        email_template_form = EmailTemplateSettingsForm(instance=email_template)
+    except Exception:
+        email_template_form = None
 
     return render(request, 'dashboard/system.html', {
         'db_vendor': connection.vendor,
@@ -586,9 +608,161 @@ def dashboard_system(request: HttpRequest) -> HttpResponse:
         'send_emails': getattr(settings, 'SEND_EMAILS', False),
         'debug': settings.DEBUG,
         'can_manage_db': can_manage_db,
+        'can_manage_email': can_manage_email,
         'db_operations': operations,
         'restore_form': RestoreDatabaseForm(),
+        'email_template_form': email_template_form,
+        'mailgun_domain': getattr(settings, 'MAILGUN_DOMAIN', ''),
+        'mailgun_base_url': getattr(settings, 'MAILGUN_API_BASE_URL', ''),
         'has_running_restore': has_running_restore_operation(),
+    })
+
+
+@staff_required
+def dashboard_email(request: HttpRequest) -> HttpResponse:
+    can_manage_email = _can_manage_email_templates(request)
+    can_manage_campaigns = _can_manage_email_campaigns(request)
+    can_view_reports = _can_view_email_reports(request)
+
+    try:
+        email_template = EmailTemplateSettings.get_solo()
+        email_template_form = EmailTemplateSettingsForm(instance=email_template)
+    except Exception:
+        email_template_form = None
+
+    campaign_form = EmailCampaignForm()
+    preview_purchases = list(
+        Purchase.objects.select_related('ticket1', 'ticket2')
+        .order_by('-date')[:100]
+    )
+    default_preview_purchase_id = preview_purchases[0].id if preview_purchases else None
+    campaigns = EmailCampaign.objects.select_related('created_by', 'audience_performance').prefetch_related('audience_associations')[:20]
+    failed_rows = EmailCampaignRecipient.objects.filter(
+        campaign__in=campaigns,
+        status=EmailCampaignRecipient.STATUS_FAILED,
+    ).order_by('-id')
+    failed_by_campaign: dict[int, list[EmailCampaignRecipient]] = {}
+    for row in failed_rows:
+        failed_by_campaign.setdefault(row.campaign_id, []).append(row)
+    for campaign in campaigns:
+        campaign.failed_rows = failed_by_campaign.get(campaign.id, [])
+
+    return render(request, 'dashboard/email.html', {
+        'can_manage_email': can_manage_email,
+        'can_manage_campaigns': can_manage_campaigns,
+        'can_view_reports': can_view_reports,
+        'email_template_form': email_template_form,
+        'campaign_form': campaign_form,
+        'preview_purchases': preview_purchases,
+        'default_preview_purchase_id': default_preview_purchase_id,
+        'campaigns': campaigns,
+        'mailgun_domain': getattr(settings, 'MAILGUN_DOMAIN', ''),
+        'mailgun_base_url': getattr(settings, 'MAILGUN_API_BASE_URL', ''),
+    })
+
+
+@staff_required
+@require_POST
+def dashboard_email_campaign_create(request: HttpRequest) -> HttpResponse:
+    if not _can_manage_email_campaigns(request):
+        messages.error(request, _('dashboard.email.no_campaign_permission'))
+        return redirect('dashboard:dashboard_email')
+
+    form = EmailCampaignForm(request.POST)
+    if not form.is_valid():
+        messages.error(request, _('dashboard.email.campaign_create_invalid'))
+        return redirect('dashboard:dashboard_email')
+
+    cleaned = form.cleaned_data
+    campaign = EmailCampaign.objects.create(
+        name=cleaned['name'],
+        created_by=request.user,
+        audience_type=cleaned['audience_type'],
+        audience_performance=cleaned.get('performance'),
+        subject_template=cleaned['subject_template'],
+        text_template=cleaned.get('text_template', ''),
+        html_template=cleaned.get('html_template', ''),
+    )
+    if cleaned['audience_type'] == EmailCampaign.AUDIENCE_ASSOCIATIONS:
+        campaign.audience_associations.set(cleaned.get('associations'))
+
+    send_email_campaign_async(campaign)
+    messages.success(request, _('dashboard.email.campaign_queued') % {'id': campaign.pk})
+    return redirect('dashboard:dashboard_email')
+
+
+@staff_required
+@require_POST
+def dashboard_email_template_save(request: HttpRequest) -> HttpResponse:
+    if not _can_manage_email_templates(request):
+        messages.error(request, _('dashboard.email.no_template_permission'))
+        return redirect('dashboard:dashboard_email')
+
+    try:
+        template_settings = EmailTemplateSettings.get_solo()
+    except Exception:
+        messages.error(request, _('dashboard.email.template_model_not_ready'))
+        return redirect('dashboard:dashboard_email')
+    form = EmailTemplateSettingsForm(request.POST, instance=template_settings)
+    if form.is_valid():
+        obj = form.save(commit=False)
+        obj.updated_by = request.user
+        obj.save()
+        messages.success(request, _('dashboard.email.template_saved'))
+    else:
+        messages.error(request, _('dashboard.email.template_save_invalid'))
+    return redirect('dashboard:dashboard_email')
+
+
+@staff_required
+@require_POST
+def dashboard_email_template_preview(request: HttpRequest) -> JsonResponse:
+    if not _can_manage_email_templates(request):
+        return JsonResponse({'success': False, 'error': _('dashboard.email.preview_permission_denied')}, status=403)
+
+    html_template = request.POST.get('html_template', '')
+    purchase_id = (request.POST.get('purchase_id') or '').strip()
+    purchase_qs = Purchase.objects.select_related(
+        'ticket1', 'ticket1__association', 'ticket2', 'ticket2__association',
+    ).order_by('-date')
+    purchase = None
+    if purchase_id:
+        try:
+            purchase = purchase_qs.filter(pk=int(purchase_id)).first()
+        except ValueError:
+            purchase = None
+    if purchase is None:
+        purchase = purchase_qs.first()
+
+    style_context = {
+        'primary_color': request.POST.get('primary_color') or '#0d6efd',
+        'accent_color': request.POST.get('accent_color') or '#198754',
+        'background_color': request.POST.get('background_color') or '#f5f7fb',
+        'card_background_color': request.POST.get('card_background_color') or '#ffffff',
+        'border_color': request.POST.get('border_color') or '#dbe3ec',
+        'content_width': request.POST.get('content_width') or 640,
+        'footer_text': request.POST.get('footer_text') or 'See you at the IFTF performances.',
+    }
+    rendered_html, error_message = render_email_html_preview(
+        html_template,
+        style_context,
+        purchase=purchase,
+    )
+    if purchase is not None:
+        preview_label = _('%(name)s (%(code)s)') % {
+            'name': purchase.name,
+            'code': purchase.verification_code,
+        }
+    else:
+        preview_label = _('dashboard.email.preview_dummy_data')
+
+    return JsonResponse({
+        'success': True,
+        'html': rendered_html,
+        'error': error_message,
+        'preview_purchase_id': purchase.id if purchase else None,
+        'preview_purchase_label': preview_label,
+        'used_dummy': purchase is None,
     })
 
 
